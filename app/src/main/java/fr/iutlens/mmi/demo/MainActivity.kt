@@ -22,10 +22,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        loadSpritesheet(R.drawable.decor, 5, 4)
+        loadSpritesheet(R.drawable.decor, 6, 7)
         loadSpritesheet(R.drawable.isaac, 3, 4)
         loadSpritesheet(R.drawable.tear,1,1)
-        loadSpritesheet(R.drawable.transparent,1,1)
+        loadSpritesheet(R.drawable.transparent, 1,1)
 
         loadSound(R.raw.message)
 

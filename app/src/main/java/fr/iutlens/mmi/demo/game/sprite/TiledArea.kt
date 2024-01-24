@@ -20,12 +20,12 @@ class TiledArea(private val sprite: SpriteSheet, private val data: TileMap) : Sp
     /**
      * W largeur d'une case, en pixels
      */
-    val w  = sprite.spriteWidth-1
+    val w  = sprite.spriteWidth-2
 
     /**
      * H hauteur d'une case, en pixels
      */
-    val h  = sprite.spriteHeight-1
+    val h  = sprite.spriteHeight-2
 
     override fun paint(drawScope: DrawScope, elapsed: Long) {
         for (y in 0 until sizeY) {
