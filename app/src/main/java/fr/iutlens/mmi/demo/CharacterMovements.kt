@@ -9,6 +9,7 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.TileMap
 import fr.iutlens.mmi.demo.game.sprite.mutableSpriteListOf
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.game.sprite.tiledArea
 import fr.iutlens.mmi.demo.game.sprite.toMutableTileMap
 import fr.iutlens.mmi.demo.game.transform.FitTransform
@@ -42,6 +43,7 @@ fun testCharacter(): Game {
         transform = FitTransform(tileMap),
     )
     game.setupControllableCharacter()
+    game.addCharacter(CloseNinja(0f,0f,game))
     return game
 }
 @Preview(
