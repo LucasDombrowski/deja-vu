@@ -40,13 +40,14 @@ fun createCroppedBitmap(
     left: Int, top: Int,
     width: Int, height: Int
 ): Bitmap = if (Build.VERSION.SDK_INT > 22) {
-    Bitmap.createBitmap(src, left, top, width, height)
+
+    Bitmap.createBitmap(src, left+1, top+1, width-2, height-2)
     //bug: returns incorrect region for some version,  so must do it manually
 } else {
     val offset = 0
-    val pixels = IntArray(width * height)
-    src.getPixels(pixels, offset, width, left, top, width, height)
-    Bitmap.createBitmap(pixels, width, height, src.config)
+    val pixels = IntArray((width-2) * (height-2))
+    src.getPixels(pixels, offset, (width-2), (left+1), (top+1), (width-2), (height-2))
+    Bitmap.createBitmap(pixels, (width-2), (height-2), src.config)
 }
 
 fun setInterval(delayTime: Long, awaitTime: Long, action: ()->Unit): Job{
