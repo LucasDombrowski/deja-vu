@@ -17,9 +17,11 @@ import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
 import fr.iutlens.mmi.demo.game.sprite.Sprite
 import fr.iutlens.mmi.demo.game.sprite.TileMap
 import fr.iutlens.mmi.demo.game.sprite.TiledArea
+import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import kotlinx.coroutines.delay
+import kotlin.reflect.typeOf
 import kotlin.time.TimeSource
 
 /**
@@ -38,6 +40,7 @@ import kotlin.time.TimeSource
 class Game(val background : Sprite,
            val map : TiledArea,
            val spriteList : MutableSpriteList,
+           var controllableCharacter : MainCharacter ?=null,
            val transform: CameraTransform,
            var onDragStart: ((Offset) -> Unit)? = null,
            var onDragMove:  ((Offset) -> Unit)? = null,
@@ -73,12 +76,16 @@ class Game(val background : Sprite,
     }
 
     fun setupControllableCharacter(){
-        val character = MainCharacter(x = 1f*((map.w*map.sizeX)/2), y = 1f*((map.h*map.sizeY)/2), game = this)
-        spriteList.add(character.sprite)
+        controllableCharacter = MainCharacter(x = 1f*((map.w*map.sizeX)/2), y = 1f*((map.h*map.sizeY)/2), game = this)
+        spriteList.add(controllableCharacter!!.sprite)
         onTap = {
             (x,y)->
-            character.moveTo(x,y)
+            controllableCharacter!!.moveTo(x,y)
         }
+    }
+
+    fun addCharacter(character: Character){
+        spriteList.add(character.sprite)
     }
 
     /**

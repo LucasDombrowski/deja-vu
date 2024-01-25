@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.demo
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -11,12 +12,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import fr.iutlens.mmi.demo.game.ath.Ath
+import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.utils.Music.mute
 import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.loadSound
 
 import fr.iutlens.mmi.demo.utils.loadSpritesheet
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +43,7 @@ class MainActivity : ComponentActivity() {
                 game.View(modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black))
+                Ath(game)
                 Music(id = R.raw.jungle)
             }
         }
