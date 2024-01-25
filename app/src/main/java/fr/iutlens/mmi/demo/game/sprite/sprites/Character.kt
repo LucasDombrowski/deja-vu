@@ -21,19 +21,14 @@ open class Character(val sprite: BasicSprite,
                      val leftAnimationSequence: List<Int> = basicAnimationSequence,
                      val topAnimationSequence: List<Int> = basicAnimationSequence,
                      val rightAnimationSequence: List<Int> = basicAnimationSequence,
-                     val bottomAnimationSequence: List<Int> = basicAnimationSequence,
-                     val topLeftAnimationSequence: List<Int> = basicAnimationSequence,
-                     val topRightAnimationSequence : List<Int> = basicAnimationSequence,
-                     val bottomLeftAnimationSequence: List<Int> = basicAnimationSequence,
-                     val bottomRightAnimationSequence: List<Int> = basicAnimationSequence,
+                     val bottomAnimationSequence : List<Int> = basicAnimationSequence,
                      var target : Character? = null){
-    private var animationLoop = setInterval(0,basicAnimationSequence.size*100.toLong()){
-        playAnimation(basicAnimationSequence)
+    private var animation : Job = GlobalScope.launch {
+        return@launch
     }
     private var movingAction : Job = GlobalScope.launch {
         return@launch
     }
-    private var movingTimer: Long = 0;
 
     var previousDirection = "static"
     var currentDirection = "static"
@@ -48,19 +43,23 @@ open class Character(val sprite: BasicSprite,
         game.invalidate()
     }
 
-    fun changeAnimationLoop(animationSequence: List<Int>){
-        animationLoop.cancel()
-        animationLoop = setInterval(0, animationSequence.size*100.toLong()){
-            playAnimation(animationSequence)
+    fun maxAnimationSequence() : Int{
+        return listOf<Int>(basicAnimationSequence.size, leftAnimationSequence.size, topAnimationSequence.size, bottomAnimationSequence.size, rightAnimationSequence.size).max()
+    }
+    fun changeAnimationLoop(animationSequence: List<Int>, awaitTime: Long = 100){
+        animation.cancel()
+        animation = setInterval(0, maxAnimationSequence()*awaitTime){
+            playAnimation(animationSequence, awaitTime)
         }
     }
 
-    fun resetAnimationLoop(){
-        animationLoop.cancel()
-        animationLoop = setInterval(0,basicAnimationSequence.size*100.toLong()){
+    fun resetAnimationLoop(awaitTime: Long = 100){
+        animation.cancel()
+        animation = setInterval(0,maxAnimationSequence()*awaitTime){
             playAnimation(basicAnimationSequence)
         }
     }
+
 
     fun playAnimation(frames: List<Int>, awaitTime:Long = 100){
         GlobalScope.launch {
@@ -97,10 +96,10 @@ open class Character(val sprite: BasicSprite,
                     currentDirection = when{
                         nextX<sprite.x && nextY == sprite.y-> "left"
                         nextX>sprite.x&&nextY==sprite.y-> "right"
-                        nextX<sprite.x&&nextY<sprite.y-> "top-left"
-                        nextX<sprite.x&&nextY>sprite.y-> "bottom-left"
-                        nextX>sprite.x&&nextY<sprite.y-> "top-right"
-                        nextX>sprite.x&&nextY>sprite.y-> "bottom-right"
+                        nextX<sprite.x&&nextY<sprite.y-> "left"
+                        nextX<sprite.x&&nextY>sprite.y-> "left"
+                        nextX>sprite.x&&nextY<sprite.y-> "right"
+                        nextX>sprite.x&&nextY>sprite.y-> "right"
                         nextX==sprite.x&&nextY<sprite.y-> "top"
                         else-> "bottom"
                     }
@@ -131,10 +130,6 @@ open class Character(val sprite: BasicSprite,
                 "right"->rightAnimationSequence
                 "top"->topAnimationSequence
                 "bottom"->bottomAnimationSequence
-                "top-left"->topLeftAnimationSequence
-                "top-right"->topRightAnimationSequence
-                "bottom-left"->bottomLeftAnimationSequence
-                "bottom-right"->bottomRightAnimationSequence
                 else->basicAnimationSequence
             }
             changeAnimationLoop(animationSequence)

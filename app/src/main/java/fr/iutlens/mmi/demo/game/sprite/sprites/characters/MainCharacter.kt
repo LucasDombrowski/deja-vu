@@ -16,10 +16,6 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     hearts = setBasicHearts(3),
     leftAnimationSequence = listOf(3,4,5),
     topAnimationSequence = listOf(9,10,11),
-    bottomAnimationSequence = listOf(0,1,2),
     rightAnimationSequence = listOf(6,7,8),
-    topLeftAnimationSequence = listOf(3,4,5),
-    topRightAnimationSequence = listOf(6,7,8),
-    bottomLeftAnimationSequence = listOf(3,4,5),
-    bottomRightAnimationSequence = listOf(6,7,8)
-)
+    bottomAnimationSequence = listOf(0,1,2)
+    )

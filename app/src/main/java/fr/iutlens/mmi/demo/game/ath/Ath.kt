@@ -36,8 +36,8 @@ fun Ath(game: Game){
 @Composable
 fun Heart(permanent: Boolean, filled: Float){
     Box(modifier = Modifier
-        .width(64.dp)
-        .height(64.dp)) {
+        .width(32.dp)
+        .height(32.dp)) {
         if (permanent) {
             Image(
                 painter = painterResource(id = R.drawable.heart_pixel_art_254x254),

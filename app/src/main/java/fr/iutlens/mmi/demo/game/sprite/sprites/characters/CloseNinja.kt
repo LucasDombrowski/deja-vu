@@ -18,13 +18,11 @@ class CloseNinja(x: Float, y:Float, game: Game) : Character(
     topAnimationSequence = listOf(9,10,11),
     bottomAnimationSequence = listOf(0,1,2),
     rightAnimationSequence = listOf(6,7,8),
-    topLeftAnimationSequence = listOf(3,4,5),
-    topRightAnimationSequence = listOf(6,7,8),
-    bottomLeftAnimationSequence = listOf(3,4,5),
-    bottomRightAnimationSequence = listOf(6,7,8),
     target = game.controllableCharacter
 ){
     var action = setInterval(1000,100){
-        moveTo(target!!.sprite.x, target!!.sprite.y)
+        if(!target!!.inBoundingBox(sprite.x,sprite.y)) {
+            moveTo(target!!.sprite.x, target!!.sprite.y)
+        }
     }
 }
