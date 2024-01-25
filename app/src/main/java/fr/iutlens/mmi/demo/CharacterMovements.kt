@@ -19,13 +19,13 @@ import fr.iutlens.mmi.demo.utils.loadSpritesheet
 
 fun testCharacter(): Game {
     val map = """
-        01222O33345
-        CGTTTTTTTHF
-        IS!!!!!!!ZL
-        QS!!!!!!!ZR
-        ES!!!!!!!ZD
-        KMYYYYYYYNJ
-        67888P999AB
+        0122222O3333345
+        CGTTTTTTTTTTTHF
+        IS!!!!!!!!!!!ZL
+        QS!!!!!!!!!!!ZR
+        ES!!!!!!!!!!!ZD
+        KMYYYYYYYYYYYNJ
+        6788888P99999AB
     """.trimIndent().toMutableTileMap(
         "012345"+
                 "6789AB"+

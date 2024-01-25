@@ -4,6 +4,7 @@ import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
+import fr.iutlens.mmi.demo.game.sprite.TileMap
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -135,7 +136,6 @@ open class Character(val sprite: BasicSprite,
             changeAnimationLoop(animationSequence)
         }
     }
-
 
 }
 
