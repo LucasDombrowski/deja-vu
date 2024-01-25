@@ -9,6 +9,7 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.TileMap
 import fr.iutlens.mmi.demo.game.sprite.mutableSpriteListOf
+import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.tiledArea
 import fr.iutlens.mmi.demo.game.sprite.toMutableTileMap
 import fr.iutlens.mmi.demo.game.transform.FitTransform
@@ -18,13 +19,13 @@ import fr.iutlens.mmi.demo.utils.loadSpritesheet
 
 fun testCharacter(): Game {
     val map = """
-        01222O33345
-        CGTTTTTTTHF
-        IS!!!!!!!ZL
-        QS!!!!!!!ZR
-        ES!!!!!!!ZD
-        KMYYYYYYYNJ
-        67888P999AB
+        0122222O3333345
+        CGTTTTTTTTTTTHF
+        IS!!!!!!!!!!!ZL
+        QS!!!!!!!!!!!ZR
+        ES!!!!!!!!!!!ZD
+        KMYYYYYYYYYYYNJ
+        6788888P99999AB
     """.trimIndent().toMutableTileMap(
         "012345"+
                 "6789AB"+
