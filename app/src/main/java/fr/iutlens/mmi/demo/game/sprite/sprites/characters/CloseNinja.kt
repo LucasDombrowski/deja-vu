@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites.characters
 
+import android.util.Log
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
@@ -13,16 +14,20 @@ class CloseNinja(x: Float, y:Float, game: Game) : Character(
     basicAnimationSequence = listOf(1),
     speed = 10f,
     damages = 1f,
+    knockback = 20f,
     hearts = setBasicHearts(3),
     leftAnimationSequence = listOf(3,4,5),
     topAnimationSequence = listOf(9,10,11),
     bottomAnimationSequence = listOf(0,1,2),
     rightAnimationSequence = listOf(6,7,8),
-    target = game.controllableCharacter
+    target = game.controllableCharacter!!
 ){
     var action = setInterval(1000,100){
         if(!target!!.inBoundingBox(sprite.x,sprite.y)) {
             moveTo(target!!.sprite.x, target!!.sprite.y)
+        } else {
+            target!!.healthDown(damages, knockback, currentDirection)
+            game.controllableCharacter!!.refreshHeathBar()
         }
     }
 }

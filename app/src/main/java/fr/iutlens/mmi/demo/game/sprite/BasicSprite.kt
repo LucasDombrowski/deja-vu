@@ -2,6 +2,8 @@ package fr.iutlens.mmi.demo.game.sprite
 
 
 import android.graphics.RectF
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
 import fr.iutlens.mmi.demo.game.Game
@@ -43,9 +45,6 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
     override val boundingBox get() = RectF(x - w2, y - h2, x + w2, y + h2)
     override fun update() {action?.invoke(this)}
 
-    fun addToGame(game: Game){
-        game.spriteList.add(this)
-    }
 }
 
 /**

@@ -11,6 +11,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.math.round
 
 
 open class Character(val sprite: BasicSprite,
@@ -18,6 +19,8 @@ open class Character(val sprite: BasicSprite,
                      val speed:Float,
                      val damages: Float,
                      var hearts: MutableList<Heart>,
+                     val knockback : Float,
+                     val invulnerability: Long = 0,
                      val basicAnimationSequence: List<Int>,
                      val leftAnimationSequence: List<Int> = basicAnimationSequence,
                      val topAnimationSequence: List<Int> = basicAnimationSequence,
@@ -31,6 +34,7 @@ open class Character(val sprite: BasicSprite,
         return@launch
     }
 
+    var remainingInvulnerability : Boolean = false
     var previousDirection = "static"
     var currentDirection = "static"
     fun changePos(x: Float, y: Float){
@@ -56,8 +60,9 @@ open class Character(val sprite: BasicSprite,
 
     fun resetAnimationLoop(awaitTime: Long = 100){
         animation.cancel()
-        animation = setInterval(0,maxAnimationSequence()*awaitTime){
-            playAnimation(basicAnimationSequence)
+        animation = GlobalScope.launch {
+            delay(awaitTime*maxAnimationSequence())
+            changeFrame(basicAnimationSequence[0])
         }
     }
 
@@ -75,7 +80,7 @@ open class Character(val sprite: BasicSprite,
             previousDirection = currentDirection
             movingAction.cancel()
             movingAction = GlobalScope.launch {
-                if(x!=sprite.x || y!=sprite.y){
+                if(round(x)!= round(sprite.x) || round(y)!=round(sprite.y)){
                     val xDifference = when{
                         abs(x-sprite.x)>=speed->speed
                         else->abs(x-sprite.x)%speed
@@ -110,7 +115,7 @@ open class Character(val sprite: BasicSprite,
                     moveTo(x,y)
                 } else {
                     currentDirection = "static"
-                    checkDirectionChange()
+                    resetAnimationLoop()
                 }
 
             }
@@ -126,14 +131,100 @@ open class Character(val sprite: BasicSprite,
 
     private fun checkDirectionChange(){
         if(previousDirection!=currentDirection){
-            val animationSequence = when(currentDirection){
-                "left"->leftAnimationSequence
-                "right"->rightAnimationSequence
-                "top"->topAnimationSequence
-                "bottom"->bottomAnimationSequence
-                else->basicAnimationSequence
+            when(currentDirection){
+                "left"->changeAnimationLoop(leftAnimationSequence)
+                "right"->changeAnimationLoop(rightAnimationSequence)
+                "top"->changeAnimationLoop(topAnimationSequence)
+                "bottom"->changeAnimationLoop(bottomAnimationSequence)
+                else->resetAnimationLoop()
             }
-            changeAnimationLoop(animationSequence)
+        }
+    }
+
+    fun healthDown(n: Float, knockback: Float = 0f, direction: String = "static"){
+        if(!remainingInvulnerability) {
+            if(invulnerability>0){
+                remainingInvulnerability = true
+                decreaseInvulnerability()
+            }
+            var healhToRemove = n
+            var heartIndex = hearts.lastIndex
+            while (healhToRemove >= 1 && heartIndex >= 0) {
+                if (!hearts[heartIndex].permanent) {
+                    hearts.removeLast()
+                } else {
+                    while (hearts[heartIndex].filled == 0f) {
+                        heartIndex--
+                    }
+                    if (heartIndex >= 1) {
+                        hearts[heartIndex].filled = 0f
+                    }
+                }
+                heartIndex--
+                healhToRemove--
+
+            }
+            while (healhToRemove >= 0.5 && heartIndex >= 0) {
+                if (!hearts[heartIndex].permanent) {
+                    if (hearts[heartIndex].filled <= 0.5) {
+                        hearts.removeLast()
+                    } else {
+                        hearts[heartIndex].filled -= 0.5f
+                    }
+                } else {
+                    while (hearts[heartIndex].filled == 0f) {
+                        heartIndex--
+                    }
+                    if (heartIndex >= 1) {
+                        if (hearts[heartIndex].filled <= 0.5) {
+                            hearts[heartIndex].filled = 0f
+                        } else {
+                            hearts[heartIndex].filled -= 0.5f
+                        }
+                    }
+                }
+                heartIndex--
+                healhToRemove -= 0.5f
+            }
+            getKnockback(knockback,direction)
+        }
+    }
+
+    fun getKnockback(knockback: Float, direction: String){
+        movingAction.cancel()
+        val xMultiplier= when(direction){
+            "left"->-1
+            "right"->1
+            else->0
+        }
+        val yMultiplier = when(direction){
+            "top"->-1
+            "bottom"->1
+            "left"->0
+            "right"->0
+            else->1
+        }
+        GlobalScope.launch {
+            repeat(10){
+                changePos(sprite.x+(knockback*xMultiplier), sprite.y + (knockback*yMultiplier))
+                delay(33)
+            }
+        }
+    }
+
+    fun getReverseDirection() : String{
+        return when(currentDirection){
+            "left"->"right"
+            "right"->"left"
+            "top"->"bottom"
+            "bottom"->"top"
+            else->"static"
+        }
+    }
+    fun decreaseInvulnerability(){
+        GlobalScope.launch {
+            delay(invulnerability)
+            remainingInvulnerability = false
         }
     }
 

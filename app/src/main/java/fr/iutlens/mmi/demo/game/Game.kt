@@ -3,25 +3,30 @@ package fr.iutlens.mmi.demo.game
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
-import fr.iutlens.mmi.demo.game.sprite.BasicSprite
+import fr.iutlens.mmi.demo.game.ath.Hearts
+import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
 import fr.iutlens.mmi.demo.game.sprite.Sprite
-import fr.iutlens.mmi.demo.game.sprite.TileMap
 import fr.iutlens.mmi.demo.game.sprite.TiledArea
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlin.reflect.typeOf
+import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
 
 /**
@@ -78,6 +83,7 @@ class Game(val background : Sprite,
     fun setupControllableCharacter(){
         controllableCharacter = MainCharacter(x = 1f*((map.w*map.sizeX)/2), y = 1f*((map.h*map.sizeY)/2), game = this)
         spriteList.add(controllableCharacter!!.sprite)
+        ath["hearts"] = controllableCharacter!!.hearts
         onTap = {
             (x,y)->
             controllableCharacter!!.moveTo(x,y)
@@ -128,6 +134,16 @@ class Game(val background : Sprite,
                     myUpdate(this@Game)
                 }
             }
+        }
+    }
+
+    var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>())
+    @Composable
+    fun Ath(){
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()){
+            ath["hearts"]?.let { Hearts(hearts = it) }
         }
     }
 }

@@ -12,8 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import fr.iutlens.mmi.demo.game.ath.Ath
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.utils.Music.mute
 import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.Music
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                 game.View(modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black))
-                Ath(game)
+                game.Ath()
                 Music(id = R.raw.jungle)
             }
         }

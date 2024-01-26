@@ -23,4 +23,5 @@ interface Sprite {
      * Update demande au sprite de réaliser son action (par exemple bouger)
      */
     fun update()
+
 }
