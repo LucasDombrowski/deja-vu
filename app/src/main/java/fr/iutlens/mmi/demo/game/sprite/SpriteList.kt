@@ -19,10 +19,10 @@ fun Iterable<Sprite>.update() {for(sprite in this) sprite.update()}
  * @property list
  * @constructor Crée une SpriteList à partir d'un liste de sprite
  */
-open class SpriteList(open val list: Iterable<Sprite>) : Sprite, Iterable<Sprite> by list{
-    override fun paint(drawScope: DrawScope, elapsed: Long)  = list.paint(drawScope,elapsed)
-    override val boundingBox: RectF get() = list.boundingBox()
-    override fun update()  = list.update()
+open class SpriteList(open val list: Iterable<Sprite>) : Iterable<Sprite> by list{
+    open fun paint(drawScope: DrawScope, elapsed: Long)  = list.paint(drawScope,elapsed)
+    val boundingBox: RectF get() = list.boundingBox()
+    fun update()  = list.update()
 }
 
 /**
@@ -32,7 +32,16 @@ open class SpriteList(open val list: Iterable<Sprite>) : Sprite, Iterable<Sprite
  * @constructor Create empty Mutable sprite list
  */
 class MutableSpriteList(override val list: MutableList<Sprite>) : SpriteList(list), MutableList<Sprite> by list {
-    override fun iterator() = list.iterator()
+    override fun iterator() = list.listIterator()
+    override fun paint(drawScope: DrawScope, elapsed: Long){
+        val listCopy = MutableSpriteList(list = list.toMutableList())
+        with(listCopy.iterator()){
+            forEach {
+                it.paint(drawScope,elapsed)
+            }
+        }
+    }
+
 }
 
 fun Iterable<Sprite>.asSpriteList() = SpriteList(this)

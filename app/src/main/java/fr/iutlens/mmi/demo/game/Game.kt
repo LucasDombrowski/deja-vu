@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo.game
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -18,10 +19,12 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
 import fr.iutlens.mmi.demo.game.ath.Hearts
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
 import fr.iutlens.mmi.demo.game.sprite.Sprite
 import fr.iutlens.mmi.demo.game.sprite.TiledArea
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
+import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import kotlinx.coroutines.GlobalScope
@@ -73,6 +76,8 @@ class Game(val background : Sprite,
      */
     var update: ((Game)-> Unit)? = null
 
+
+    var characterList : MutableList<Character> = mutableListOf()
     /**
      * Invalidate demande une nouvelle image, en général parce que les données du jeu ont changé
      */
@@ -82,17 +87,38 @@ class Game(val background : Sprite,
 
     fun setupControllableCharacter(){
         controllableCharacter = MainCharacter(x = 1f*((map.w*map.sizeX)/2), y = 1f*((map.h*map.sizeY)/2), game = this)
-        spriteList.add(controllableCharacter!!.sprite)
+        addCharacter(controllableCharacter!!)
         ath["hearts"] = controllableCharacter!!.hearts
         onTap = {
             (x,y)->
-            controllableCharacter!!.moveTo(x,y)
+            for(character in characterList){
+                if(character.inBoundingBox(x,y) && character is Enemy){
+                    controllableCharacter!!.target = character
+                }
+            }
+                controllableCharacter!!.moveTo(x,y)
         }
     }
 
     fun addCharacter(character: Character){
-        spriteList.add(character.sprite)
+        addSprite(character.sprite)
+        characterList.add(character)
     }
+
+    fun deleteCharacter(character: Character){
+        characterList.remove(character)
+    }
+
+    fun addSprite(sprite: BasicSprite){
+        spriteList.add(sprite)
+    }
+
+    fun deleteSprite(sprite : BasicSprite){
+        spriteList.remove(sprite)
+    }
+
+
+
 
     /**
      * View

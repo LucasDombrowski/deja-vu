@@ -5,6 +5,7 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.TileMap
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -19,7 +20,7 @@ open class Character(val sprite: BasicSprite,
                      val speed:Float,
                      val damages: Float,
                      var hearts: MutableList<Heart>,
-                     val knockback : Float,
+                     var knockback : Float,
                      val invulnerability: Long = 0,
                      val basicAnimationSequence: List<Int>,
                      val leftAnimationSequence: List<Int> = basicAnimationSequence,
@@ -33,6 +34,9 @@ open class Character(val sprite: BasicSprite,
     private var movingAction : Job = GlobalScope.launch {
         return@launch
     }
+
+    var alive = true
+
 
     var remainingInvulnerability : Boolean = false
     var previousDirection = "static"
@@ -149,44 +153,20 @@ open class Character(val sprite: BasicSprite,
             }
             var healhToRemove = n
             var heartIndex = hearts.lastIndex
-            while (healhToRemove >= 1 && heartIndex >= 0) {
-                if (!hearts[heartIndex].permanent) {
-                    hearts.removeLast()
-                } else {
-                    while (hearts[heartIndex].filled == 0f) {
-                        heartIndex--
-                    }
-                    if (heartIndex >= 1) {
-                        hearts[heartIndex].filled = 0f
-                    }
+            while(healhToRemove>0 && heartIndex>=0){
+                while (hearts[heartIndex].filled>0f){
+                    hearts[heartIndex].filled-=0.25f
+                    healhToRemove-=0.25f
                 }
                 heartIndex--
-                healhToRemove--
-
-            }
-            while (healhToRemove >= 0.5 && heartIndex >= 0) {
-                if (!hearts[heartIndex].permanent) {
-                    if (hearts[heartIndex].filled <= 0.5) {
-                        hearts.removeLast()
-                    } else {
-                        hearts[heartIndex].filled -= 0.5f
-                    }
-                } else {
-                    while (hearts[heartIndex].filled == 0f) {
-                        heartIndex--
-                    }
-                    if (heartIndex >= 1) {
-                        if (hearts[heartIndex].filled <= 0.5) {
-                            hearts[heartIndex].filled = 0f
-                        } else {
-                            hearts[heartIndex].filled -= 0.5f
-                        }
-                    }
-                }
-                heartIndex--
-                healhToRemove -= 0.5f
             }
             getKnockback(knockback,direction)
+            if(this is MainCharacter){
+                refreshHeathBar()
+                blink()
+            } else if(hearts[0].filled<=0f){
+                die()
+            }
         }
     }
 
@@ -225,6 +205,17 @@ open class Character(val sprite: BasicSprite,
         GlobalScope.launch {
             delay(invulnerability)
             remainingInvulnerability = false
+        }
+    }
+
+    fun die(){
+        alive = false
+        game.deleteSprite(sprite)
+        game.deleteCharacter(character = this)
+        movingAction.cancel()
+        animation.cancel()
+        if(this is Enemy){
+            action.cancel()
         }
     }
 
