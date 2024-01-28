@@ -82,6 +82,10 @@ class Game(val background : Sprite,
 
 
     var characterList : MutableList<Character> = mutableListOf()
+
+    fun copyCharacterList() : MutableList<Character>{
+        return characterList.toMutableList()
+    }
     /**
      * Invalidate demande une nouvelle image, en général parce que les données du jeu ont changé
      */
@@ -93,6 +97,7 @@ class Game(val background : Sprite,
         controllableCharacter = MainCharacter(x = 1f*((map.w*map.sizeX)/2), y = 1f*((map.h*map.sizeY)/2), game = this)
         addCharacter(controllableCharacter!!)
         ath["hearts"] = controllableCharacter!!.hearts
+        addSprite(controllableCharacter!!.targetIndicator)
         onTap = {
             (x,y)->
             for(character in characterList){

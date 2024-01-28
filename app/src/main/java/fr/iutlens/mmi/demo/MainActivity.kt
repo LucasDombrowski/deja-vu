@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.isaac, 3, 4)
         loadSpritesheet(R.drawable.tear,1,1)
         loadSpritesheet(R.drawable.transparent, 1,1)
+        loadSpritesheet(R.drawable.arrow, 1,1)
 
         loadSound(R.raw.message)
 

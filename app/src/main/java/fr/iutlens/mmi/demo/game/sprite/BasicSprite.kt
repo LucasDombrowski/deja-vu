@@ -62,6 +62,10 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
         scaleY = 1f
     }
 
+    fun isInvisible() : Boolean{
+        return scaleX==0f && scaleY==0f
+    }
+
     fun copy() : BasicSprite{
         return BasicSprite(spriteSheet,x,y,scaleX,scaleY,ndx = ndx, colorFilter = colorFilter, action=action)
     }

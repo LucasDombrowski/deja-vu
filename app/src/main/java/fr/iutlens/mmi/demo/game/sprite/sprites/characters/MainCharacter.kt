@@ -29,10 +29,20 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     fireRate = 500
     ){
 
+    val targetIndicator : BasicSprite = BasicSprite(R.drawable.arrow, sprite.x, sprite.y)
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = true, damages =  1f, knockback = 15f)
     var autoFire : Job = setInterval(0,fireRate){
-        if(target is Enemy && target!!.alive){
+        if(target is Enemy && target!!.alive && !target!!.sprite.isInvisible()){
+            targetIndicator.visible()
             projectile.aimTarget(target!!, sprite.x, sprite.y)
+        } else {
+            targetIndicator.invisible()
+        }
+    }
+    val targetFollow : Job = setInterval(0, 33){
+        if(target is Enemy){
+            targetIndicator.x = target!!.sprite.x
+            targetIndicator.y = target!!.sprite.boundingBox.top
         }
     }
 

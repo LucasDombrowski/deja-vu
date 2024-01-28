@@ -16,7 +16,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     sprite = BasicSprite(R.drawable.isaac,x,y,1),
     game = game,
     basicAnimationSequence = listOf(1),
-    speed = 15f,
+    speed = 10f,
     hearts = setBasicHearts(6),
     leftAnimationSequence = listOf(3,4,5),
     topAnimationSequence = listOf(9,10,11),
@@ -33,36 +33,38 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
 
     fun pattern() {
         GlobalScope.launch {
-            if (!chasing) {
-                sprite.invisible()
-                val xPos = when (Math.random()) {
-                    in 0f..0.5f -> target!!.sprite.x - 50f
-                    else -> target!!.sprite.x + 50f
-                }
-                val yPos = when (Math.random()) {
-                    in 0f..0.5f -> target!!.sprite.y + 50f
-                    else -> target!!.sprite.y - 50f
-                }
-                chasing = true
-                delay(1000)
-                changePos(xPos, yPos)
-                sprite.visible()
-                action = GlobalScope.launch {
-                    pattern()
-                }
+            if(alive) {
+                if (!chasing) {
+                    sprite.invisible()
+                    val xPos = when (Math.random()) {
+                        in 0f..0.5f -> target!!.sprite.x - 50f
+                        else -> target!!.sprite.x + 50f
+                    }
+                    val yPos = when (Math.random()) {
+                        in 0f..0.5f -> target!!.sprite.y + 50f
+                        else -> target!!.sprite.y - 50f
+                    }
+                    chasing = true
+                    delay(2000)
+                    changePos(xPos, yPos)
+                    sprite.visible()
+                    action = GlobalScope.launch {
+                        pattern()
+                    }
 
-            } else if (target!!.inBoundingBox(sprite.x, sprite.y)) {
-                target!!.healthDown(1f, 20f, currentDirection)
-                chasing = false
-                action = GlobalScope.launch {
-                    delay(100)
-                    pattern()
-                }
-            } else {
-                moveTo(target!!.sprite.x, target!!.sprite.y)
-                action = GlobalScope.launch {
-                    delay(100)
-                    pattern()
+                } else if (target!!.inBoundingBox(sprite.x, sprite.y)) {
+                    target!!.healthDown(1f, 20f, currentDirection)
+                    chasing = false
+                    action = GlobalScope.launch {
+                        delay(100)
+                        pattern()
+                    }
+                } else {
+                    moveTo(target!!.sprite.x, target!!.sprite.y)
+                    action = GlobalScope.launch {
+                        delay(100)
+                        pattern()
+                    }
                 }
             }
         }

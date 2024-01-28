@@ -23,7 +23,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     bottomAnimationSequence = listOf(0,1,2),
     rightAnimationSequence = listOf(6,7,8),
     target = game.controllableCharacter!!,
-    fireRate = 1000
+    fireRate = 3000
 ){
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = false, damages =  1f, knockback = 15f)
     override var action = setInterval(0,fireRate){
@@ -31,8 +31,6 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
             moveTo(target!!.sprite.x, target!!.sprite.y)
         } else {
             movingAction.cancel()
-            currentDirection = "static"
-            checkDirectionChange()
             val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
             val firstProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (PI/6).toFloat())
             val secondProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1],(-PI/6).toFloat())

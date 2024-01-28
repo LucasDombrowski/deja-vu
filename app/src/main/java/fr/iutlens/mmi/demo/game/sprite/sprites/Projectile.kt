@@ -47,25 +47,26 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
     }
 
     fun moveProjectile(xStep: Float, yStep: Float, game: Game){
-        GlobalScope.launch {
+        val move = GlobalScope.launch {
             repeat(round(range/speed).toInt()){
                 delay(33)
                 changePos(sprite.x+xStep, sprite.y+yStep)
-                game.invalidate()
                 if(friendly){
-                    for(character in game.characterList){
-                        if(character.inBoundingBox(sprite.x, sprite.y) && character is Enemy){
-                            this.cancel()
-                            val direction = when{
-                                sprite.x < character.sprite.x -> "right"
-                                sprite.x > character.sprite.x -> "left"
-                                sprite.y < character.sprite.y -> "bottom"
-                                else -> "top"
+                    with(game.copyCharacterList().iterator()){
+                        forEach {
+                            if (it.inBoundingBox(sprite.x, sprite.y) && it is Enemy && it.alive) {
+                                cancel()
+                                val direction = when {
+                                    sprite.x < it.sprite.x -> "right"
+                                    sprite.x > it.sprite.x -> "left"
+                                    sprite.y < it.sprite.y -> "bottom"
+                                    else -> "top"
+                                }
+                                game.deleteSprite(sprite)
+                                it.hit(damages, knockback, direction)
+                                }
                             }
-                            game.deleteSprite(sprite)
-                            character.hit(damages,knockback,direction)
                         }
-                    }
                 } else {
                     if(game.controllableCharacter!!.inBoundingBox(sprite.x, sprite.y)){
                         this.cancel()
@@ -79,6 +80,7 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
                         game.controllableCharacter!!.healthDown(damages, knockback, direction)
                     }
                 }
+                game.invalidate()
             }
             game.deleteSprite(sprite)
         }

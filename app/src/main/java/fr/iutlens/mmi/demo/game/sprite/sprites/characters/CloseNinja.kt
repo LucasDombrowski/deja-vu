@@ -14,7 +14,7 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
     sprite = BasicSprite(R.drawable.isaac,x,y,1),
     game = game,
     basicAnimationSequence = listOf(1),
-    speed = 10f,
+    speed = 15f,
     hearts = setBasicHearts(6),
     leftAnimationSequence = listOf(3,4,5),
     topAnimationSequence = listOf(9,10,11),

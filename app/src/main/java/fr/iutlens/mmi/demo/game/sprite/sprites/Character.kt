@@ -27,18 +27,24 @@ open class Character(val sprite: BasicSprite,
                      val rightAnimationSequence: List<Int> = basicAnimationSequence,
                      val bottomAnimationSequence : List<Int> = basicAnimationSequence,
                      var target : Character? = null){
-    var animation : Job = GlobalScope.launch {
-        return@launch
-    }
+
+
     var movingAction : Job = GlobalScope.launch {
         return@launch
     }
 
     var alive = true
 
+    var currentAnimationSequence = basicAnimationSequence
+
+    val animation : Job = setInterval(0,maxAnimationSequence().toLong()*100){
+        playAnimation(currentAnimationSequence)
+    }
 
     var remainingInvulnerability : Boolean = false
+
     var previousDirection = "static"
+
     var currentDirection = "static"
     fun changePos(x: Float, y: Float){
         sprite.x = x
@@ -54,22 +60,6 @@ open class Character(val sprite: BasicSprite,
     fun maxAnimationSequence() : Int{
         return listOf<Int>(basicAnimationSequence.size, leftAnimationSequence.size, topAnimationSequence.size, bottomAnimationSequence.size, rightAnimationSequence.size).max()
     }
-    fun changeAnimationLoop(animationSequence: List<Int>, awaitTime: Long = 100){
-        animation.cancel()
-        animation = setInterval(0, maxAnimationSequence()*awaitTime){
-            playAnimation(animationSequence, awaitTime)
-        }
-    }
-
-    fun resetAnimationLoop(awaitTime: Long = 100){
-        animation.cancel()
-        animation = GlobalScope.launch {
-            delay(awaitTime*maxAnimationSequence())
-            changeFrame(basicAnimationSequence[0])
-        }
-    }
-
-
     fun playAnimation(frames: List<Int>, awaitTime:Long = 100){
         GlobalScope.launch {
             for (frame in frames){
@@ -112,13 +102,21 @@ open class Character(val sprite: BasicSprite,
                         nextX==sprite.x&&nextY<sprite.y-> "top"
                         else-> "bottom"
                     }
+                    if(previousDirection!=currentDirection){
+                        currentAnimationSequence = when(currentDirection){
+                            "left"->leftAnimationSequence
+                            "right"->rightAnimationSequence
+                            "top"->topAnimationSequence
+                            "bottom"->bottomAnimationSequence
+                            else->basicAnimationSequence
+                        }
+                    }
                     changePos(nextX,nextY)
                     delay(33)
-                    checkDirectionChange()
                     moveTo(x,y)
                 } else {
                     currentDirection = "static"
-                    resetAnimationLoop()
+                    currentAnimationSequence = basicAnimationSequence
                 }
 
             }
@@ -132,17 +130,6 @@ open class Character(val sprite: BasicSprite,
                 sprite.boundingBox.bottom > y)
     }
 
-    fun checkDirectionChange(){
-        if(previousDirection!=currentDirection){
-            when(currentDirection){
-                "left"->changeAnimationLoop(leftAnimationSequence)
-                "right"->changeAnimationLoop(rightAnimationSequence)
-                "top"->changeAnimationLoop(topAnimationSequence)
-                "bottom"->changeAnimationLoop(bottomAnimationSequence)
-                else->resetAnimationLoop()
-            }
-        }
-    }
 
     fun healthDown(n: Float, knockback: Float = 0f, direction: String = "static"){
         if(!remainingInvulnerability) {
@@ -216,7 +203,6 @@ open class Character(val sprite: BasicSprite,
         game.deleteSprite(sprite)
         game.deleteCharacter(character = this)
         movingAction.cancel()
-        animation.cancel()
         if(this is Enemy){
             action.cancel()
         }
