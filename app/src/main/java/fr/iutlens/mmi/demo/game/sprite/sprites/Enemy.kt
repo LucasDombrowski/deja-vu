@@ -12,15 +12,14 @@ open class Enemy(
     sprite: BasicSprite,
     game: Game,
     speed:Float,
-    damages: Float,
     hearts: MutableList<Heart>,
-    knockback : Float,
     basicAnimationSequence: List<Int>,
     leftAnimationSequence: List<Int> = basicAnimationSequence,
     topAnimationSequence: List<Int> = basicAnimationSequence,
     rightAnimationSequence: List<Int> = basicAnimationSequence,
     bottomAnimationSequence : List<Int> = basicAnimationSequence,
     target : Character? = null,
+    fireRate : Long = 0,
     open var action : Job = GlobalScope.launch {
         return@launch
     }
@@ -28,15 +27,14 @@ open class Enemy(
     sprite = sprite,
     game = game,
     speed = speed,
-    damages = damages,
     hearts = hearts,
-    knockback = knockback,
     basicAnimationSequence = basicAnimationSequence,
     leftAnimationSequence = leftAnimationSequence,
     topAnimationSequence = topAnimationSequence,
     rightAnimationSequence = rightAnimationSequence,
     bottomAnimationSequence = bottomAnimationSequence,
     target = target,
+    fireRate = fireRate
 ){
     fun hit(damages : Float, knockback: Float, direction : String){
         healthDown(damages, knockback, direction)

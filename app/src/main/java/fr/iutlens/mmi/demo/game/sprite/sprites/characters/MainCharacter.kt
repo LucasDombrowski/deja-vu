@@ -20,18 +20,16 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     game = game,
     basicAnimationSequence = listOf(1),
     speed = 20f,
-    damages = 1f,
-    knockback = 15f,
     invulnerability = 750,
     hearts = setBasicHearts(3),
     leftAnimationSequence = listOf(3,4,5),
     topAnimationSequence = listOf(9,10,11),
     rightAnimationSequence = listOf(6,7,8),
     bottomAnimationSequence = listOf(0,1,2),
+    fireRate = 500
     ){
 
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = true, damages = damages, knockback = knockback)
-    var fireRate : Long = 500
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = true, damages =  1f, knockback = 15f)
     var autoFire : Job = setInterval(0,fireRate){
         if(target is Enemy && target!!.alive){
             projectile.aimTarget(target!!, sprite.x, sprite.y)

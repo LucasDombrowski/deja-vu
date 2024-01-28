@@ -51,9 +51,10 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
             repeat(round(range/speed).toInt()){
                 delay(33)
                 changePos(sprite.x+xStep, sprite.y+yStep)
-                for(character in game.characterList){
-                    if(character.inBoundingBox(sprite.x, sprite.y)){
-                        if(friendly && character is Enemy){
+                game.invalidate()
+                if(friendly){
+                    for(character in game.characterList){
+                        if(character.inBoundingBox(sprite.x, sprite.y) && character is Enemy){
                             this.cancel()
                             val direction = when{
                                 sprite.x < character.sprite.x -> "right"
@@ -64,6 +65,18 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
                             game.deleteSprite(sprite)
                             character.hit(damages,knockback,direction)
                         }
+                    }
+                } else {
+                    if(game.controllableCharacter!!.inBoundingBox(sprite.x, sprite.y)){
+                        this.cancel()
+                        val direction = when{
+                            sprite.x < game.controllableCharacter!!.sprite.x -> "right"
+                            sprite.x > game.controllableCharacter!!.sprite.x -> "left"
+                            sprite.y < game.controllableCharacter!!.sprite.y -> "bottom"
+                            else -> "top"
+                        }
+                        game.deleteSprite(sprite)
+                        game.controllableCharacter!!.healthDown(damages, knockback, direction)
                     }
                 }
             }

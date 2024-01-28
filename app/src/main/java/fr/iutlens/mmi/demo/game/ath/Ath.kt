@@ -15,6 +15,7 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.utils.setInterval
+import kotlin.math.round
 
 @Composable
 fun Heart(permanent: Boolean, filled: Float){
@@ -22,17 +23,20 @@ fun Heart(permanent: Boolean, filled: Float){
     Box(modifier = Modifier
         .width(32.dp)
         .height(32.dp)) {
-        if (permanent) {
-            if(filled==1f) {
-                Image(
-                    painter = painterResource(id = R.drawable.heart_pixel_art_254x254),
-                    contentDescription = "Heart",
-                    contentScale = ContentScale.Fit
-                )
+        val image = when{
+            permanent->when(filled){
+                1f->R.drawable.permanent_heart_3_3
+                0.66f->R.drawable.permanent_heart_2_3
+                0.33f->R.drawable.permanent_heart_1_3
+                else->R.drawable.empty_heart
             }
-        } else {
-            return
+            else->R.drawable.transparent
         }
+        Image(
+            painter = painterResource(id = image),
+            contentDescription = "Heart",
+            contentScale = ContentScale.Fit
+        )
     }
 }
 

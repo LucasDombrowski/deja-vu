@@ -42,6 +42,10 @@ class MutableSpriteList(override val list: MutableList<Sprite>) : SpriteList(lis
         }
     }
 
+    fun copy() : MutableSpriteList{
+        return MutableSpriteList(list = list)
+    }
+
 }
 
 fun Iterable<Sprite>.asSpriteList() = SpriteList(this)

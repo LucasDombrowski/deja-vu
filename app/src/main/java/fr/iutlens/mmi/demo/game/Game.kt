@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.demo.game.ath.Hearts
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
@@ -27,6 +29,7 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
+import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,7 +50,7 @@ import kotlin.time.TimeSource
  */
 class Game(val background : Sprite,
            val map : TiledArea,
-           val spriteList : MutableSpriteList,
+           var spriteList : MutableSpriteList,
            var controllableCharacter : MainCharacter ?=null,
            val transform: CameraTransform,
            var onDragStart: ((Offset) -> Unit)? = null,
@@ -56,6 +59,7 @@ class Game(val background : Sprite,
 
     val timeSource = TimeSource.Monotonic
 
+    var refresh = false
     /**
      * Start Instant du début du jeu, utiliser pour calculer le temps écoulé
      */
@@ -69,7 +73,7 @@ class Game(val background : Sprite,
     /**
      * Nombre de milliseconde souhaité entre deux images
      */
-    var animationDelayMs: Int? = null
+    var animationDelayMs: Int = 33
 
     /**
      * Update : action à réaliser entre deux images
@@ -117,6 +121,10 @@ class Game(val background : Sprite,
         spriteList.remove(sprite)
     }
 
+    fun refresh(){
+        spriteList = spriteList.copy()
+    }
+
 
 
 
@@ -151,7 +159,7 @@ class Game(val background : Sprite,
         }
         // Gestion du rafraîssement automatique si update et animationDelay sont défnis
         update?.let{myUpdate->
-            animationDelayMs?.let {delay ->
+            animationDelayMs.let {delay ->
                 LaunchedEffect(elapsed){
                     //Calcul du temps avant d'afficher la prochaine image, et pause si nécessaire)
                     val current = (timeSource.markNow()-start).inWholeMilliseconds
@@ -161,6 +169,8 @@ class Game(val background : Sprite,
                 }
             }
         }
+
+
     }
 
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>())
@@ -168,7 +178,7 @@ class Game(val background : Sprite,
     fun Ath(){
         Box(modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()){
+            .fillMaxHeight().padding(20.dp)){
             ath["hearts"]?.let { Hearts(hearts = it) }
         }
     }

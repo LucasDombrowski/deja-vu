@@ -10,6 +10,8 @@ import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.TileMap
 import fr.iutlens.mmi.demo.game.sprite.mutableSpriteListOf
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.RangeNinja
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.TeleportNinja
 import fr.iutlens.mmi.demo.game.sprite.tiledArea
 import fr.iutlens.mmi.demo.game.sprite.toMutableTileMap
 import fr.iutlens.mmi.demo.game.transform.FitTransform

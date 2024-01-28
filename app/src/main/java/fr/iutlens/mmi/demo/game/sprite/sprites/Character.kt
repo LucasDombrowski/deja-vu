@@ -18,9 +18,8 @@ import kotlin.math.round
 open class Character(val sprite: BasicSprite,
                      val game: Game,
                      val speed:Float,
-                     val damages: Float,
                      var hearts: MutableList<Heart>,
-                     var knockback : Float,
+                     var fireRate : Long = 0,
                      val invulnerability: Long = 0,
                      val basicAnimationSequence: List<Int>,
                      val leftAnimationSequence: List<Int> = basicAnimationSequence,
@@ -28,10 +27,10 @@ open class Character(val sprite: BasicSprite,
                      val rightAnimationSequence: List<Int> = basicAnimationSequence,
                      val bottomAnimationSequence : List<Int> = basicAnimationSequence,
                      var target : Character? = null){
-    private var animation : Job = GlobalScope.launch {
+    var animation : Job = GlobalScope.launch {
         return@launch
     }
-    private var movingAction : Job = GlobalScope.launch {
+    var movingAction : Job = GlobalScope.launch {
         return@launch
     }
 
@@ -133,7 +132,7 @@ open class Character(val sprite: BasicSprite,
                 sprite.boundingBox.bottom > y)
     }
 
-    private fun checkDirectionChange(){
+    fun checkDirectionChange(){
         if(previousDirection!=currentDirection){
             when(currentDirection){
                 "left"->changeAnimationLoop(leftAnimationSequence)
@@ -154,9 +153,13 @@ open class Character(val sprite: BasicSprite,
             var healhToRemove = n
             var heartIndex = hearts.lastIndex
             while(healhToRemove>0 && heartIndex>=0){
-                while (hearts[heartIndex].filled>0f){
-                    hearts[heartIndex].filled-=0.25f
-                    healhToRemove-=0.25f
+                while (hearts[heartIndex].filled>0f && healhToRemove>0){
+                    hearts[heartIndex].filled = when(hearts[heartIndex].filled){
+                        1f->0.66f
+                        0.66f->0.33f
+                        else->0f
+                    }
+                    healhToRemove-=0.33f
                 }
                 heartIndex--
             }
