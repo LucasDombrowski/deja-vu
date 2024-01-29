@@ -62,27 +62,3 @@ fun Hearts(hearts: MutableList<Heart>){
     }
 }
 
-@Composable
-fun MyItem(permanent: Boolean, item: Sprite){
-    Box(modifier = Modifier
-        .width(40.dp)
-        .height(40.dp)
-    ) {
-        if (permanent) {
-            Image(
-                painter = painterResource(id = ),
-                contentDescription = "Item",
-                contentScale = ContentScale.Fit
-            )
-        }
-    }
-}
-
-@Composable
-fun MyItems(myItems: MutableList<MyItem>) {
-    Row {
-        for(myItem in myItems) {
-            fr.iutlens.mmi.demo.game.ath.Heart()
-        }
-    }
-}

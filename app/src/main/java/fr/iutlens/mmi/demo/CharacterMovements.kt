@@ -16,17 +16,90 @@ import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
 import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.loadSpritesheet
+import java.lang.StringBuilder
+import java.util.Random
+
+fun createMap(row: Int, col: Int): String {
+
+    val theMap = StringBuilder()
+
+    fun randomTile(): Char{
+        val tiles = listOf('!', '!', '!', '!', '_')
+        val randInd = (0 until tiles.size).random()
+        return tiles[randInd]
+    }
+
+    val door = kotlin.random.Random.nextInt(1, 4)
+    val topWallDoor = "0122222O3333345"
+
+    for (i in 1..row) {
+        when(i) {
+            1 -> if(door==1) {
+                    theMap.append(topWallDoor)
+                }else {
+                    theMap.append("012222233333345")
+                }
+            4 -> for (j in 1..col) {
+                    when(j) {
+                        1 -> if (door==2) {
+                                theMap.append('Q')
+                            } else {
+                                theMap.append('I')
+                            }
+                        col -> if(door==3){
+                                theMap.append('R')
+                            }else{
+                                theMap.append('L')
+                            }
+                        else -> theMap.append(randomTile())
+                    }
+
+                 }
+            row -> theMap.append("6788888P99999AB")
+            else -> for (j in 1..col) {
+                when(j){
+                    1 -> if(i==2) {
+                            theMap.append('C')
+                        }else if(i==3) {
+                            theMap.append('I')
+                        }else if(i==5){
+                            theMap.append('E')
+                        }else if(i==6){
+                            theMap.append('K')
+                        }
+                    col -> if(i==2) {
+                            theMap.append('F')
+                        }else if(i==3) {
+                            theMap.append('L')
+                        }else if(i==5){
+                            theMap.append('D')
+                        }else if(i==6){
+                            theMap.append('J')
+                        }
+                    else -> theMap.append(randomTile())
+                }
+
+            }
+        }
+        theMap.appendln()
+    }
+    return theMap.toString()
+}
+fun oneEra(nbOfRooms: Int): List<String> {
+    val allRooms = mutableListOf<String>()
+
+    for (i in 1..nbOfRooms) {
+        allRooms.add(createMap(7,15))
+    }
+
+    return allRooms
+}
+
+var firstEra = kotlin.random.Random.nextInt(7, 11);
+var allRooms = oneEra(firstEra)
 
 fun testCharacter(): Game {
-    val map = """
-        0122222O3333345
-        CGTTTTTTTTTTTHF
-        IS!!!!!!!!!!!ZL
-        QS!!!!!!!!!!!ZR
-        ES!!!!!!!!!!!ZD
-        KMYYYYYYYYYYYNJ
-        6788888P99999AB
-    """.trimIndent().toMutableTileMap(
+    val map = allRooms[0].trimIndent().toMutableTileMap(
         "012345"+
                 "6789AB"+
                 "CDEFGH" +
