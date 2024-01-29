@@ -25,7 +25,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     target = game.controllableCharacter!!,
     fireRate = 3000
 ){
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = false, damages =  1f, knockback = 15f)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = false, damages =  1, knockback = 15f)
     override var action = setInterval(0,fireRate){
         if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.range){
             moveTo(target!!.sprite.x, target!!.sprite.y)

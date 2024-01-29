@@ -36,7 +36,7 @@ open class Enemy(
     target = target,
     fireRate = fireRate
 ){
-    fun hit(damages : Float, knockback: Float, direction : String){
+    fun hit(damages: Int, knockback: Float, direction: String){
         healthDown(damages, knockback, direction)
         GlobalScope.launch {
             sprite.semiRedColor()

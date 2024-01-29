@@ -1,6 +1,6 @@
 package fr.iutlens.mmi.demo.game.gameplayResources
 
-class Heart(val permanent: Boolean, var filled : Float = 1f) {
+class Heart(val permanent: Boolean, var filled : Int = 3) {
     fun copy() : Heart{
         return Heart(permanent = permanent, filled = filled)
     }

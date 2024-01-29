@@ -1,26 +1,41 @@
 package fr.iutlens.mmi.demo.game
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.ath.Hearts
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.screens.ItemImage
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
 import fr.iutlens.mmi.demo.game.sprite.Sprite
@@ -29,10 +44,7 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
-import fr.iutlens.mmi.demo.utils.setInterval
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
 
 /**
@@ -100,12 +112,17 @@ class Game(val background : Sprite,
         addSprite(controllableCharacter!!.targetIndicator)
         onTap = {
             (x,y)->
-            for(character in characterList){
-                if(character.inBoundingBox(x,y) && character is Enemy){
-                    controllableCharacter!!.target = character
+            if(item["show"] as Boolean){
+                item["show"] = false
+            } else {
+                for(character in characterList){
+                    if(character.inBoundingBox(x,y) && character is Enemy){
+                        controllableCharacter!!.target = character
+                    }
                 }
-            }
                 controllableCharacter!!.moveTo(x,y)
+            }
+
         }
     }
 
@@ -183,8 +200,45 @@ class Game(val background : Sprite,
     fun Ath(){
         Box(modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight().padding(20.dp)){
+            .fillMaxHeight()
+            .padding(20.dp)){
             ath["hearts"]?.let { Hearts(hearts = it) }
+        }
+    }
+
+    var item = mutableStateMapOf<String,Any>("show" to false, "image" to 0, "name" to "", "description" to "")
+    @Composable
+    fun Item(modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight()){
+        if(item["show"] as Boolean) {
+            Box(modifier = modifier.background(Color(0, 0, 0, 128))){
+                Column(
+                    modifier = modifier,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        ItemImage(id = item["image"] as Int, item["name"] as String)
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = item["name"] as String,
+                            color = Color.White,
+                            fontSize = 32.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Text(text = item["description"] as String,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(0.8f)
+                            .background(Color.White)
+                            .padding(5.dp)
+                    )
+                }
+            }
         }
     }
 }

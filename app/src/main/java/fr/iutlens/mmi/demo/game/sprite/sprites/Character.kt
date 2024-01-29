@@ -131,7 +131,7 @@ open class Character(val sprite: BasicSprite,
     }
 
 
-    fun healthDown(n: Float, knockback: Float = 0f, direction: String = "static"){
+    fun healthDown(n: Int, knockback: Float = 0f, direction: String = "static"){
         if(!remainingInvulnerability) {
             if(invulnerability>0){
                 remainingInvulnerability = true
@@ -141,12 +141,8 @@ open class Character(val sprite: BasicSprite,
             var heartIndex = hearts.lastIndex
             while(healhToRemove>0 && heartIndex>=0){
                 while (hearts[heartIndex].filled>0f && healhToRemove>0){
-                    hearts[heartIndex].filled = when(hearts[heartIndex].filled){
-                        1f->0.66f
-                        0.66f->0.33f
-                        else->0f
-                    }
-                    healhToRemove-=0.33f
+                    hearts[heartIndex].filled-=1
+                    healhToRemove-=1
                 }
                 heartIndex--
             }
@@ -154,7 +150,7 @@ open class Character(val sprite: BasicSprite,
             if(this is MainCharacter){
                 refreshHeathBar()
                 blink()
-            } else if(hearts[0].filled<=0f){
+            } else if(hearts[0].filled<=0){
                 die()
             }
         }

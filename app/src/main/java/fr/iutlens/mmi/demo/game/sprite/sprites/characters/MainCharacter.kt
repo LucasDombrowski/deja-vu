@@ -16,7 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainCharacter(x: Float, y:Float, game: Game) : Character(
-    sprite = BasicSprite(R.drawable.isaac,x,y,1),
+    sprite =  BasicSprite(R.drawable.isaac,x,y,1),
     game = game,
     basicAnimationSequence = listOf(1),
     speed = 20f,
@@ -30,7 +30,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     ){
 
     val targetIndicator : BasicSprite = BasicSprite(R.drawable.arrow, sprite.x, sprite.y)
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = true, damages =  1f, knockback = 15f)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = true, damages =  3, knockback = 15f)
     var autoFire : Job = setInterval(0,fireRate){
         if(target is Enemy && target!!.alive && !target!!.sprite.isInvisible()){
             targetIndicator.visible()
@@ -51,6 +51,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     fun refreshHeathBar(){
         val newHearts : MutableList<Heart> = mutableListOf()
         for(heart in hearts){
+            Log.i("Heart","${heart.filled}")
             newHearts.add(heart.copy())
         }
         game.ath["hearts"] = newHearts

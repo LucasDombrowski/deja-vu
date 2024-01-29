@@ -45,7 +45,7 @@ fun testCharacter(): Game {
         transform = FitTransform(tileMap),
     )
     game.setupControllableCharacter()
-    game.addCharacter(TeleportNinja(x = 0f, y = 0f, game))
+    game.addCharacter(CloseNinja(x = 0f, y = 0f, game))
     return game
 }
 @Preview(

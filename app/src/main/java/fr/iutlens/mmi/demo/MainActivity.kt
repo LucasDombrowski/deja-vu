@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
                     .fillMaxSize()
                     .background(Color.Black))
                 game.Ath()
+                game.Item()
                 Music(id = R.raw.jungle)
             }
         }

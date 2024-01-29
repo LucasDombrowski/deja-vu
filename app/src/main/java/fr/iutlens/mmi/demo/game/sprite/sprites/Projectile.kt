@@ -1,21 +1,15 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites
 
-import android.util.Log
-import androidx.compose.ui.graphics.Canvas
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
-import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
-import kotlin.math.pow
 import kotlin.math.round
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
-class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Float, var knockback : Float) {
+class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Int, var knockback : Float) {
 
     fun changePos(x: Float, y:Float){
         sprite.x = x

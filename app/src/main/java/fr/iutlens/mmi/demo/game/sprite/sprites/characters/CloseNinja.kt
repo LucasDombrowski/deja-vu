@@ -26,7 +26,7 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
         if(!target!!.inBoundingBox(sprite.x,sprite.y)) {
             moveTo(target!!.sprite.x, target!!.sprite.y)
         } else {
-            target!!.healthDown(0.33f, 20f, currentDirection)
+            target!!.healthDown(2, 20f, currentDirection)
         }
     }
 }

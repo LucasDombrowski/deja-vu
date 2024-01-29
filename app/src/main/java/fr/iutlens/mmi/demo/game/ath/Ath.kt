@@ -18,16 +18,15 @@ import fr.iutlens.mmi.demo.utils.setInterval
 import kotlin.math.round
 
 @Composable
-fun Heart(permanent: Boolean, filled: Float){
-    Log.i("New Heart","$permanent, $filled")
+fun Heart(permanent: Boolean, filled: Int){
     Box(modifier = Modifier
         .width(32.dp)
         .height(32.dp)) {
         val image = when{
             permanent->when(filled){
-                1f->R.drawable.permanent_heart_3_3
-                0.66f->R.drawable.permanent_heart_2_3
-                0.33f->R.drawable.permanent_heart_1_3
+                3->R.drawable.permanent_heart_3_3
+                2->R.drawable.permanent_heart_2_3
+                1->R.drawable.permanent_heart_1_3
                 else->R.drawable.empty_heart
             }
             else->R.drawable.transparent
