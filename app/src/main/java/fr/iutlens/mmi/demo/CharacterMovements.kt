@@ -6,9 +6,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.gameplayResources.Chest
+import fr.iutlens.mmi.demo.game.gameplayResources.items.DragonFire
+import fr.iutlens.mmi.demo.game.gameplayResources.items.LessFireRateLessDamages
+import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
+import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaBoots
+import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
+import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken
+import fr.iutlens.mmi.demo.game.gameplayResources.items.ReverseDirectionPotion
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.TileMap
 import fr.iutlens.mmi.demo.game.sprite.mutableSpriteListOf
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.Buddy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.RangeNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.TeleportNinja
@@ -45,7 +54,9 @@ fun testCharacter(): Game {
         transform = FitTransform(tileMap),
     )
     game.setupControllableCharacter()
-    game.addCharacter(CloseNinja(x = 0f, y = 0f, game))
+    val chest = Chest(listOf(NinjaShuriken()))
+    chest.setup(1000f, 1000f, game)
+    game.addCharacter(Buddy(300f,400f,game))
     return game
 }
 @Preview(

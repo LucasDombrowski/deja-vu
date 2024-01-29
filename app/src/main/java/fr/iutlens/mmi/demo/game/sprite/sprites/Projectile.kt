@@ -1,15 +1,17 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites
 
+import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.round
 
-class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Int, var knockback : Float) {
+class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Int, var knockback : Float, val onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
 
     fun changePos(x: Float, y:Float){
         sprite.x = x
@@ -58,6 +60,14 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
                                 }
                                 game.deleteSprite(sprite)
                                 it.hit(damages, knockback, direction)
+                                val character = it
+                                Log.i("OnHitEffects","$onHitEffects")
+                                with(onHitEffects.iterator()){
+                                    forEach {
+                                        Log.i("Effect","true")
+                                        it(character)
+                                    }
+                                }
                                 }
                             }
                         }

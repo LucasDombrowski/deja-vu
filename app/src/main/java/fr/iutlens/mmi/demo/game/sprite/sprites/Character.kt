@@ -17,7 +17,7 @@ import kotlin.math.round
 
 open class Character(val sprite: BasicSprite,
                      val game: Game,
-                     val speed:Float,
+                     var speed:Float,
                      var hearts: MutableList<Heart>,
                      var fireRate : Long = 0,
                      val invulnerability: Long = 0,
@@ -137,12 +137,15 @@ open class Character(val sprite: BasicSprite,
                 remainingInvulnerability = true
                 decreaseInvulnerability()
             }
-            var healhToRemove = n
+            var healthToRemove = n
             var heartIndex = hearts.lastIndex
-            while(healhToRemove>0 && heartIndex>=0){
-                while (hearts[heartIndex].filled>0f && healhToRemove>0){
+            while(healthToRemove>0 && heartIndex>=0){
+                while (hearts[heartIndex].filled>0f && healthToRemove>0){
                     hearts[heartIndex].filled-=1
-                    healhToRemove-=1
+                    healthToRemove-=1
+                }
+                if(!hearts[heartIndex].permanent && hearts[heartIndex].filled<=0){
+                    hearts.removeAt(heartIndex)
                 }
                 heartIndex--
             }

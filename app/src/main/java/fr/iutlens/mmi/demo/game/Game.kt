@@ -120,7 +120,7 @@ class Game(val background : Sprite,
                         controllableCharacter!!.target = character
                     }
                 }
-                controllableCharacter!!.moveTo(x,y)
+                controllableCharacter!!.movingBehavior(x,y)
             }
 
         }

@@ -1,8 +1,8 @@
 package fr.iutlens.mmi.demo.game.gameplayResources
 
-class Heart(val permanent: Boolean, var filled : Int = 3) {
+class Heart(val permanent: Boolean, var filled: Int = 3, var onLost: (() -> Unit)? = null) {
     fun copy() : Heart{
-        return Heart(permanent = permanent, filled = filled)
+        return Heart(permanent = permanent, filled = filled, onLost)
     }
 }
 

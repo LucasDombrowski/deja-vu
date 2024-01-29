@@ -30,15 +30,25 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     ){
 
     val targetIndicator : BasicSprite = BasicSprite(R.drawable.arrow, sprite.x, sprite.y)
+
+    val directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
+
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = true, damages =  3, knockback = 15f)
+
     var autoFire : Job = setInterval(0,fireRate){
         if(target is Enemy && target!!.alive && !target!!.sprite.isInvisible()){
             targetIndicator.visible()
             projectile.aimTarget(target!!, sprite.x, sprite.y)
+            with(directProjectileBehaviors.iterator()){
+                forEach {
+                    it()
+                }
+            }
         } else {
             targetIndicator.invisible()
         }
     }
+
     val targetFollow : Job = setInterval(0, 33){
         if(target is Enemy){
             targetIndicator.x = target!!.sprite.x
@@ -46,7 +56,26 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         }
     }
 
-
+    var movingBehavior : (x: Float, y:Float)->Unit = {
+        x,y->moveTo(x,y)
+    }
+    fun fitToFireRate(){
+        autoFire.cancel()
+        Log.i("Firerate","$fireRate")
+        autoFire = setInterval(0,fireRate) {
+            if (target is Enemy && target!!.alive && !target!!.sprite.isInvisible()) {
+                targetIndicator.visible()
+                projectile.aimTarget(target!!, sprite.x, sprite.y)
+                with(directProjectileBehaviors.iterator()) {
+                    forEach {
+                        it()
+                    }
+                }
+            } else {
+                targetIndicator.invisible()
+            }
+        }
+    }
 
     fun refreshHeathBar(){
         val newHearts : MutableList<Heart> = mutableListOf()

@@ -29,7 +29,11 @@ fun Heart(permanent: Boolean, filled: Int){
                 1->R.drawable.permanent_heart_1_3
                 else->R.drawable.empty_heart
             }
-            else->R.drawable.transparent
+            else->when(filled){
+                3->R.drawable.temporary_heart_3_3
+                2->R.drawable.temporary_heart_2_3
+                else->R.drawable.temporary_heart_1_3
+            }
         }
         Image(
             painter = painterResource(id = image),
