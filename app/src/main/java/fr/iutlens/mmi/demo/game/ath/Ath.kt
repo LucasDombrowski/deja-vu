@@ -48,7 +48,6 @@ fun Hearts(hearts: MutableList<Heart>){
     Row {
         for(heart in hearts){
             fr.iutlens.mmi.demo.game.ath.Heart(permanent = heart.permanent, filled = heart.filled)
-
         }
     }
 }
