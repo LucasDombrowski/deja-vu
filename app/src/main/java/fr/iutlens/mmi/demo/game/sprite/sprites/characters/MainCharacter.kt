@@ -4,6 +4,7 @@ import android.util.Log
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.gameplayResources.Item
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
@@ -26,7 +27,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     topAnimationSequence = listOf(9,10,11),
     rightAnimationSequence = listOf(6,7,8),
     bottomAnimationSequence = listOf(0,1,2),
-    fireRate = 500
+    fireRate = 1000
     ){
 
     val targetIndicator : BasicSprite = BasicSprite(R.drawable.arrow, sprite.x, sprite.y)
@@ -34,6 +35,8 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     val directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
 
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = true, damages =  3, knockback = 15f)
+
+    val items : MutableList<Item> = mutableListOf()
 
     var autoFire : Job = setInterval(0,fireRate){
         if(target is Enemy && target!!.alive && !target!!.sprite.isInvisible()){

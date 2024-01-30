@@ -20,8 +20,8 @@ import kotlin.math.round
 @Composable
 fun Heart(permanent: Boolean, filled: Int){
     Box(modifier = Modifier
-        .width(32.dp)
-        .height(32.dp)) {
+        .width(24.dp)
+        .height(24.dp)) {
         val image = when{
             permanent->when(filled){
                 3->R.drawable.permanent_heart_3_3

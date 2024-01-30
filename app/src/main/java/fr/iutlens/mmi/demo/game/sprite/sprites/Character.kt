@@ -181,6 +181,12 @@ open class Character(val sprite: BasicSprite,
         }
     }
 
+    fun copy() : Character{
+        return Character(
+            sprite.copy(), game, speed, hearts, fireRate, invulnerability, basicAnimationSequence, leftAnimationSequence, topAnimationSequence
+        )
+    }
+
     fun getReverseDirection() : String{
         return when(currentDirection){
             "left"->"right"

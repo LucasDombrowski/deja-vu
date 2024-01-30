@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.round
 
-class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Int, var knockback : Float, val onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
+class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Int, var knockback : Float, var onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
 
     fun changePos(x: Float, y:Float){
         sprite.x = x

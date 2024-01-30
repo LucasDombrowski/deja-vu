@@ -54,8 +54,12 @@ fun testCharacter(): Game {
         transform = FitTransform(tileMap),
     )
     game.setupControllableCharacter()
-    val chest = Chest(listOf(NinjaShuriken()))
+    val chest = Chest(listOf(DragonFire(), LessFireRateLessDamages(), MoreDamagesMoreRate(), NinjaScarf(), NinjaBoots(), NinjaShuriken()))
+    val chest1 = Chest(listOf(DragonFire(), LessFireRateLessDamages(), MoreDamagesMoreRate(), NinjaScarf(), NinjaBoots(), NinjaShuriken()))
+    val chest2 = Chest(listOf(DragonFire(), LessFireRateLessDamages(), MoreDamagesMoreRate(), NinjaScarf(), NinjaBoots(), NinjaShuriken()))
     chest.setup(1000f, 1000f, game)
+    chest1.setup(400f, 1000f, game)
+    chest2.setup(600f, 1000f, game)
     game.addCharacter(Buddy(300f,400f,game))
     return game
 }

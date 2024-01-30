@@ -14,18 +14,16 @@ class DragonFire() : Item(
     name = "Feu du dragon",
     description = "Blablablabla",
     effects = {
-
-        game ->  Log.i("Add Effect","true")
-        game.controllableCharacter!!.projectile.onHitEffects.add({character->
-            GlobalScope.launch {
-                repeat(5){
-                    delay(1000)
-                    if(character is Enemy){
-                        character.hit(game.controllableCharacter!!.projectile.damages,0f,"static")
+        game ->  game.controllableCharacter!!.projectile.onHitEffects = mutableListOf({
+            val character = it
+            if(character is Enemy){
+                GlobalScope.launch {
+                    repeat(5){
+                        character.hit(game.controllableCharacter!!.projectile.damages, 0f, "static")
                     }
                 }
             }
-        })
+    })
     }
 ) {
 }

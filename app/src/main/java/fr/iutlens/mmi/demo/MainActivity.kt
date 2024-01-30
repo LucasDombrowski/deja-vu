@@ -47,6 +47,7 @@ class MainActivity : ComponentActivity() {
                     .background(Color.Black))
                 game.Ath()
                 game.Item()
+                game.Menu()
                 Music(id = R.raw.jungle)
             }
         }

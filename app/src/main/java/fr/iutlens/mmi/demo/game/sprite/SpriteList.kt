@@ -43,7 +43,7 @@ class MutableSpriteList(override val list: MutableList<Sprite>) : SpriteList(lis
     }
 
     fun copy() : MutableSpriteList{
-        return MutableSpriteList(list = list)
+        return MutableSpriteList(list = list.toMutableList())
     }
 
 }

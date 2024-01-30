@@ -22,10 +22,12 @@ class Chest(val itemList: List<Item>) {
         openSprite()
         val item = itemList.random()
         item.effects(game)
+        game.controllableCharacter!!.items.add(item)
         game.item["image"] = item.image
         game.item["name"] = item.name
         game.item["description"] = item.description
         game.item["show"] = true
+        game.pauseGame()
         openable = GlobalScope.launch {
             return@launch
         }
