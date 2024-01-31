@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,7 +22,7 @@ import java.util.LinkedList
 import java.util.Queue
 import java.util.Random
 
-fun isPathAvailable(map: Array<CharArray>): Boolean {
+fun isPathAvailable(map: List<List<Char>>): Boolean {
     val queue: Queue<Pair<Int, Int>> = LinkedList()
     val visited = mutableSetOf<Pair<Int, Int>>()
 
@@ -52,7 +53,7 @@ fun isPathAvailable(map: Array<CharArray>): Boolean {
     return false
 }
 
-fun tryMove(queue: Queue<Pair<Int, Int>>, visited: MutableSet<Pair<Int, Int>>, map: Array<CharArray>, row: Int, col: Int) {
+fun tryMove(queue: Queue<Pair<Int, Int>>, visited: MutableSet<Pair<Int, Int>>, map: List<List<Char>>, row: Int, col: Int) {
     val isValidMove = row in 0 until map.size && col in 0 until map[0].size &&
             map[row][col] != '!' && map[row][col] != '_'
 
@@ -62,7 +63,7 @@ fun tryMove(queue: Queue<Pair<Int, Int>>, visited: MutableSet<Pair<Int, Int>>, m
     }
 }
 
-fun findStartPosition(map: Array<CharArray>): Pair<Int, Int>? {
+fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
     for (i in map.indices) {
         for (j in map[i].indices) {
             if (map[i][j] == 'P') {
@@ -73,7 +74,7 @@ fun findStartPosition(map: Array<CharArray>): Pair<Int, Int>? {
     return null
 }
 
-fun findEndPosition(map: Array<CharArray>): Pair<Int, Int>? {
+fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
     for (i in map.indices) {
         for (j in map[i].indices) {
             if (map[i][j] == 'O') {
@@ -149,12 +150,21 @@ fun createMap(row: Int, col: Int): String {
         theMap.appendln()
     }
 
-    val mapArray = theMap.lines().map { it.toCharArray() }.toTypedArray()
-    val result = isPathAvailable(mapArray)
+    val mapList = theMap.lines().map {
+        it.split("").toMutableList()
+    }.toMutableList()
 
+
+
+
+    Log.i("Map Array","$mapList")
+    /*
+
+    val result = isPathAvailable(mapArray)
     if (!result) {
         return createMap(row, col)
     }
+     */
 
     return theMap.toString()
 }
