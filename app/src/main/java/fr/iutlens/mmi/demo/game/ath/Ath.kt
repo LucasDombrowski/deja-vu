@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.sprite.BasicSprite
+import fr.iutlens.mmi.demo.game.sprite.Sprite
 
 @Composable
 fun Ath(game: Game){
@@ -59,3 +61,4 @@ fun Hearts(hearts: MutableList<Heart>){
         }
     }
 }
+
