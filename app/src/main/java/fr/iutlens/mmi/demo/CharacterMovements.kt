@@ -151,21 +151,35 @@ fun createMap(row: Int, col: Int): String {
     }
 
     val mapList = theMap.lines().map {
-        it.split("").toMutableList()
-    }.toMutableList()
+        it.split("")
+    }
+    val mapChars = mutableListOf<List<Char>>()
+    with(mapList.iterator()){
+        forEach {
+            val newRow = mutableListOf<Char>();
+            with(it.iterator()){
+                forEach {
+                    if(it!=""){
+                        newRow.add(it.single())
+                    }
+                }
+            }
+            if(!newRow.isEmpty()){
+                mapChars.add(newRow)
+            }
+        }
+    }
 
 
 
 
-    Log.i("Map Array","$mapList")
-    /*
 
-    val result = isPathAvailable(mapArray)
+    Log.i("Map Array","$mapChars")
+
+    val result = isPathAvailable(mapChars)
     if (!result) {
         return createMap(row, col)
     }
-     */
-
     return theMap.toString()
 }
 
