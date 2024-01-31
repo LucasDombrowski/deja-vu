@@ -37,7 +37,9 @@ class MutableSpriteList(override val list: MutableList<Sprite>) : SpriteList(lis
         val listCopy = MutableSpriteList(list = list.toMutableList())
         with(listCopy.iterator()){
             forEach {
-                it.paint(drawScope,elapsed)
+                if(it!=null) {
+                    it.paint(drawScope, elapsed)
+                }
             }
         }
     }
