@@ -3,6 +3,9 @@ package fr.iutlens.mmi.demo.utils
 import android.content.Context
 import android.graphics.*
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorFilter.Companion.lighting
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import java.util.HashMap
@@ -52,8 +55,8 @@ class SpriteSheet(val bitmap: Bitmap, val sizeX: Int, val sizeY: Int) {
      * @param x abscisse
      * @param y ordonnée
      */
-    fun paint(drawScope: DrawScope, ndx: Int, x: Float, y: Float) {
-        get(ndx)?.let{drawScope.drawImage(it.asImageBitmap(),  Offset(x,y))}
+    fun paint(drawScope: DrawScope, ndx: Int, x: Float, y: Float, colorFilter: ColorFilter ?= null) {
+        get(ndx)?.let{drawScope.drawImage(image = it.asImageBitmap(), topLeft = Offset(x,y), colorFilter = colorFilter)}
     }
 
     companion object {

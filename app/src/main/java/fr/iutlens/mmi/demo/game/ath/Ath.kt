@@ -4,15 +4,9 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -20,35 +14,34 @@ import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.utils.setInterval
+import kotlin.math.round
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.Sprite
 
 @Composable
-fun Ath(game: Game){
-    var hearts by remember {
-        mutableStateOf(game.controllableCharacter!!.hearts)
-    }
+fun Heart(permanent: Boolean, filled: Int){
     Box(modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight()){
-        Hearts(hearts = hearts)
-    }
-}
-
-@Composable
-fun Heart(permanent: Boolean, filled: Float){
-    Box(modifier = Modifier
-        .width(32.dp)
-        .height(32.dp)) {
-        if (permanent) {
-            Image(
-                painter = painterResource(id = R.drawable.heart_pixel_art_254x254),
-                contentDescription = "Heart",
-                contentScale = ContentScale.Fit
-            )
-        } else {
-            return
+        .width(24.dp)
+        .height(24.dp)) {
+        val image = when{
+            permanent->when(filled){
+                3->R.drawable.permanent_heart_3_3
+                2->R.drawable.permanent_heart_2_3
+                1->R.drawable.permanent_heart_1_3
+                else->R.drawable.empty_heart
+            }
+            else->when(filled){
+                3->R.drawable.temporary_heart_3_3
+                2->R.drawable.temporary_heart_2_3
+                else->R.drawable.temporary_heart_1_3
+            }
         }
+        Image(
+            painter = painterResource(id = image),
+            contentDescription = "Heart",
+            contentScale = ContentScale.Fit
+        )
     }
 }
 
@@ -57,7 +50,6 @@ fun Hearts(hearts: MutableList<Heart>){
     Row {
         for(heart in hearts){
             fr.iutlens.mmi.demo.game.ath.Heart(permanent = heart.permanent, filled = heart.filled)
-
         }
     }
 }

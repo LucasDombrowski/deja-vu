@@ -6,12 +6,18 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.core.content.ContextCompat.getDrawable
 import kotlinx.coroutines.Delay
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /*
 fun getStringResourceByName(context: Context, aString: String?): String {
@@ -59,5 +65,38 @@ fun setInterval(delayTime: Long, awaitTime: Long, action: ()->Unit): Job{
         }
     }
 }
+
+fun getDistance(x1 : Float, y1 : Float, x2 : Float, y2 : Float) : Float{
+    return sqrt((x2-x1).pow(2)+(y2-y1).pow(2))
+}
+
+fun getCenter(x1: Float, y1: Float, x2: Float, y2: Float) : List<Float>{
+    return listOf(
+        (x1+x2)/2, (y1+y2)/2
+    )
+}
+fun rotationFromCenter(x: Float, y: Float, value: Float) : List<Float>{
+    return listOf(
+        cos(value)*x - sin(value)*y,
+        sin(value)*x + cos(value)*y
+    )
+}
+
+fun getTranslation(x1: Float, y1: Float, x2: Float, y2: Float) : List<Float>{
+    return listOf(
+        x2-x1,
+        y2-y1
+    )
+}
+
+fun rotationFromPoint(x : Float, y: Float, rotationX: Float, rotationY: Float, value: Float) : List<Float>{
+    val centerRotation = rotationFromCenter(rotationX, rotationY, value)
+    val centerTranslation = getTranslation(centerRotation[0], centerRotation[1], rotationX, rotationY)
+    return listOf(
+        rotationFromCenter(x,y, value)[0] + centerTranslation[0],
+        rotationFromCenter(x,y,value)[1] + centerTranslation[1]
+    )
+}
+
 
 

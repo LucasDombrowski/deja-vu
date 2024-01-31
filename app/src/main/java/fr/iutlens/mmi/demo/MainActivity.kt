@@ -12,8 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import fr.iutlens.mmi.demo.game.ath.Ath
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.utils.Music.mute
 import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.Music
@@ -32,6 +32,8 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.isaac, 3, 4)
         loadSpritesheet(R.drawable.tear,1,1)
         loadSpritesheet(R.drawable.transparent, 1,1)
+        loadSpritesheet(R.drawable.arrow, 1,1)
+        loadSpritesheet(R.drawable.treasure_chest,2,1)
 
         loadSound(R.raw.message)
 
@@ -43,7 +45,9 @@ class MainActivity : ComponentActivity() {
                 game.View(modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black))
-                Ath(game)
+                game.Ath()
+                game.Item()
+                game.Menu()
                 Music(id = R.raw.jungle)
             }
         }

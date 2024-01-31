@@ -1,27 +1,63 @@
 package fr.iutlens.mmi.demo.game
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import fr.iutlens.mmi.demo.R
+import fr.iutlens.mmi.demo.game.ath.Hearts
+import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.gameplayResources.Item
+import fr.iutlens.mmi.demo.game.screens.ItemImage
+import fr.iutlens.mmi.demo.game.screens.MenuButton
+import fr.iutlens.mmi.demo.game.screens.MenuItem
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
 import fr.iutlens.mmi.demo.game.sprite.Sprite
-import fr.iutlens.mmi.demo.game.sprite.TileMap
 import fr.iutlens.mmi.demo.game.sprite.TiledArea
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
+import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import kotlinx.coroutines.delay
-import kotlin.reflect.typeOf
 import kotlin.time.TimeSource
 
 /**
@@ -39,7 +75,7 @@ import kotlin.time.TimeSource
  */
 class Game(val background : Sprite,
            val map : TiledArea,
-           val spriteList : MutableSpriteList,
+           var spriteList : MutableSpriteList,
            var controllableCharacter : MainCharacter ?=null,
            val transform: CameraTransform,
            var onDragStart: ((Offset) -> Unit)? = null,
@@ -47,7 +83,6 @@ class Game(val background : Sprite,
            var onTap: ((Offset)-> Unit)? = null){
 
     val timeSource = TimeSource.Monotonic
-
     /**
      * Start Instant du début du jeu, utiliser pour calculer le temps écoulé
      */
@@ -61,13 +96,19 @@ class Game(val background : Sprite,
     /**
      * Nombre de milliseconde souhaité entre deux images
      */
-    var animationDelayMs: Int? = null
+    var animationDelayMs: Int = 33
 
     /**
      * Update : action à réaliser entre deux images
      */
     var update: ((Game)-> Unit)? = null
 
+
+    var characterList : MutableList<Character> = mutableListOf()
+
+    fun copyCharacterList() : MutableList<Character>{
+        return characterList.toMutableList()
+    }
     /**
      * Invalidate demande une nouvelle image, en général parce que les données du jeu ont changé
      */
@@ -77,16 +118,74 @@ class Game(val background : Sprite,
 
     fun setupControllableCharacter(){
         controllableCharacter = MainCharacter(x = 1f*((map.w*map.sizeX)/2), y = 1f*((map.h*map.sizeY)/2), game = this)
-        spriteList.add(controllableCharacter!!.sprite)
+        addCharacter(controllableCharacter!!)
+        ath["hearts"] = controllableCharacter!!.hearts
+        addSprite(controllableCharacter!!.targetIndicator)
         onTap = {
             (x,y)->
-            controllableCharacter!!.moveTo(x,y)
+            if(item["show"] as Boolean){
+                item["show"] = false
+                resumeGame()
+            } else {
+                for(character in characterList){
+                    if(character.inBoundingBox(x,y) && character is Enemy){
+                        controllableCharacter!!.target = character
+                    }
+                }
+                controllableCharacter!!.movingBehavior(x,y)
+            }
+
         }
     }
 
     fun addCharacter(character: Character){
-        spriteList.add(character.sprite)
+        addSprite(character.sprite)
+        characterList.add(character)
     }
+
+    fun deleteCharacter(character: Character){
+        characterList.remove(character)
+    }
+
+    fun addSprite(sprite: BasicSprite){
+        spriteList.add(sprite)
+    }
+
+    fun deleteSprite(sprite : BasicSprite){
+        spriteList.remove(sprite)
+    }
+
+    var pause = false
+
+    var savedSpriteList = spriteList
+
+    val savedCharacterList : MutableMap<Character, List<Float>> = mutableMapOf()
+    fun saveGameStatus(){
+        savedSpriteList = spriteList.copy()
+        with(characterList.iterator()){
+            forEach {
+                savedCharacterList[it] = listOf(it.sprite.x, it.sprite.y)
+                savedSpriteList.remove(it.sprite)
+                savedSpriteList.add(it.sprite.copy())
+            }
+        }
+    }
+
+    fun pauseGame(){
+        pause = true
+        saveGameStatus()
+    }
+
+    fun resumeGame(){
+        pause = false
+        with(characterList.iterator()){
+            forEach {
+                it.sprite.x = savedCharacterList[it]!![0]
+                it.sprite.y = savedCharacterList[it]!![1]
+            }
+        }
+    }
+
 
     /**
      * View
@@ -114,18 +213,146 @@ class Game(val background : Sprite,
             // Dessin proprement dit. On précise la transformation à appliquer avant
             this.withTransform({ transform(transform.getMatrix(size)) }) {
                 background.paint(this, elapsed)
-                spriteList.paint(this, elapsed)
+                if(pause) {
+                    savedSpriteList.paint(this, elapsed)
+                } else {
+                    spriteList.paint(this, elapsed)
+                }
             }
         }
         // Gestion du rafraîssement automatique si update et animationDelay sont défnis
         update?.let{myUpdate->
-            animationDelayMs?.let {delay ->
+            animationDelayMs.let {delay ->
                 LaunchedEffect(elapsed){
                     //Calcul du temps avant d'afficher la prochaine image, et pause si nécessaire)
                     val current = (timeSource.markNow()-start).inWholeMilliseconds
                     val next = elapsed+ delay
                     if (next>current) delay(next-current)
                     myUpdate(this@Game)
+                }
+            }
+        }
+
+
+    }
+
+    var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>())
+    @Composable
+    fun Ath(){
+        if(menu["open"] == false && item["show"] == false) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(20.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        ath["hearts"]?.let { Hearts(hearts = it) }
+                    }
+
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Box(modifier = Modifier
+                            .width(50.dp)
+                            .height(50.dp)
+                            .clickable {
+                                menu["open"] = true
+                                pauseGame()
+                            }
+                            .background(Color.White, shape = CircleShape)
+                            .padding(5.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.home_icon),
+                                contentDescription = "Menu",
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    var item = mutableStateMapOf<String,Any>("show" to false, "image" to 0, "name" to "", "description" to "")
+    @Composable
+    fun Item(modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight()){
+        if(item["show"] as Boolean) {
+            Box(modifier = modifier.background(Color(0, 0, 0, 128))){
+                Column(
+                    modifier = modifier,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        ItemImage(id = item["image"] as Int, item["name"] as String)
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = item["name"] as String,
+                            color = Color.White,
+                            fontSize = 32.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Text(text = item["description"] as String,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .background(Color.White)
+                            .padding(5.dp)
+                    )
+                }
+            }
+        }
+    }
+
+    var menu = mutableStateMapOf("open" to false, "items" to mutableListOf<Item>())
+    @Composable fun Menu(modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight().padding(20.dp)){
+        if(menu["open"] as Boolean) {
+            Box(modifier=modifier.background(Color(0,0,0,128))){
+                Column(
+                    modifier = modifier,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text(text = "PAUSE",
+                        fontSize = 32.sp,
+                        color = Color.White)
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Column {
+                        MenuButton(text = "REPRENDRE") {
+                            menu["open"] = false
+                            resumeGame()
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        MenuButton(text = "OPTIONS") {
+                            
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        MenuButton(text = "QUITTER") {
+                            
+                        }
+                    }
+                }
+                Column {
+                    with(controllableCharacter!!.items.iterator()){
+                        forEach {
+                            MenuItem(id = it.image, name = it.name)
+                        }
+                    }
                 }
             }
         }
