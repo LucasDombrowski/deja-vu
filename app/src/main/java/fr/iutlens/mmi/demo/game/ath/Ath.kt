@@ -16,6 +16,8 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlin.math.round
+import fr.iutlens.mmi.demo.game.sprite.BasicSprite
+import fr.iutlens.mmi.demo.game.sprite.Sprite
 
 @Composable
 fun Heart(permanent: Boolean, filled: Int){
@@ -51,3 +53,4 @@ fun Hearts(hearts: MutableList<Heart>){
         }
     }
 }
+
