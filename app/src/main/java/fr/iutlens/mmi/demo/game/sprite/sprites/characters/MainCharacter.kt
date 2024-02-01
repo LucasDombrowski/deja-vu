@@ -62,6 +62,21 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     var movingBehavior : (x: Float, y:Float)->Unit = {
         x,y->moveTo(x,y)
     }
+
+    override fun changePos(x: Float, y: Float){
+        if(game.map.inForbiddenArea(x,y)){
+            movingAction.cancel()
+            currentDirection = "static"
+            currentAnimationSequence = basicAnimationSequence
+        } else if(game.map.inOpenDoor(x,y)){
+            movingAction.cancel()
+            game.nextRoom()
+        } else {
+            sprite.x = x
+            sprite.y = y
+            game.invalidate()
+        }
+    }
     fun fitToFireRate(){
         autoFire.cancel()
         Log.i("Firerate","$fireRate")
@@ -100,5 +115,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             }
         }
     }
+
+
 
 }
