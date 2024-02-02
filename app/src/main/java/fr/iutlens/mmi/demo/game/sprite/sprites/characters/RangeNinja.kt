@@ -16,7 +16,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     sprite = BasicSprite(R.drawable.isaac,x,y,1),
     game = game,
     basicAnimationSequence = listOf(1),
-    speed = 0.4f,
+    speed = 0.05f,
     hearts = setBasicHearts(6),
     leftAnimationSequence = listOf(3,4,5),
     topAnimationSequence = listOf(9,10,11),
@@ -25,7 +25,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     target = game.controllableCharacter!!,
     fireRate = 3000
 ){
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.4f, friendly = false, damages =  1, knockback = 15f)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.4f, friendly = false, damages =  0.5f, knockback = 0.2f)
     override var action = setInterval(0,fireRate){
         if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.range){
             moveTo(target!!.sprite.x, target!!.sprite.y)

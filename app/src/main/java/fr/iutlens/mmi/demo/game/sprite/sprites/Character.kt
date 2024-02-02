@@ -61,6 +61,10 @@ open class Character(val sprite: BasicSprite,
     fun realSpeed() : Float{
         return speed*((game.map.tileArea.w + game.map.tileArea.h)/2)
     }
+
+    fun realKnockback(knockback: Float) : Float{
+        return knockback*((game.map.tileArea.w + game.map.tileArea.h)/2)
+    }
     fun changeFrame(n: Int){
         sprite.ndx = n
         game.invalidate()
@@ -140,7 +144,7 @@ open class Character(val sprite: BasicSprite,
     }
 
 
-    fun healthDown(n: Int, knockback: Float = 0f, direction: String = "static"){
+    fun healthDown(n: Float, knockback: Float = 0f, direction: String = "static"){
         if(!remainingInvulnerability) {
             if(invulnerability>0){
                 remainingInvulnerability = true
@@ -150,8 +154,8 @@ open class Character(val sprite: BasicSprite,
             var heartIndex = hearts.lastIndex
             while(healthToRemove>0 && heartIndex>=0){
                 while (hearts[heartIndex].filled>0f && healthToRemove>0){
-                    hearts[heartIndex].filled-=1
-                    healthToRemove-=1
+                    hearts[heartIndex].filled-=0.25f
+                    healthToRemove-=0.25f
                 }
                 if(!hearts[heartIndex].permanent && hearts[heartIndex].filled<=0){
                     hearts.removeAt(heartIndex)
@@ -184,7 +188,7 @@ open class Character(val sprite: BasicSprite,
         }
         GlobalScope.launch {
             repeat(10){
-                changePos(sprite.x+(knockback*xMultiplier), sprite.y + (knockback*yMultiplier))
+                changePos(sprite.x+(realKnockback(knockback)/10*xMultiplier), sprite.y + (realKnockback(knockback)/10*yMultiplier))
                 delay(33)
             }
         }

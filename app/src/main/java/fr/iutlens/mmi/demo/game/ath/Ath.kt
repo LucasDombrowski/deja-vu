@@ -1,6 +1,5 @@
 package fr.iutlens.mmi.demo.game.ath
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -12,29 +11,26 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.demo.R
-import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
-import fr.iutlens.mmi.demo.utils.setInterval
-import kotlin.math.round
-import fr.iutlens.mmi.demo.game.sprite.BasicSprite
-import fr.iutlens.mmi.demo.game.sprite.Sprite
 
 @Composable
-fun Heart(permanent: Boolean, filled: Int){
+fun Heart(permanent: Boolean, filled: Float){
     Box(modifier = Modifier
         .width(24.dp)
         .height(24.dp)) {
         val image = when{
             permanent->when(filled){
-                3->R.drawable.permanent_heart_3_3
-                2->R.drawable.permanent_heart_2_3
-                1->R.drawable.permanent_heart_1_3
+                1f->R.drawable.permanent_heart_4_4
+                0.75f->R.drawable.permanent_heart_3_4
+                0.5f->R.drawable.permanent_heart_2_4
+                0.25f->R.drawable.permanent_heart_1_4
                 else->R.drawable.empty_heart
             }
             else->when(filled){
-                3->R.drawable.temporary_heart_3_3
-                2->R.drawable.temporary_heart_2_3
-                else->R.drawable.temporary_heart_1_3
+                1f->R.drawable.temporary_heart_4_4
+                0.75f->R.drawable.temporary_heart_3_4
+                0.5f->R.drawable.temporary_heart_2_4
+                else->R.drawable.temporary_heart_1_4
             }
         }
         Image(

@@ -19,6 +19,7 @@ import fr.iutlens.mmi.demo.game.map.Room
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.mutableSpriteListOf
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.Buddy
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.loadSpritesheet
 
@@ -27,7 +28,9 @@ fun testCharacter(): Game {
         map = Map(5..7,R.drawable.decor)
     )
     game.initiate()
-    game.addCharacter(Buddy(game.map.characterStartPosition().first, game.map.characterStartPosition().second, game))
+    game.addCharacter(
+        Buddy(game.map.characterStartPosition().first-100f,game.map.characterStartPosition().second-100f,game)
+    )
     return game
 }
 @Preview(

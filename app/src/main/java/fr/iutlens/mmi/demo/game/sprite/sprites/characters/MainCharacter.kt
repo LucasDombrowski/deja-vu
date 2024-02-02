@@ -34,7 +34,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     val directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
 
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = true, damages =  3, knockback = 15f)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.2f)
 
     val items : MutableList<Item> = mutableListOf()
 
