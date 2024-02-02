@@ -46,10 +46,16 @@ open class Character(val sprite: BasicSprite,
     var previousDirection = "static"
 
     var currentDirection = "static"
-    fun changePos(x: Float, y: Float){
-        sprite.x = x
-        sprite.y = y
-        game.invalidate()
+    open fun changePos(x: Float, y: Float){
+        if(game.map.inForbiddenArea(x,y)){
+            movingAction.cancel()
+            currentDirection = "static"
+            currentAnimationSequence = basicAnimationSequence
+        } else {
+            sprite.x = x
+            sprite.y = y
+            game.invalidate()
+        }
     }
 
     fun changeFrame(n: Int){

@@ -46,6 +46,8 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.ath.Hearts
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.Item
+import fr.iutlens.mmi.demo.game.map.Camera
+import fr.iutlens.mmi.demo.game.map.Map
 import fr.iutlens.mmi.demo.game.screens.ItemImage
 import fr.iutlens.mmi.demo.game.screens.MenuButton
 import fr.iutlens.mmi.demo.game.screens.MenuItem
@@ -57,6 +59,8 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
+import fr.iutlens.mmi.demo.game.transform.FitTransform
+import fr.iutlens.mmi.demo.game.transform.FocusTransform
 import kotlinx.coroutines.delay
 import kotlin.time.TimeSource
 
@@ -73,21 +77,28 @@ import kotlin.time.TimeSource
  * par dessus (spriteList) et un point de vue (transform)
  * Il est possible de préciser en plus les interactions (onDrag/onTap)
  */
-class Game(val background : Sprite,
-           val map : TiledArea,
-           var spriteList : MutableSpriteList,
+class Game(val map : Map,
+           var spriteList : MutableSpriteList = MutableSpriteList(list = mutableListOf()),
            var controllableCharacter : MainCharacter ?=null,
-           val transform: CameraTransform,
+           var transform: CameraTransform = FitTransform(map.tileArea),
            var onDragStart: ((Offset) -> Unit)? = null,
            var onDragMove:  ((Offset) -> Unit)? = null,
            var onTap: ((Offset)-> Unit)? = null){
 
+    val background = map.tileArea
+    val camera = Camera(this)
     val timeSource = TimeSource.Monotonic
+
     /**
      * Start Instant du début du jeu, utiliser pour calculer le temps écoulé
      */
     val start = timeSource.markNow()
 
+    fun initiate(){
+        setupControllableCharacter()
+        addSprite(camera.sprite)
+        transform = FocusTransform(background,camera.sprite,8)
+    }
     /**
      * Elapsed Mesure le temps écoulé entre début du jeu et la dernière demande d'affichage
      */
@@ -117,10 +128,11 @@ class Game(val background : Sprite,
     }
 
     fun setupControllableCharacter(){
-        controllableCharacter = MainCharacter(x = 1f*((map.w*map.sizeX)/2), y = 1f*((map.h*map.sizeY)/2), game = this)
+        controllableCharacter = MainCharacter(x = map.characterStartPosition().first, y = map.characterStartPosition().second, game = this)
         addCharacter(controllableCharacter!!)
         ath["hearts"] = controllableCharacter!!.hearts
         addSprite(controllableCharacter!!.targetIndicator)
+        controllableCharacter!!.targetIndicator.invisible()
         onTap = {
             (x,y)->
             if(item["show"] as Boolean){
@@ -134,7 +146,6 @@ class Game(val background : Sprite,
                 }
                 controllableCharacter!!.movingBehavior(x,y)
             }
-
         }
     }
 
@@ -183,6 +194,21 @@ class Game(val background : Sprite,
                 it.sprite.x = savedCharacterList[it]!![0]
                 it.sprite.y = savedCharacterList[it]!![1]
             }
+        }
+    }
+
+    fun switchRoom(ndx : Int){
+        map.currentRoom = ndx
+        camera.moveTo(
+            map.rooms?.get(ndx)!!.getRoomCenter().first,
+            map.rooms?.get(ndx)!!.getRoomCenter().second
+        )
+        map.rooms!![map.currentRoom].placeCharacter(this)
+    }
+
+    fun nextRoom(){
+        if(map.currentRoom+1<map.rooms!!.size){
+            switchRoom(map.currentRoom+1)
         }
     }
 
