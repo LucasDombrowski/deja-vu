@@ -20,7 +20,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     sprite =  BasicSprite(R.drawable.isaac,x,y,1),
     game = game,
     basicAnimationSequence = listOf(1),
-    speed = 20f,
+    speed = 0.1f,
     invulnerability = 750,
     hearts = setBasicHearts(3),
     leftAnimationSequence = listOf(3,4,5),
@@ -34,7 +34,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     val directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
 
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 1000f, speed = 20f, friendly = true, damages =  3, knockback = 15f)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = true, damages =  3, knockback = 15f)
 
     val items : MutableList<Item> = mutableListOf()
 

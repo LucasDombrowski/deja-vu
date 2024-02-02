@@ -58,6 +58,9 @@ open class Character(val sprite: BasicSprite,
         }
     }
 
+    fun realSpeed() : Float{
+        return speed*((game.map.tileArea.w + game.map.tileArea.h)/2)
+    }
     fun changeFrame(n: Int){
         sprite.ndx = n
         game.invalidate()
@@ -81,12 +84,12 @@ open class Character(val sprite: BasicSprite,
             movingAction = GlobalScope.launch {
                 if(round(x)!= round(sprite.x) || round(y)!=round(sprite.y)){
                     val xDifference = when{
-                        abs(x-sprite.x)>=speed->speed
-                        else->abs(x-sprite.x)%speed
+                        abs(x-sprite.x)>=realSpeed()->realSpeed()
+                        else->abs(x-sprite.x)%realSpeed()
                     }
                     val yDifference = when{
-                        abs(y-sprite.y)>=speed->speed
-                        else->abs(y-sprite.y)%speed
+                        abs(y-sprite.y)>=realSpeed()->realSpeed()
+                        else->abs(y-sprite.y)%realSpeed()
                     }
                     val nextX = when{
                         x<sprite.x->sprite.x-xDifference

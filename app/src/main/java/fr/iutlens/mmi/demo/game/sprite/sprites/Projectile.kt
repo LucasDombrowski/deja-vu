@@ -13,10 +13,18 @@ import kotlin.math.round
 
 class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Int, var knockback : Float, var onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
 
+    fun realSpeed(game: Game) : Float{
+        return speed*((game.map.tileArea.w + game.map.tileArea.h)/2)
+    }
+
+    fun realRange(game: Game) : Float{
+        return range*((game.map.tileArea.w + game.map.tileArea.h)/2)
+    }
     fun changePos(x: Float, y:Float){
         sprite.x = x
         sprite.y = y
     }
+
     fun setup(game: Game, xStart: Float, yStart: Float) : Projectile{
         val newProjectile = copy()
         newProjectile.changePos(xStart,yStart)
@@ -29,7 +37,7 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
     }
     fun fireProjectile(game: Game, xStart: Float, yStart: Float, x: Float, y: Float){
         val newProjectile = setup(game, xStart, yStart = yStart)
-        val steps = newProjectile.calculateSteps(x,y)
+        val steps = newProjectile.calculateSteps(x,y, game)
         val xStep = when{
             x<xStart->-steps[0]
             else->steps[0]
@@ -44,7 +52,7 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
 
     fun moveProjectile(xStep: Float, yStep: Float, game: Game){
         val move = GlobalScope.launch {
-            repeat(round(range/speed).toInt()){
+            repeat(round(realRange(game)/realSpeed(game)).toInt()){
                 delay(33)
                 changePos(sprite.x+xStep, sprite.y+yStep)
                 if(friendly){
@@ -90,21 +98,21 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
         }
     }
 
-    fun calculateSteps(x : Float, y : Float) : List<Float> {
+    fun calculateSteps(x : Float, y : Float, game : Game) : List<Float> {
         val vectorX = abs( round(x) - round(sprite.x))
         val vectorY = abs(round(y) - round(sprite.y))
         return if (vectorX == 0f && vectorY == 0f) {
             listOf(0f, 0f)
         } else if (vectorX == 0f) {
-            listOf(0f, speed)
+            listOf(0f, realSpeed(game))
         } else if(vectorY==0f){
-            listOf(speed,0f)
+            listOf(realSpeed(game),0f)
         } else if(vectorX==vectorY){
-            listOf(speed,speed)
+            listOf(realSpeed(game),realSpeed(game))
         } else if(vectorX>vectorY){
-            listOf(speed,speed/(vectorX/vectorY))
+            listOf(realSpeed(game),realSpeed(game)/(vectorX/vectorY))
         } else {
-            listOf(speed/(vectorY/vectorX),speed)
+            listOf(realSpeed(game)/(vectorY/vectorX),realSpeed(game))
         }
     }
 

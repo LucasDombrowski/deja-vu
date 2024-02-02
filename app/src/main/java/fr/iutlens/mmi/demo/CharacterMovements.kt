@@ -27,6 +27,7 @@ fun testCharacter(): Game {
         map = Map(5..7,R.drawable.decor)
     )
     game.initiate()
+    game.addCharacter(Buddy(game.map.characterStartPosition().first, game.map.characterStartPosition().second, game))
     return game
 }
 @Preview(
