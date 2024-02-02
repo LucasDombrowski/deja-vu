@@ -14,6 +14,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaBoots
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken
+import fr.iutlens.mmi.demo.game.levels.Ninja
 import fr.iutlens.mmi.demo.game.map.Map
 import fr.iutlens.mmi.demo.game.map.Room
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
@@ -24,10 +25,7 @@ import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.loadSpritesheet
 
 fun testCharacter(): Game {
-    val game = Game(
-        map = Map(5..7,R.drawable.decor)
-    )
-    game.initiate()
+    val game = Ninja()
     game.addCharacter(
         Buddy(game.map.characterStartPosition().first-100f,game.map.characterStartPosition().second-100f,game)
     )

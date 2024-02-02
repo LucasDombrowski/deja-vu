@@ -1,15 +1,16 @@
 package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
+import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.sprite.ArrayTileMap
 import fr.iutlens.mmi.demo.game.sprite.TiledArea
+import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.tiledArea
 import fr.iutlens.mmi.demo.game.sprite.toMutableTileMap
 import kotlin.collections.Map
-import kotlin.math.round
 
-class Map(val roomInterval: IntRange, val drawable: Int) {
+open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: ((game: Game) -> List<Enemy>?)? =null) {
 
     var tileMap = makeTileMap()
     var tileArea = makeTileArea()

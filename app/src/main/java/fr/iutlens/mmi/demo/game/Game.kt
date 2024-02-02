@@ -77,7 +77,7 @@ import kotlin.time.TimeSource
  * par dessus (spriteList) et un point de vue (transform)
  * Il est possible de préciser en plus les interactions (onDrag/onTap)
  */
-class Game(val map : Map,
+open class Game(val map : Map,
            var spriteList : MutableSpriteList = MutableSpriteList(list = mutableListOf()),
            var controllableCharacter : MainCharacter ?=null,
            var transform: CameraTransform = FitTransform(map.tileArea),
@@ -94,11 +94,6 @@ class Game(val map : Map,
      */
     val start = timeSource.markNow()
 
-    fun initiate(){
-        setupControllableCharacter()
-        addSprite(camera.sprite)
-        transform = FocusTransform(background,camera.sprite,8)
-    }
     /**
      * Elapsed Mesure le temps écoulé entre début du jeu et la dernière demande d'affichage
      */
@@ -382,6 +377,12 @@ class Game(val map : Map,
                 }
             }
         }
+    }
+
+    init{
+        setupControllableCharacter()
+        addSprite(camera.sprite)
+        transform = FocusTransform(background,camera.sprite,8)
     }
 }
 

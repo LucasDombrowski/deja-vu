@@ -2,10 +2,12 @@ package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.utils.getCenter
 import java.lang.StringBuilder
 import java.util.LinkedList
 import java.util.Queue
+import kotlin.reflect.KClass
 
 open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false) {
 
@@ -22,10 +24,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         val randInd = (0 until tiles.size).random()
         return tiles[randInd]
     }
-    fun create() : String {
+    open fun create() : String {
         val theMap = StringBuilder()
-
-
         for (i in 1..row) {
             when (i) {
                 1 -> if (exit=="top" || enter=="top") {
@@ -240,8 +240,6 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         game.controllableCharacter!!.sprite.x = getRoomCenter().first
         game.controllableCharacter!!.sprite.y = getRoomCenter().second
     }
-
-
 
 
 }
