@@ -6,6 +6,7 @@ import fr.iutlens.mmi.demo.utils.getCenter
 import java.lang.StringBuilder
 import java.util.LinkedList
 import java.util.Queue
+import kotlin.math.log
 
 open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false) {
 
@@ -13,22 +14,22 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     var topLeftCorner : Pair<Int,Int> ?= null
     var bottomRightCorner : Pair<Int,Int> ?= null
 
-    fun copy() : Room{
+    open fun copy() : Room{
         return Room(row, col, map, enter, exit, open)
     }
 
     fun randomTile(): Char {
-        val tiles = listOf('!', '!', '!', '!', '_')
+        val tiles = listOf('!', '!', '!', '!', '!', '!', '!', '!', '!', '_')
         val randInd = (0 until tiles.size).random()
         return tiles[randInd]
     }
-    fun create() : String {
+    open fun create() : String {
         val theMap = StringBuilder()
-
 
         for (i in 1..row) {
             when (i) {
                 1 -> if (exit=="top" || enter=="top") {
+
                         if(exit=="top" && open){
                             theMap.append("0122222U3333345")
                         } else {
@@ -126,14 +127,17 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
 
 
-        /*
-        val result = isPathAvailable(mapChars)
-        if (!result) {
-            return create()
+        if(enter!=null || exit!=null) {
+            val result = isPathAvailable(mapChars)
+
+            if (!result) {
+                return create()
+            }
         }
-        */
         return theMap.toString()
     }
+
+
     fun isPathAvailable(map: List<List<Char>>): Boolean {
         val queue: Queue<Pair<Int, Int>> = LinkedList()
         val visited = mutableSetOf<Pair<Int, Int>>()
@@ -167,7 +171,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
     fun tryMove(queue: Queue<Pair<Int, Int>>, visited: MutableSet<Pair<Int, Int>>, map: List<List<Char>>, row: Int, col: Int) {
         val isValidMove = row in 0 until map.size && col in 0 until map[0].size &&
-                map[row][col] != '!' && map[row][col] != '_'
+                map[row][col].toString() in this.map.authorizedTiles
 
         if (isValidMove && !visited.contains(Pair(row, col))) {
             queue.offer(Pair(row, col))
@@ -176,9 +180,27 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
+
+        val doorStart = when (enter) {
+            "top" -> {
+                'O'
+            }
+            "left" -> {
+                'Q'
+            }
+            "right" -> {
+                'R'
+            }
+            else -> {
+                'P'
+            }
+        }
+
+        Log.i("test entrée", "$doorStart")
+
         for (i in map.indices) {
             for (j in map[i].indices) {
-                if (map[i][j] == 'P') {
+                if (map[i][j] == doorStart) {
                     return Pair(i, j)
                 }
             }
@@ -187,9 +209,27 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
+
+        val doorEnd = when (exit) {
+            "top" -> {
+                'U'
+            }
+            "left" -> {
+                'W'
+            }
+            "right" -> {
+                'X'
+            }
+            else -> {
+                'V'
+            }
+        }
+
+        Log.i("test sortie", "$doorEnd")
+
         for (i in map.indices) {
             for (j in map[i].indices) {
-                if (map[i][j] == 'O') {
+                if (map[i][j] == doorEnd) {
                     return Pair(i, j)
                 }
             }
@@ -219,7 +259,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         )
     }
 
-    fun refresh(){
+    open fun refresh(){
         composition = create().trimIndent()
     }
 
