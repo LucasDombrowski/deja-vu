@@ -39,9 +39,11 @@ open class Character(
 
     var currentAnimationSequence = basicAnimationSequence
 
-    var animation : Job = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
-        playAnimation(currentAnimationSequence)
+    var animationLoop : Job = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
+        animation = playAnimation(currentAnimationSequence)
     }
+
+    var animation = playAnimation()
 
     var remainingInvulnerability : Boolean = false
 
@@ -53,6 +55,7 @@ open class Character(
             movingAction.cancel()
             currentDirection = "static"
             currentAnimationSequence = basicAnimationSequence
+            resetAnimationSequence()
         } else {
             sprite.x = x
             sprite.y = y
@@ -73,18 +76,19 @@ open class Character(
     }
 
     fun resetAnimationSequence(){
+        animationLoop.cancel()
         animation.cancel()
-        playAnimation(currentAnimationSequence)
-        animation = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
-            playAnimation(currentAnimationSequence)
+        animation = playAnimation()
+        animationLoop = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
+            animation = playAnimation(currentAnimationSequence)
         }
 
     }
     fun maxAnimationSequence() : Int{
         return listOf<Int>(basicAnimationSequence.size, leftAnimationSequence.size, topAnimationSequence.size, bottomAnimationSequence.size, rightAnimationSequence.size).max()
     }
-    fun playAnimation(frames: List<Int>){
-        GlobalScope.launch {
+    fun playAnimation(frames: List<Int> = currentAnimationSequence) : Job{
+        return GlobalScope.launch {
             for (frame in frames){
                 changeFrame(frame)
                 delay(animationDelay)
@@ -157,6 +161,7 @@ open class Character(
                 } else {
                     currentDirection = "static"
                     currentAnimationSequence = basicAnimationSequence
+                    resetAnimationSequence()
                 }
 
             }
