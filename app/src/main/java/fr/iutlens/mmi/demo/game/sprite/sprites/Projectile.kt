@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.round
 
-class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Float, var knockback : Float, var onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
+class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Float, var knockback : Float, var aoe : Boolean = false, var onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
 
     fun realSpeed(game: Game) : Float{
         return speed*((game.map.tileArea.w + game.map.tileArea.h)/2)
@@ -52,6 +52,7 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
 
     fun moveProjectile(xStep: Float, yStep: Float, game: Game){
         val move = GlobalScope.launch {
+            var contact = false
             repeat(round(realRange(game)/realSpeed(game)).toInt()){
                 delay(33)
                 changePos(sprite.x+xStep, sprite.y+yStep)
@@ -67,11 +68,14 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
                                     else -> "top"
                                 }
                                 game.deleteSprite(sprite)
-                                it.hit(damages, knockback, direction)
-                                val character = it
-                                with(onHitEffects.iterator()){
-                                    forEach {
-                                        it(character)
+                                if(!aoe && !contact) {
+                                    contact = true
+                                    it.hit(damages, knockback, direction)
+                                    val character = it
+                                    with(onHitEffects.iterator()) {
+                                        forEach {
+                                            it(character)
+                                        }
                                     }
                                 }
                                 }

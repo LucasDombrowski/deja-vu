@@ -55,8 +55,12 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             movingAction.cancel()
             currentDirection = "static"
             currentAnimationSequence = basicAnimationSequence
+            resetAnimationSequence()
         } else if(game.map.inOpenDoor(x,y)){
             movingAction.cancel()
+            currentDirection = "static"
+            currentAnimationSequence = basicAnimationSequence
+            resetAnimationSequence()
             game.nextRoom()
         } else {
             sprite.x = x
@@ -127,6 +131,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 target = null
             } else {
                 target = distances.toSortedMap().values.toList().first()
+                setupTargetFollow()
             }
         } else {
             target = null

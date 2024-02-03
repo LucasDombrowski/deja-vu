@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -130,16 +131,23 @@ open class Game(val map : Map,
         controllableCharacter!!.targetIndicator.invisible()
         onTap = {
             (x,y)->
+            var newTarget = false
             if(item["show"] as Boolean){
                 item["show"] = false
                 resumeGame()
             } else {
                 for(character in characterList){
                     if(character.inBoundingBox(x,y) && character is Enemy){
-                        controllableCharacter!!.target = character
+                        if(character!=controllableCharacter!!.target) {
+                            controllableCharacter!!.target = character
+                            controllableCharacter!!.setupTargetFollow()
+                            newTarget = true
+                        }
                     }
                 }
-                controllableCharacter!!.movingBehavior(x,y)
+                if(!newTarget) {
+                    controllableCharacter!!.movingBehavior(x, y)
+                }
             }
         }
     }
@@ -345,7 +353,8 @@ open class Game(val map : Map,
     var menu = mutableStateMapOf("open" to false, "items" to mutableListOf<Item>())
     @Composable fun Menu(modifier: Modifier = Modifier
         .fillMaxWidth()
-        .fillMaxHeight().padding(20.dp)){
+        .fillMaxHeight()
+        .padding(20.dp)){
         if(menu["open"] as Boolean) {
             Box(modifier=modifier.background(Color(0,0,0,128))){
                 Column(
