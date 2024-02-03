@@ -3,6 +3,8 @@ package fr.iutlens.mmi.demo.game.map
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
+import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
+import fr.iutlens.mmi.demo.game.map.rooms.StartingRoom
 import fr.iutlens.mmi.demo.game.sprite.ArrayTileMap
 import fr.iutlens.mmi.demo.game.sprite.TiledArea
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
@@ -12,14 +14,16 @@ import kotlin.collections.Map
 
 open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<Enemy> = listOf()) {
 
+    val authorizedTiles : List<String> = listOf("!","U","V","W","X")
+    var roomNumber = roomInterval.random()
     var tileMap = makeTileMap()
     var tileArea = makeTileArea()
-    val authorizedTiles : List<String> = listOf("!","U","V","W","X")
     var mapString : String ? = null
     var mapPath : List<List<String>> ?= null
     var rooms : List<Room> ?= null
     var roomSequence : List<String>? = null
     var currentRoom = 0
+
     fun makeTileMap() : ArrayTileMap{
         if(mapString==null) {
             generateMap()
@@ -81,7 +85,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     fun generateMapPath() : List<List<String>>{
         var entranceDoor : String ?= null
         var n = 1
-        val roomNumber = roomInterval.random()
+
         val sequence = mutableListOf<String>()
         val map = mutableListOf<MutableList<String>>(
         )
@@ -114,6 +118,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         if(mapPath==null){
             mapPath = generateMapPath()
         }
+        Log.i("monTest", "$mapPath")
         if(rooms==null){
             generateRooms()
         }
@@ -152,23 +157,36 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     }
 
     fun generateRooms(){
-        val room = BasicRoom(this)
+        val currentMap = this
+        var room : Room = BasicRoom(currentMap)
+        room.open = true
+        val lastRoom = roomNumber+1
         val rowsToAdd = room.row
         val colsToAdd = room.col
         var currentRow = 0
         var currentCol = 0
         val roomList : MutableMap<String,Room> = mutableMapOf()
-        Log.i("Sequence","$roomSequence")
         with(mapPath!!.iterator()){
             forEach {
                 currentCol = 0
                 with(it.iterator()){
                     forEach {
                          if(it!=""){
+                             if(it=="1"){
+                                 Log.i("First Room","true")
+                                 room = StartingRoom(currentMap)
+                             } else if (it==lastRoom.toString()) {
+                                 Log.i("Last Room",lastRoom.toString())
+                                 room = BossRoom(currentMap)
+                             } else {
+                                 room = BasicRoom(currentMap)
+                                 room.open = true
+                             }
                             val newRoom = room.copy()
                             newRoom.topLeftCorner = Pair(currentRow, currentCol)
                             newRoom.bottomRightCorner = Pair(currentRow+rowsToAdd, currentCol+colsToAdd)
                             roomList[it] = newRoom
+
                         }
                         currentCol+=colsToAdd
                     }
@@ -177,8 +195,11 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             }
         }
         rooms = roomList.toSortedMap().values.toList()
+        Log.i("test Rooms", "$rooms")
+
         for(i in 0..<roomSequence!!.size){
             when{
+
                 i==0->{
                     rooms!![i].exit = roomSequence!![i]
                     rooms!![i].open = true
@@ -191,6 +212,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             rooms!![i].refresh()
         }
         rooms!!.last().enter = getReverseDirection(roomSequence!!.last())
+
         rooms!!.last().refresh()
     }
     fun fillEmptySpace(row: Int, col: Int) : String{
@@ -258,6 +280,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                     }
         }
         entranceDoor = getReverseDirection(nextRoom)
+
         return mapOf(
             "currentRow" to currentRow,
             "currentCol" to currentCol,
