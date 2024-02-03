@@ -131,25 +131,29 @@ open class Game(val map : Map,
         controllableCharacter!!.targetIndicator.invisible()
         onTap = {
             (x,y)->
-            var newTarget = false
             if(item["show"] as Boolean){
                 item["show"] = false
                 resumeGame()
             } else {
+                var targetChange = false
                 for(character in characterList){
-                    if(character.inBoundingBox(x,y) && character is Enemy){
-                        if(character!=controllableCharacter!!.target) {
-                            controllableCharacter!!.target = character
-                            controllableCharacter!!.setupTargetFollow()
-                            newTarget = true
-                        }
+                    if(character.inBoundingBox(x,y) && character is Enemy && controllableCharacter!!.target!=character){
+                        targetChange = true
+                        controllableCharacter!!.target = character
+                        controllableCharacter!!.setupTargetFollow()
                     }
                 }
-                if(!newTarget) {
-                    controllableCharacter!!.movingBehavior(x, y)
+                if(!targetChange){
+                    controllableCharacter!!.moveTo(x,y)
                 }
             }
         }
+        onDragMove = {
+            (x,y)->
+            controllableCharacter!!.moveTo(x,y)
+        }
+
+
     }
 
     fun addCharacter(character: Character){
@@ -237,6 +241,7 @@ open class Game(val map : Map,
                 onTap?.invoke(transform.getPoint(it))
                 invalidate()
             }
+        }.pointerInput(key1 = this){
             if (onDragMove!= null) detectDragGestures(onDragStart = {
                 onDragStart?.invoke(transform.getPoint(it))
             }) { change, dragAmount ->
