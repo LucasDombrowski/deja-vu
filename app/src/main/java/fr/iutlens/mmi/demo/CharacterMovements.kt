@@ -26,9 +26,6 @@ import fr.iutlens.mmi.demo.utils.loadSpritesheet
 
 fun testCharacter(): Game {
     val game = Ninja()
-    game.addCharacter(
-        Buddy(game.map.characterStartPosition().first-100f,game.map.characterStartPosition().second-100f,game)
-    )
     return game
 }
 @Preview(

@@ -25,21 +25,32 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     target = game.controllableCharacter!!,
     fireRate = 3000
 ){
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.4f, friendly = false, damages =  0.5f, knockback = 0.2f)
-    override var action = setInterval(0,fireRate){
-        if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.range){
-            moveTo(target!!.sprite.x, target!!.sprite.y)
-        } else {
-            movingAction.cancel()
-            val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
-            val firstProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (PI/6).toFloat())
-            val secondProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1],(-PI/6).toFloat())
-            projectile.aimTarget(target!!, sprite.x, sprite.y)
-            projectile.fireProjectile(game,sprite.x, sprite.y, firstProjectile[0], firstProjectile[1])
-            projectile.fireProjectile(game,sprite.x,sprite.y,secondProjectile[0],secondProjectile[1])
-        }
-        if(target!!.inBoundingBox(sprite.x, sprite.y)){
-            target!!.healthDown(projectile.damages, 20f, currentDirection)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f)
+    override fun spawn(x: Float, y: Float){
+        game.addCharacter(this)
+        changePos(x, y)
+        action = setInterval(0,fireRate){
+            if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.realRange(game)){
+                moveTo(target!!.sprite.x, target!!.sprite.y)
+            } else {
+                movingAction.cancel()
+                val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
+                val firstProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (PI/6).toFloat())
+                val secondProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1],(-PI/6).toFloat())
+                projectile.aimTarget(target!!, sprite.x, sprite.y)
+                projectile.fireProjectile(game,sprite.x, sprite.y, firstProjectile[0], firstProjectile[1])
+                projectile.fireProjectile(game,sprite.x,sprite.y,secondProjectile[0],secondProjectile[1])
+            }
+            if(target!!.inBoundingBox(sprite.x, sprite.y)){
+                target!!.healthDown(projectile.damages, 20f, currentDirection)
+            }
         }
     }
+
+    override fun copy() : RangeNinja{
+        val newCharacter = RangeNinja(sprite.x, sprite.y, game)
+        newCharacter.sprite = newCharacter.sprite.copy()
+        return newCharacter
+    }
+
 }

@@ -45,5 +45,13 @@ open class Enemy(
         }
     }
 
+    open fun spawn(x: Float, y: Float){
+        game.addCharacter(this)
+        changePos(x, y)
+    }
+
+    override fun copy() : Enemy{
+        return Enemy(sprite.copy(), game, speed, hearts, basicAnimationSequence, leftAnimationSequence, topAnimationSequence, rightAnimationSequence, bottomAnimationSequence, target, fireRate, action)
+    }
 
 }

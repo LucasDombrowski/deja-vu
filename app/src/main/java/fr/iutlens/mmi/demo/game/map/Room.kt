@@ -14,13 +14,13 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     var composition : String = create().trimIndent()
     var topLeftCorner : Pair<Int,Int> ?= null
     var bottomRightCorner : Pair<Int,Int> ?= null
-
+    var enemyList : MutableList<Enemy> ?= null
     fun copy() : Room{
         return Room(row, col, map, enter, exit, open)
     }
 
     fun randomTile(): Char {
-        val tiles = listOf('!', '!', '!', '!', '_')
+        val tiles = listOf('!', '!', '!', '!', '!')
         val randInd = (0 until tiles.size).random()
         return tiles[randInd]
     }
@@ -224,9 +224,19 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun getPosition(row: Int, column:Int) : Pair<Int,Int>{
+        val firstValue = when{
+            row-topLeftCorner!!.first<0->0
+            row-topLeftCorner!!.first>this.row-1->this.row-1
+            else->row-topLeftCorner!!.first
+        }
+        val secondValue = when{
+            column-topLeftCorner!!.second<0->0
+            column-topLeftCorner!!.second>this.col-1->this.col-1
+            else->column-topLeftCorner!!.second
+        }
         return Pair(
-            row-topLeftCorner!!.first,
-            column-topLeftCorner!!.second
+            firstValue,
+            secondValue
         )
     }
 
@@ -239,6 +249,49 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     fun placeCharacter(game: Game){
         game.controllableCharacter!!.sprite.x = getRoomCenter().first
         game.controllableCharacter!!.sprite.y = getRoomCenter().second
+    }
+
+    fun getMinMaxCoordinates() : Pair<Pair<Float,Float>,Pair<Float,Float>>{
+        return Pair(
+            map.getPositionFromMapIndex(topLeftCorner!!.first+1, topLeftCorner!!.second+1),
+            map.getPositionFromMapIndex(bottomRightCorner!!.first-1, bottomRightCorner!!.second-1)
+        )
+    }
+
+    fun spawnEnemies(){
+        val list = mutableListOf<Enemy>()
+        repeat((3..5).random()){
+            val enemy = spawnEnemy()
+            if(enemy is Enemy){
+                list.add(enemy)
+            }
+        }
+        enemyList = list
+    }
+    fun spawnEnemy() : Enemy ?{
+        val enemy = map.enemies.random().copy()
+        val minMaxCoordinates = getMinMaxCoordinates()
+        val xVal = (minMaxCoordinates.first.first + Math.random() * (minMaxCoordinates.second.first - minMaxCoordinates.first.first)).toFloat()
+        val yVal = (minMaxCoordinates.first.second + Math.random() * (minMaxCoordinates.second.second - minMaxCoordinates.first.second)).toFloat()
+        if(map.inForbiddenArea(xVal,yVal)){
+            spawnEnemy()
+            return null
+        } else {
+            enemy.spawn(xVal,yVal)
+            return enemy
+        }
+    }
+
+    fun open(){
+        Log.i("OPEN","true")
+        open = true
+        map.reload()
+    }
+
+    fun checkEnemyList(){
+        if(enemyList!!.isEmpty()){
+            open()
+        }
     }
 
 

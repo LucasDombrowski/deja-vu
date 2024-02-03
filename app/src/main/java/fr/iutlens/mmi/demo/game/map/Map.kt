@@ -10,7 +10,7 @@ import fr.iutlens.mmi.demo.game.sprite.tiledArea
 import fr.iutlens.mmi.demo.game.sprite.toMutableTileMap
 import kotlin.collections.Map
 
-open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: ((game: Game) -> List<Enemy>?)? =null) {
+open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<Enemy> = listOf()) {
 
     var tileMap = makeTileMap()
     var tileArea = makeTileArea()
@@ -153,7 +153,6 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: ((gam
 
     fun generateRooms(){
         val room = BasicRoom(this)
-        room.open = true
         val rowsToAdd = room.row
         val colsToAdd = room.col
         var currentRow = 0
@@ -182,6 +181,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: ((gam
             when{
                 i==0->{
                     rooms!![i].exit = roomSequence!![i]
+                    rooms!![i].open = true
                 }
                 else->{
                     rooms!![i].exit = roomSequence!![i]
@@ -296,6 +296,13 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: ((gam
         generateMap()
         tileMap = makeTileMap()
         tileArea = makeTileArea()
+        if(!enemies.isEmpty()){
+            enemies[0].game.reloadBackground()
+        }
+    }
+
+    fun currentRoom() : Room{
+        return rooms!![currentRoom]
     }
 
 

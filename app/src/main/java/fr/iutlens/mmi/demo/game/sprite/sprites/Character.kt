@@ -15,18 +15,20 @@ import kotlin.math.abs
 import kotlin.math.round
 
 
-open class Character(val sprite: BasicSprite,
-                     val game: Game,
-                     var speed:Float,
-                     var hearts: MutableList<Heart>,
-                     var fireRate : Long = 0,
-                     val invulnerability: Long = 0,
-                     val basicAnimationSequence: List<Int>,
-                     val leftAnimationSequence: List<Int> = basicAnimationSequence,
-                     val topAnimationSequence: List<Int> = basicAnimationSequence,
-                     val rightAnimationSequence: List<Int> = basicAnimationSequence,
-                     val bottomAnimationSequence : List<Int> = basicAnimationSequence,
-                     var target : Character? = null){
+open class Character(
+    var sprite: BasicSprite,
+    val game: Game,
+    var speed:Float,
+    var hearts: MutableList<Heart>,
+    var fireRate : Long = 0,
+    val invulnerability: Long = 0,
+    val basicAnimationSequence: List<Int>,
+    val leftAnimationSequence: List<Int> = basicAnimationSequence,
+    val topAnimationSequence: List<Int> = basicAnimationSequence,
+    val rightAnimationSequence: List<Int> = basicAnimationSequence,
+    val bottomAnimationSequence : List<Int> = basicAnimationSequence,
+    val animationDelay : Long = 100,
+    var target : Character? = null){
 
 
     var movingAction : Job = GlobalScope.launch {
@@ -37,7 +39,7 @@ open class Character(val sprite: BasicSprite,
 
     var currentAnimationSequence = basicAnimationSequence
 
-    val animation : Job = setInterval(0,maxAnimationSequence().toLong()*100){
+    var animation : Job = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
         playAnimation(currentAnimationSequence)
     }
 
@@ -70,14 +72,22 @@ open class Character(val sprite: BasicSprite,
         game.invalidate()
     }
 
+    fun resetAnimationSequence(){
+        animation.cancel()
+        playAnimation(currentAnimationSequence)
+        animation = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
+            playAnimation(currentAnimationSequence)
+        }
+
+    }
     fun maxAnimationSequence() : Int{
         return listOf<Int>(basicAnimationSequence.size, leftAnimationSequence.size, topAnimationSequence.size, bottomAnimationSequence.size, rightAnimationSequence.size).max()
     }
-    fun playAnimation(frames: List<Int>, awaitTime:Long = 100){
+    fun playAnimation(frames: List<Int>){
         GlobalScope.launch {
             for (frame in frames){
                 changeFrame(frame)
-                delay(awaitTime)
+                delay(animationDelay)
             }
         }
     }
@@ -108,10 +118,26 @@ open class Character(val sprite: BasicSprite,
                     currentDirection = when{
                         nextX<sprite.x && nextY == sprite.y-> "left"
                         nextX>sprite.x&&nextY==sprite.y-> "right"
-                        nextX<sprite.x&&nextY<sprite.y-> "left"
-                        nextX<sprite.x&&nextY>sprite.y-> "left"
-                        nextX>sprite.x&&nextY<sprite.y-> "right"
-                        nextX>sprite.x&&nextY>sprite.y-> "right"
+                        nextX<sprite.x&&nextY<sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+                            "top"
+                        } else {
+                            "left"
+                        }
+                        nextX<sprite.x&&nextY>sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+                            "bottom"
+                        } else {
+                            "left"
+                        }
+                        nextX>sprite.x&&nextY<sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+                            "top"
+                        } else {
+                            "right"
+                        }
+                        nextX>sprite.x&&nextY>sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+                            "bottom"
+                        } else {
+                            "right"
+                        }
                         nextX==sprite.x&&nextY<sprite.y-> "top"
                         else-> "bottom"
                     }
@@ -123,6 +149,7 @@ open class Character(val sprite: BasicSprite,
                             "bottom"->bottomAnimationSequence
                             else->basicAnimationSequence
                         }
+                        resetAnimationSequence()
                     }
                     changePos(nextX,nextY)
                     delay(33)
@@ -194,9 +221,9 @@ open class Character(val sprite: BasicSprite,
         }
     }
 
-    fun copy() : Character{
+    open fun copy() : Character{
         return Character(
-            sprite.copy(), game, speed, hearts, fireRate, invulnerability, basicAnimationSequence, leftAnimationSequence, topAnimationSequence
+            sprite.copy(), game, speed, hearts, fireRate, invulnerability, basicAnimationSequence, leftAnimationSequence, topAnimationSequence, bottomAnimationSequence, target = target
         )
     }
 
@@ -223,7 +250,10 @@ open class Character(val sprite: BasicSprite,
         movingAction.cancel()
         if(this is Enemy){
             action.cancel()
+            game.map.currentRoom().enemyList!!.remove(this)
+            game.map.currentRoom().checkEnemyList()
         }
+        game.invalidate()
     }
 
 }

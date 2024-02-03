@@ -85,7 +85,7 @@ open class Game(val map : Map,
            var onDragMove:  ((Offset) -> Unit)? = null,
            var onTap: ((Offset)-> Unit)? = null){
 
-    val background = map.tileArea
+    var background = map.tileArea
     val camera = Camera(this)
     val timeSource = TimeSource.Monotonic
 
@@ -198,13 +198,17 @@ open class Game(val map : Map,
             map.rooms?.get(ndx)!!.getRoomCenter().first,
             map.rooms?.get(ndx)!!.getRoomCenter().second
         )
-        map.rooms!![map.currentRoom].placeCharacter(this)
+        map.currentRoom().placeCharacter(this)
     }
 
     fun nextRoom(){
         if(map.currentRoom+1<map.rooms!!.size){
             switchRoom(map.currentRoom+1)
         }
+    }
+
+    fun reloadBackground(){
+        background = map.tileArea
     }
 
 

@@ -10,6 +10,7 @@ import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.Projectile
+import fr.iutlens.mmi.demo.utils.getDistance
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -17,47 +18,33 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainCharacter(x: Float, y:Float, game: Game) : Character(
-    sprite =  BasicSprite(R.drawable.isaac,x,y,1),
+    sprite =  BasicSprite(R.drawable.chrono,x,y,2),
     game = game,
-    basicAnimationSequence = listOf(1),
+    basicAnimationSequence = listOf(2),
     speed = 0.1f,
     invulnerability = 750,
     hearts = setBasicHearts(3),
-    leftAnimationSequence = listOf(3,4,5),
-    topAnimationSequence = listOf(9,10,11),
-    rightAnimationSequence = listOf(6,7,8),
-    bottomAnimationSequence = listOf(0,1,2),
-    fireRate = 1000
+    leftAnimationSequence = listOf(18,19,20,21,22,23),
+    topAnimationSequence = listOf(6,7,8,9,10,11),
+    rightAnimationSequence = listOf(12,13,14,15,16,17),
+    bottomAnimationSequence = listOf(0,1,2,3,4,5),
+    fireRate = 500
     ){
 
     val targetIndicator : BasicSprite = BasicSprite(R.drawable.arrow, sprite.x, sprite.y)
 
     val directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
 
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.2f)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
 
     val items : MutableList<Item> = mutableListOf()
 
     var autoFire : Job = setInterval(0,fireRate){
-        if(target is Enemy && target!!.alive && !target!!.sprite.isInvisible()){
-            targetIndicator.visible()
-            projectile.aimTarget(target!!, sprite.x, sprite.y)
-            with(directProjectileBehaviors.iterator()){
-                forEach {
-                    it()
-                }
-            }
-        } else {
-            targetIndicator.invisible()
-        }
+        fireToTarget()
     }
 
-    val targetFollow : Job = setInterval(0, 33){
-        if(target is Enemy){
-            targetIndicator.x = target!!.sprite.x
-            targetIndicator.y = target!!.sprite.boundingBox.top
-        }
-    }
+    var targetFollow : Job ?= null
+
 
     var movingBehavior : (x: Float, y:Float)->Unit = {
         x,y->moveTo(x,y)
@@ -74,31 +61,34 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         } else {
             sprite.x = x
             sprite.y = y
-            game.invalidate()
         }
+        game.invalidate()
     }
     fun fitToFireRate(){
         autoFire.cancel()
-        Log.i("Firerate","$fireRate")
         autoFire = setInterval(0,fireRate) {
-            if (target is Enemy && target!!.alive && !target!!.sprite.isInvisible()) {
-                targetIndicator.visible()
-                projectile.aimTarget(target!!, sprite.x, sprite.y)
-                with(directProjectileBehaviors.iterator()) {
-                    forEach {
-                        it()
-                    }
+            fireToTarget()
+        }
+    }
+
+    fun fireToTarget(){
+        if (target is Enemy && target!!.alive && !target!!.sprite.isInvisible()) {
+            targetIndicator.visible()
+            projectile.aimTarget(target!!, sprite.x, sprite.y)
+            with(directProjectileBehaviors.iterator()) {
+                forEach {
+                    it()
                 }
-            } else {
-                targetIndicator.invisible()
             }
+        } else {
+            targetIndicator.invisible()
+            getClosestEnemy()
         }
     }
 
     fun refreshHeathBar(){
         val newHearts : MutableList<Heart> = mutableListOf()
         for(heart in hearts){
-            Log.i("Heart","${heart.filled}")
             newHearts.add(heart.copy())
         }
         game.ath["hearts"] = newHearts
@@ -113,6 +103,33 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 sprite.visible()
                 blink()
             }
+        }
+    }
+
+    fun setupTargetFollow(){
+        targetFollow = setInterval(0, 33){
+            if(target is Enemy){
+                targetIndicator.x = target!!.sprite.x
+                targetIndicator.y = target!!.sprite.boundingBox.top
+            }
+        }
+    }
+
+    fun getClosestEnemy(){
+        val distances : MutableMap<Float,Enemy> = mutableMapOf<Float,Enemy>()
+        if(game.map.currentRoom().enemyList!=null) {
+            with(game.map.currentRoom().enemyList!!.iterator()) {
+                forEach {
+                    distances[getDistance(sprite.x, sprite.y, it.sprite.x, it.sprite.y)] = it
+                }
+            }
+            if (distances.isEmpty()) {
+                target = null
+            } else {
+                target = distances.toSortedMap().values.toList().first()
+            }
+        } else {
+            target = null
         }
     }
 

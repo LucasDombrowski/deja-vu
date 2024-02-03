@@ -36,6 +36,8 @@ class Camera(val game: Game) {
                 game.invalidate()
                 delay(33)
                 moveTo(x,y)
+            } else {
+                game.map.currentRoom().spawnEnemies()
             }
         }
     }

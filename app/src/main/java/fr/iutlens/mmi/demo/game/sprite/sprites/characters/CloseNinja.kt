@@ -22,11 +22,22 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
     rightAnimationSequence = listOf(6,7,8),
     target = game.controllableCharacter!!,
 ){
-    override var action = setInterval(0,100){
-        if(!target!!.inBoundingBox(sprite.x,sprite.y)) {
-            moveTo(target!!.sprite.x, target!!.sprite.y)
-        } else {
-            target!!.healthDown(0.5f, 0.2f, currentDirection)
+    override fun spawn(x: Float, y:Float){
+        game.addCharacter(this)
+        changePos(x,y)
+        action = setInterval(0,100){
+            if(!target!!.inBoundingBox(sprite.x,sprite.y)) {
+                moveTo(target!!.sprite.x, target!!.sprite.y)
+            } else {
+                target!!.healthDown(0.5f, 0.2f, currentDirection)
+            }
         }
     }
+
+    override fun copy() : CloseNinja{
+        val newCharacter = CloseNinja(sprite.x, sprite.y, game)
+        newCharacter.sprite = newCharacter.sprite.copy()
+        return newCharacter
+    }
+
 }

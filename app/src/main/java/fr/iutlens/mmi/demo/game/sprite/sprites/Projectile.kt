@@ -69,10 +69,8 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
                                 game.deleteSprite(sprite)
                                 it.hit(damages, knockback, direction)
                                 val character = it
-                                Log.i("OnHitEffects","$onHitEffects")
                                 with(onHitEffects.iterator()){
                                     forEach {
-                                        Log.i("Effect","true")
                                         it(character)
                                     }
                                 }
