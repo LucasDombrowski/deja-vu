@@ -13,10 +13,10 @@ import kotlin.math.round
 
 class Map(val roomInterval: IntRange, val drawable: Int) {
 
+    val authorizedTiles : List<String> = listOf("!","U","V","W","X")
     var roomNumber = roomInterval.random()
     var tileMap = makeTileMap()
     var tileArea = makeTileArea()
-    val authorizedTiles : List<String> = listOf("!","U","V","W","X")
     var mapString : String ? = null
     var mapPath : List<List<String>> ?= null
     var rooms : List<Room> ?= null
@@ -194,6 +194,7 @@ class Map(val roomInterval: IntRange, val drawable: Int) {
             }
         }
         rooms = roomList.toSortedMap().values.toList()
+        Log.i("test Rooms", "$rooms")
 
         for(i in 0..<roomSequence!!.size){
             when{

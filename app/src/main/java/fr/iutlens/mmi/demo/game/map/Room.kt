@@ -25,8 +25,6 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
     open fun create() : String {
         val theMap = StringBuilder()
-        Log.i("testfinal2", enter.toString())
-        Log.i("testfinal3", exit.toString())
 
         for (i in 1..row) {
             when (i) {
@@ -129,13 +127,13 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
 
 
+        if(enter!=null || exit!=null) {
+            val result = isPathAvailable(mapChars)
 
-        val result = isPathAvailable(mapChars)
-
-        if (!result) {
-            return create()
+            if (!result) {
+                return create()
+            }
         }
-
         return theMap.toString()
     }
 
@@ -173,7 +171,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
     fun tryMove(queue: Queue<Pair<Int, Int>>, visited: MutableSet<Pair<Int, Int>>, map: List<List<Char>>, row: Int, col: Int) {
         val isValidMove = row in 0 until map.size && col in 0 until map[0].size &&
-                map[row][col] != '!' && map[row][col] != '_'
+                map[row][col].toString() in this.map.authorizedTiles
 
         if (isValidMove && !visited.contains(Pair(row, col))) {
             queue.offer(Pair(row, col))
@@ -197,6 +195,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 'P'
             }
         }
+
+        Log.i("test entrée", "$doorStart")
 
         for (i in map.indices) {
             for (j in map[i].indices) {
@@ -224,6 +224,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 'V'
             }
         }
+
+        Log.i("test sortie", "$doorEnd")
 
         for (i in map.indices) {
             for (j in map[i].indices) {
