@@ -14,19 +14,18 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaBoots
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken
+import fr.iutlens.mmi.demo.game.levels.Ninja
 import fr.iutlens.mmi.demo.game.map.Map
 import fr.iutlens.mmi.demo.game.map.Room
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.mutableSpriteListOf
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.Buddy
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.loadSpritesheet
 
 fun testCharacter(): Game {
-    val game = Game(
-        map = Map(5..7,R.drawable.decor)
-    )
-    game.initiate()
+    val game = Ninja()
     return game
 }
 @Preview(

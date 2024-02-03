@@ -16,7 +16,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     sprite = BasicSprite(R.drawable.isaac,x,y,1),
     game = game,
     basicAnimationSequence = listOf(1),
-    speed = 10f,
+    speed = 0.05f,
     hearts = setBasicHearts(6),
     leftAnimationSequence = listOf(3,4,5),
     topAnimationSequence = listOf(9,10,11),
@@ -25,12 +25,14 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     target = game.controllableCharacter!!,
 ){
     var chasing = false
-
-    override var action: Job = GlobalScope.launch {
-        delay(1000)
-        pattern()
+    override fun spawn(x: Float, y: Float){
+        game.addCharacter(this)
+        changePos(x, y)
+        action = GlobalScope.launch {
+            delay(1000)
+            pattern()
+        }
     }
-
     fun pattern() {
         GlobalScope.launch {
             if(alive) {
@@ -53,7 +55,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                     }
 
                 } else if (target!!.inBoundingBox(sprite.x, sprite.y)) {
-                    target!!.healthDown(2, 20f, currentDirection)
+                    target!!.healthDown(0.5f, 0.2f, currentDirection)
                     chasing = false
                     action = GlobalScope.launch {
                         delay(100)
@@ -68,6 +70,11 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                 }
             }
         }
+    }
+    override fun copy() : TeleportNinja{
+        val newCharacter = TeleportNinja(sprite.x, sprite.y, game)
+        newCharacter.sprite = newCharacter.sprite.copy()
+        return newCharacter
     }
 
 }

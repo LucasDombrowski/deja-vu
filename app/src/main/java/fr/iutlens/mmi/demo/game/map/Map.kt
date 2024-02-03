@@ -1,17 +1,18 @@
 package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
+import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
 import fr.iutlens.mmi.demo.game.map.rooms.StartingRoom
 import fr.iutlens.mmi.demo.game.sprite.ArrayTileMap
 import fr.iutlens.mmi.demo.game.sprite.TiledArea
+import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.tiledArea
 import fr.iutlens.mmi.demo.game.sprite.toMutableTileMap
 import kotlin.collections.Map
-import kotlin.math.round
 
-class Map(val roomInterval: IntRange, val drawable: Int) {
+open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<Enemy> = listOf()) {
 
     val authorizedTiles : List<String> = listOf("!","U","V","W","X")
     var roomNumber = roomInterval.random()
@@ -201,6 +202,7 @@ class Map(val roomInterval: IntRange, val drawable: Int) {
 
                 i==0->{
                     rooms!![i].exit = roomSequence!![i]
+                    rooms!![i].open = true
                 }
                 else->{
                     rooms!![i].exit = roomSequence!![i]
@@ -317,6 +319,13 @@ class Map(val roomInterval: IntRange, val drawable: Int) {
         generateMap()
         tileMap = makeTileMap()
         tileArea = makeTileArea()
+        if(!enemies.isEmpty()){
+            enemies[0].game.reloadBackground()
+        }
+    }
+
+    fun currentRoom() : Room{
+        return rooms!![currentRoom]
     }
 
 

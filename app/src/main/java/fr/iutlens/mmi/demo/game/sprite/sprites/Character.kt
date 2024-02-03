@@ -15,18 +15,20 @@ import kotlin.math.abs
 import kotlin.math.round
 
 
-open class Character(val sprite: BasicSprite,
-                     val game: Game,
-                     var speed:Float,
-                     var hearts: MutableList<Heart>,
-                     var fireRate : Long = 0,
-                     val invulnerability: Long = 0,
-                     val basicAnimationSequence: List<Int>,
-                     val leftAnimationSequence: List<Int> = basicAnimationSequence,
-                     val topAnimationSequence: List<Int> = basicAnimationSequence,
-                     val rightAnimationSequence: List<Int> = basicAnimationSequence,
-                     val bottomAnimationSequence : List<Int> = basicAnimationSequence,
-                     var target : Character? = null){
+open class Character(
+    var sprite: BasicSprite,
+    val game: Game,
+    var speed:Float,
+    var hearts: MutableList<Heart>,
+    var fireRate : Long = 0,
+    val invulnerability: Long = 0,
+    val basicAnimationSequence: List<Int>,
+    val leftAnimationSequence: List<Int> = basicAnimationSequence,
+    val topAnimationSequence: List<Int> = basicAnimationSequence,
+    val rightAnimationSequence: List<Int> = basicAnimationSequence,
+    val bottomAnimationSequence : List<Int> = basicAnimationSequence,
+    val animationDelay : Long = 100,
+    var target : Character? = null){
 
 
     var movingAction : Job = GlobalScope.launch {
@@ -37,9 +39,11 @@ open class Character(val sprite: BasicSprite,
 
     var currentAnimationSequence = basicAnimationSequence
 
-    val animation : Job = setInterval(0,maxAnimationSequence().toLong()*100){
-        playAnimation(currentAnimationSequence)
+    var animationLoop : Job = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
+        animation = playAnimation(currentAnimationSequence)
     }
+
+    var animation = playAnimation()
 
     var remainingInvulnerability : Boolean = false
 
@@ -51,6 +55,7 @@ open class Character(val sprite: BasicSprite,
             movingAction.cancel()
             currentDirection = "static"
             currentAnimationSequence = basicAnimationSequence
+            resetAnimationSequence()
         } else {
             sprite.x = x
             sprite.y = y
@@ -58,19 +63,35 @@ open class Character(val sprite: BasicSprite,
         }
     }
 
+    fun realSpeed() : Float{
+        return speed*((game.map.tileArea.w + game.map.tileArea.h)/2)
+    }
+
+    fun realKnockback(knockback: Float) : Float{
+        return knockback*((game.map.tileArea.w + game.map.tileArea.h)/2)
+    }
     fun changeFrame(n: Int){
         sprite.ndx = n
         game.invalidate()
     }
 
+    fun resetAnimationSequence(){
+        animationLoop.cancel()
+        animation.cancel()
+        animation = playAnimation()
+        animationLoop = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
+            animation = playAnimation(currentAnimationSequence)
+        }
+
+    }
     fun maxAnimationSequence() : Int{
         return listOf<Int>(basicAnimationSequence.size, leftAnimationSequence.size, topAnimationSequence.size, bottomAnimationSequence.size, rightAnimationSequence.size).max()
     }
-    fun playAnimation(frames: List<Int>, awaitTime:Long = 100){
-        GlobalScope.launch {
+    fun playAnimation(frames: List<Int> = currentAnimationSequence) : Job{
+        return GlobalScope.launch {
             for (frame in frames){
                 changeFrame(frame)
-                delay(awaitTime)
+                delay(animationDelay)
             }
         }
     }
@@ -81,12 +102,12 @@ open class Character(val sprite: BasicSprite,
             movingAction = GlobalScope.launch {
                 if(round(x)!= round(sprite.x) || round(y)!=round(sprite.y)){
                     val xDifference = when{
-                        abs(x-sprite.x)>=speed->speed
-                        else->abs(x-sprite.x)%speed
+                        abs(x-sprite.x)>=realSpeed()->realSpeed()
+                        else->abs(x-sprite.x)%realSpeed()
                     }
                     val yDifference = when{
-                        abs(y-sprite.y)>=speed->speed
-                        else->abs(y-sprite.y)%speed
+                        abs(y-sprite.y)>=realSpeed()->realSpeed()
+                        else->abs(y-sprite.y)%realSpeed()
                     }
                     val nextX = when{
                         x<sprite.x->sprite.x-xDifference
@@ -101,10 +122,26 @@ open class Character(val sprite: BasicSprite,
                     currentDirection = when{
                         nextX<sprite.x && nextY == sprite.y-> "left"
                         nextX>sprite.x&&nextY==sprite.y-> "right"
-                        nextX<sprite.x&&nextY<sprite.y-> "left"
-                        nextX<sprite.x&&nextY>sprite.y-> "left"
-                        nextX>sprite.x&&nextY<sprite.y-> "right"
-                        nextX>sprite.x&&nextY>sprite.y-> "right"
+                        nextX<sprite.x&&nextY<sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+                            "top"
+                        } else {
+                            "left"
+                        }
+                        nextX<sprite.x&&nextY>sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+                            "bottom"
+                        } else {
+                            "left"
+                        }
+                        nextX>sprite.x&&nextY<sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+                            "top"
+                        } else {
+                            "right"
+                        }
+                        nextX>sprite.x&&nextY>sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+                            "bottom"
+                        } else {
+                            "right"
+                        }
                         nextX==sprite.x&&nextY<sprite.y-> "top"
                         else-> "bottom"
                     }
@@ -116,6 +153,7 @@ open class Character(val sprite: BasicSprite,
                             "bottom"->bottomAnimationSequence
                             else->basicAnimationSequence
                         }
+                        resetAnimationSequence()
                     }
                     changePos(nextX,nextY)
                     delay(33)
@@ -123,6 +161,7 @@ open class Character(val sprite: BasicSprite,
                 } else {
                     currentDirection = "static"
                     currentAnimationSequence = basicAnimationSequence
+                    resetAnimationSequence()
                 }
 
             }
@@ -137,7 +176,7 @@ open class Character(val sprite: BasicSprite,
     }
 
 
-    fun healthDown(n: Int, knockback: Float = 0f, direction: String = "static"){
+    fun healthDown(n: Float, knockback: Float = 0f, direction: String = "static"){
         if(!remainingInvulnerability) {
             if(invulnerability>0){
                 remainingInvulnerability = true
@@ -147,8 +186,8 @@ open class Character(val sprite: BasicSprite,
             var heartIndex = hearts.lastIndex
             while(healthToRemove>0 && heartIndex>=0){
                 while (hearts[heartIndex].filled>0f && healthToRemove>0){
-                    hearts[heartIndex].filled-=1
-                    healthToRemove-=1
+                    hearts[heartIndex].filled-=0.25f
+                    healthToRemove-=0.25f
                 }
                 if(!hearts[heartIndex].permanent && hearts[heartIndex].filled<=0){
                     hearts.removeAt(heartIndex)
@@ -181,15 +220,15 @@ open class Character(val sprite: BasicSprite,
         }
         GlobalScope.launch {
             repeat(10){
-                changePos(sprite.x+(knockback*xMultiplier), sprite.y + (knockback*yMultiplier))
+                changePos(sprite.x+(realKnockback(knockback)/10*xMultiplier), sprite.y + (realKnockback(knockback)/10*yMultiplier))
                 delay(33)
             }
         }
     }
 
-    fun copy() : Character{
+    open fun copy() : Character{
         return Character(
-            sprite.copy(), game, speed, hearts, fireRate, invulnerability, basicAnimationSequence, leftAnimationSequence, topAnimationSequence
+            sprite.copy(), game, speed, hearts, fireRate, invulnerability, basicAnimationSequence, leftAnimationSequence, topAnimationSequence, bottomAnimationSequence, target = target
         )
     }
 
@@ -216,7 +255,10 @@ open class Character(val sprite: BasicSprite,
         movingAction.cancel()
         if(this is Enemy){
             action.cancel()
+            game.map.currentRoom().enemyList!!.remove(this)
+            game.map.currentRoom().checkEnemyList()
         }
+        game.invalidate()
     }
 
 }

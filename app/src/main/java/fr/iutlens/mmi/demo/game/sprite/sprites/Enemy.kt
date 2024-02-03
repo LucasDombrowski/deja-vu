@@ -36,7 +36,7 @@ open class Enemy(
     target = target,
     fireRate = fireRate
 ){
-    fun hit(damages: Int, knockback: Float, direction: String){
+    fun hit(damages: Float, knockback: Float, direction: String){
         healthDown(damages, knockback, direction)
         GlobalScope.launch {
             sprite.semiRedColor()
@@ -45,5 +45,13 @@ open class Enemy(
         }
     }
 
+    open fun spawn(x: Float, y: Float){
+        game.addCharacter(this)
+        changePos(x, y)
+    }
+
+    override fun copy() : Enemy{
+        return Enemy(sprite.copy(), game, speed, hearts, basicAnimationSequence, leftAnimationSequence, topAnimationSequence, rightAnimationSequence, bottomAnimationSequence, target, fireRate, action)
+    }
 
 }

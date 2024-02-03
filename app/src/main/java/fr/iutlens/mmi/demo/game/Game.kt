@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -77,7 +78,7 @@ import kotlin.time.TimeSource
  * par dessus (spriteList) et un point de vue (transform)
  * Il est possible de préciser en plus les interactions (onDrag/onTap)
  */
-class Game(val map : Map,
+open class Game(val map : Map,
            var spriteList : MutableSpriteList = MutableSpriteList(list = mutableListOf()),
            var controllableCharacter : MainCharacter ?=null,
            var transform: CameraTransform = FitTransform(map.tileArea),
@@ -85,7 +86,7 @@ class Game(val map : Map,
            var onDragMove:  ((Offset) -> Unit)? = null,
            var onTap: ((Offset)-> Unit)? = null){
 
-    val background = map.tileArea
+    var background = map.tileArea
     val camera = Camera(this)
     val timeSource = TimeSource.Monotonic
 
@@ -94,11 +95,6 @@ class Game(val map : Map,
      */
     val start = timeSource.markNow()
 
-    fun initiate(){
-        setupControllableCharacter()
-        addSprite(camera.sprite)
-        transform = FocusTransform(background,camera.sprite,8)
-    }
     /**
      * Elapsed Mesure le temps écoulé entre début du jeu et la dernière demande d'affichage
      */
@@ -139,14 +135,25 @@ class Game(val map : Map,
                 item["show"] = false
                 resumeGame()
             } else {
+                var targetChange = false
                 for(character in characterList){
-                    if(character.inBoundingBox(x,y) && character is Enemy){
+                    if(character.inBoundingBox(x,y) && character is Enemy && controllableCharacter!!.target!=character){
+                        targetChange = true
                         controllableCharacter!!.target = character
+                        controllableCharacter!!.setupTargetFollow()
                     }
                 }
-                controllableCharacter!!.movingBehavior(x,y)
+                if(!targetChange){
+                    controllableCharacter!!.moveTo(x,y)
+                }
             }
         }
+        onDragMove = {
+            (x,y)->
+            controllableCharacter!!.moveTo(x,y)
+        }
+
+
     }
 
     fun addCharacter(character: Character){
@@ -203,13 +210,17 @@ class Game(val map : Map,
             map.rooms?.get(ndx)!!.getRoomCenter().first,
             map.rooms?.get(ndx)!!.getRoomCenter().second
         )
-        map.rooms!![map.currentRoom].placeCharacter(this)
+        map.currentRoom().placeCharacter(this)
     }
 
     fun nextRoom(){
         if(map.currentRoom+1<map.rooms!!.size){
             switchRoom(map.currentRoom+1)
         }
+    }
+
+    fun reloadBackground(){
+        background = map.tileArea
     }
 
 
@@ -230,6 +241,7 @@ class Game(val map : Map,
                 onTap?.invoke(transform.getPoint(it))
                 invalidate()
             }
+        }.pointerInput(key1 = this){
             if (onDragMove!= null) detectDragGestures(onDragStart = {
                 onDragStart?.invoke(transform.getPoint(it))
             }) { change, dragAmount ->
@@ -346,7 +358,8 @@ class Game(val map : Map,
     var menu = mutableStateMapOf("open" to false, "items" to mutableListOf<Item>())
     @Composable fun Menu(modifier: Modifier = Modifier
         .fillMaxWidth()
-        .fillMaxHeight().padding(20.dp)){
+        .fillMaxHeight()
+        .padding(20.dp)){
         if(menu["open"] as Boolean) {
             Box(modifier=modifier.background(Color(0,0,0,128))){
                 Column(
@@ -382,6 +395,12 @@ class Game(val map : Map,
                 }
             }
         }
+    }
+
+    init{
+        setupControllableCharacter()
+        addSprite(camera.sprite)
+        transform = FocusTransform(background,camera.sprite,8)
     }
 }
 
