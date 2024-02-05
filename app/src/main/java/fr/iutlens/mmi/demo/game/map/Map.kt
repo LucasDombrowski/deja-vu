@@ -5,14 +5,16 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
 import fr.iutlens.mmi.demo.game.map.rooms.StartingRoom
+import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
 import fr.iutlens.mmi.demo.game.sprite.ArrayTileMap
 import fr.iutlens.mmi.demo.game.sprite.TiledArea
+import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.tiledArea
 import fr.iutlens.mmi.demo.game.sprite.toMutableTileMap
 import kotlin.collections.Map
 
-open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<Enemy> = listOf()) {
+open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<Enemy> = listOf(), val treasureRooms : Int, var boss : Boss ? = null) {
 
     val authorizedTiles : List<String> = listOf("!","U","V","W","X")
     var roomNumber = roomInterval.random()
@@ -159,30 +161,33 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     fun generateRooms(){
         val currentMap = this
         var room : Room = BasicRoom(currentMap)
-        room.open = true
         val lastRoom = roomNumber+1
         val rowsToAdd = room.row
         val colsToAdd = room.col
         var currentRow = 0
         var currentCol = 0
         val roomList : MutableMap<String,Room> = mutableMapOf()
+        val randomTreasureRooms = mutableListOf<String>()
+        repeat(treasureRooms){
+            var number = (2..roomNumber).random().toString()
+            while(number in randomTreasureRooms){
+                number = (2..roomNumber).random().toString()
+            }
+            randomTreasureRooms.add(number)
+        }
         with(mapPath!!.iterator()){
             forEach {
                 currentCol = 0
                 with(it.iterator()){
                     forEach {
                          if(it!=""){
-                             if(it=="1"){
-                                 Log.i("First Room","true")
-                                 room = StartingRoom(currentMap)
-                             } else if (it==lastRoom.toString()) {
-                                 Log.i("Last Room",lastRoom.toString())
-                                 room = BossRoom(currentMap)
-                             } else {
-                                 room = BasicRoom(currentMap)
-                                 room.open = true
+                             room = when(it){
+                                 "1"->StartingRoom(currentMap)
+                                 lastRoom.toString()->BossRoom(currentMap)
+                                 in randomTreasureRooms->TreasureRoom(map = currentMap)
+                                 else->BasicRoom(currentMap)
                              }
-                            val newRoom = room.copy()
+                            val newRoom = room
                             newRoom.topLeftCorner = Pair(currentRow, currentCol)
                             newRoom.bottomRightCorner = Pair(currentRow+rowsToAdd, currentCol+colsToAdd)
                             roomList[it] = newRoom
@@ -225,11 +230,11 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         }
         return emptyArea.toString()
     }
-    fun generateNextRoom(map : MutableList<MutableList<String>>, row: Int, col: Int, door: String ?= null, number: String) : Map<String,Any>{
+    fun generateNextRoom(map : MutableList<MutableList<String>>, row: Int, col: Int, door: String ?= null, number: String, forbiddenDirections : MutableList<String> = mutableListOf()) : Map<String,Any>{
         var entranceDoor = door
         var currentCol = col
         var currentRow = row
-        val nextRoom = when((1..4).random()){
+        var nextRoom = when((1..4).random()){
             1->if(entranceDoor=="left"){
                 "right"
             } else {
@@ -251,34 +256,64 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                 "bottom"
             }
         }
+        while (nextRoom in forbiddenDirections) {
+            nextRoom = when ((1..4).random()) {
+                1 -> if (entranceDoor == "left") {
+                    "right"
+                } else {
+                    "left"
+                }
+
+                2 -> if (entranceDoor == "top") {
+                    "bottom"
+                } else {
+                    "top"
+                }
+
+                3 -> if (entranceDoor == "right") {
+                    "left"
+                } else {
+                    "right"
+                }
+
+                else -> if (entranceDoor == "bottom") {
+                    "top"
+                } else {
+                    "bottom"
+                }
+            }
+        }
         when(nextRoom){
             "left"->if(map[currentRow][currentCol-1]!=""){
-                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number)
+                        forbiddenDirections.add(nextRoom)
+                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
                     } else {
                         currentCol-=1
                         map[currentRow][currentCol] = number
                     }
-
             "right"->if(map[currentRow][currentCol+1]!=""){
-                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number)
+                        forbiddenDirections.add(nextRoom)
+                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
                     } else {
                         currentCol+=1
                         map[currentRow][currentCol] = number
                     }
             "top"->if(map[currentRow-1][currentCol]!=""){
-                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number)
+                        forbiddenDirections.add(nextRoom)
+                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
                     } else {
                         currentRow-=1
                         map[currentRow][currentCol] = number
                     }
-
             else -> if(map[currentRow+1][currentCol]!=""){
-                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number)
+                        forbiddenDirections.add(nextRoom)
+                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
                     } else {
                         currentRow+=1
                         map[currentRow][currentCol] = number
                     }
-        }
+            }
+
         entranceDoor = getReverseDirection(nextRoom)
 
         return mapOf(
@@ -311,11 +346,6 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         return room!!.getElement(x,y) in listOf<String>("U","V","W","X")
     }
     fun reload(){
-        with(rooms!!.iterator()){
-            forEach {
-                it.refresh()
-            }
-        }
         generateMap()
         tileMap = makeTileMap()
         tileArea = makeTileArea()
@@ -327,6 +357,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     fun currentRoom() : Room{
         return rooms!![currentRoom]
     }
+
 
 
 

@@ -44,11 +44,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.iutlens.mmi.demo.R
+import fr.iutlens.mmi.demo.game.ath.BossBar
 import fr.iutlens.mmi.demo.game.ath.Hearts
+import fr.iutlens.mmi.demo.game.gameplayResources.Chest
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.Item
+import fr.iutlens.mmi.demo.game.gameplayResources.items.LessFireRateLessDamages
+import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
 import fr.iutlens.mmi.demo.game.map.Camera
 import fr.iutlens.mmi.demo.game.map.Map
+import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
 import fr.iutlens.mmi.demo.game.screens.ItemImage
 import fr.iutlens.mmi.demo.game.screens.MenuButton
 import fr.iutlens.mmi.demo.game.screens.MenuItem
@@ -56,6 +61,7 @@ import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
 import fr.iutlens.mmi.demo.game.sprite.Sprite
 import fr.iutlens.mmi.demo.game.sprite.TiledArea
+import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
@@ -89,6 +95,10 @@ open class Game(val map : Map,
     var background = map.tileArea
     val camera = Camera(this)
     val timeSource = TimeSource.Monotonic
+    val items = mutableListOf<Item>(
+        LessFireRateLessDamages(),
+        MoreDamagesMoreRate()
+    )
 
     /**
      * Start Instant du début du jeu, utiliser pour calculer le temps écoulé
@@ -113,6 +123,7 @@ open class Game(val map : Map,
 
     var characterList : MutableList<Character> = mutableListOf()
 
+    var onEnd : ()->Unit = {}
     fun copyCharacterList() : MutableList<Character>{
         return characterList.toMutableList()
     }
@@ -129,11 +140,16 @@ open class Game(val map : Map,
         ath["hearts"] = controllableCharacter!!.hearts
         addSprite(controllableCharacter!!.targetIndicator)
         controllableCharacter!!.targetIndicator.invisible()
+        setupControls()
+    }
+
+    fun setupControls(){
         onTap = {
             (x,y)->
             if(item["show"] as Boolean){
                 item["show"] = false
                 resumeGame()
+                controllableCharacter!!.restart()
             } else {
                 var targetChange = false
                 for(character in characterList){
@@ -152,8 +168,16 @@ open class Game(val map : Map,
             (x,y)->
             controllableCharacter!!.moveTo(x,y)
         }
-
-
+    }
+    fun switchControllableCharacter(character : MainCharacter){
+        deleteCharacter(controllableCharacter!!)
+        deleteSprite(controllableCharacter!!.targetIndicator)
+        controllableCharacter = character
+        addCharacter(controllableCharacter!!)
+        addSprite(controllableCharacter!!.targetIndicator)
+        controllableCharacter!!.targetIndicator.invisible()
+        ath["hearts"] = controllableCharacter!!.hearts
+        setupControls()
     }
 
     fun addCharacter(character: Character){
@@ -205,12 +229,21 @@ open class Game(val map : Map,
     }
 
     fun switchRoom(ndx : Int){
+        controllableCharacter!!.stun()
         map.currentRoom = ndx
         camera.moveTo(
             map.rooms?.get(ndx)!!.getRoomCenter().first,
             map.rooms?.get(ndx)!!.getRoomCenter().second
         )
         map.currentRoom().placeCharacter(this)
+        if(map.currentRoom() is TreasureRoom){
+            val chest = Chest(items)
+            chest.setup(
+                map.currentRoom().getRoomCenter().first,
+                map.currentRoom().getRoomCenter().second,
+                this
+            )
+        }
     }
 
     fun nextRoom(){
@@ -223,6 +256,12 @@ open class Game(val map : Map,
         background = map.tileArea
     }
 
+    fun spawnBoss(){
+        map.boss!!.copy().spawn(
+            map.currentRoom().getRoomCenter().first,
+            map.currentRoom().getRoomCenter().second
+        )
+    }
 
     /**
      * View
@@ -236,18 +275,20 @@ open class Game(val map : Map,
     fun View(modifier: Modifier) {
 
         // gestion des évènements
-        Canvas(modifier = modifier.pointerInput(key1 = this) {
-            if (onTap!= null) detectTapGestures {
-                onTap?.invoke(transform.getPoint(it))
-                invalidate()
+        Canvas(modifier = modifier
+            .pointerInput(key1 = this) {
+                if (onTap != null) detectTapGestures {
+                    onTap?.invoke(transform.getPoint(it))
+                    invalidate()
+                }
             }
-        }.pointerInput(key1 = this){
-            if (onDragMove!= null) detectDragGestures(onDragStart = {
-                onDragStart?.invoke(transform.getPoint(it))
-            }) { change, dragAmount ->
-                onDragMove?.invoke(transform.getPoint(change.position))
-            }
-        }) {
+            .pointerInput(key1 = this) {
+                if (onDragMove != null) detectDragGestures(onDragStart = {
+                    onDragStart?.invoke(transform.getPoint(it))
+                }) { change, dragAmount ->
+                    onDragMove?.invoke(transform.getPoint(change.position))
+                }
+            }) {
             // Dessin proprement dit. On précise la transformation à appliquer avant
             this.withTransform({ transform(transform.getMatrix(size)) }) {
                 background.paint(this, elapsed)
@@ -274,9 +315,10 @@ open class Game(val map : Map,
 
     }
 
-    var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>())
+    var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
     @Composable
     fun Ath(){
+        Log.i("Ath reload","true")
         if(menu["open"] == false && item["show"] == false) {
             Box(
                 modifier = Modifier
@@ -313,6 +355,9 @@ open class Game(val map : Map,
                             )
                         }
                     }
+                }
+                if(ath["boss"]!!.isNotEmpty()){
+                    BossBar(hearts = ath["boss"]!!)
                 }
             }
         }
@@ -397,10 +442,13 @@ open class Game(val map : Map,
         }
     }
 
-    init{
+    fun initiate(){
         setupControllableCharacter()
         addSprite(camera.sprite)
         transform = FocusTransform(background,camera.sprite,8)
+    }
+    init{
+        initiate()
     }
 }
 

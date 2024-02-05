@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo.game.gameplayResources
 
+import android.util.Log
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
@@ -17,8 +18,7 @@ class Chest(val itemList: List<Item>) {
     }
     fun open(game: Game){
         openable.cancel()
-        game.controllableCharacter!!.movingAction.cancel()
-        game.controllableCharacter!!.currentAnimationSequence = game.controllableCharacter!!.basicAnimationSequence
+        game.controllableCharacter!!.stun()
         openSprite()
         val item = itemList.random()
         item.effects(game)

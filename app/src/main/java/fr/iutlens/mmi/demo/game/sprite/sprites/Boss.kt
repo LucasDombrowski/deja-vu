@@ -8,7 +8,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-open class Enemy(
+open class Boss(
     sprite: BasicSprite,
     game: Game,
     speed:Float,
@@ -20,38 +20,40 @@ open class Enemy(
     bottomAnimationSequence : List<Int> = basicAnimationSequence,
     target : Character? = null,
     fireRate : Long = 0,
-    open var action : Job = GlobalScope.launch {
+    action : Job = GlobalScope.launch {
         return@launch
     }
-) : Character(
-    sprite = sprite,
-    game = game,
-    speed = speed,
-    hearts = hearts,
-    basicAnimationSequence = basicAnimationSequence,
-    leftAnimationSequence = leftAnimationSequence,
-    topAnimationSequence = topAnimationSequence,
-    rightAnimationSequence = rightAnimationSequence,
-    bottomAnimationSequence = bottomAnimationSequence,
-    target = target,
-    fireRate = fireRate
-){
-    open fun hit(damages: Float, knockback: Float, direction: String){
-        healthDown(damages, knockback, direction)
+) : Enemy(
+    sprite,
+    game,
+    speed,
+    hearts,
+    basicAnimationSequence,
+    leftAnimationSequence,
+    topAnimationSequence,
+    rightAnimationSequence,
+    bottomAnimationSequence,
+    target,
+    fireRate,
+    action){
+
+    override fun hit(damages: Float, knockback: Float, direction: String){
+        healthDown(damages, 0f, direction)
         GlobalScope.launch {
             sprite.semiRedColor()
             delay(100)
             sprite.normalColor()
         }
+        refreshHeathBar()
     }
 
-    open fun spawn(x: Float, y: Float){
-        game.addCharacter(this)
-        changePos(x, y)
+    fun refreshHeathBar(){
+        val newHearts : MutableList<Heart> = mutableListOf()
+        for(heart in hearts){
+            newHearts.add(heart.copy())
+        }
+        game.ath["boss"] = newHearts
     }
 
-    override fun copy() : Enemy{
-        return Enemy(sprite.copy(), game, speed, hearts, basicAnimationSequence, leftAnimationSequence, topAnimationSequence, rightAnimationSequence, bottomAnimationSequence, target, fireRate, action)
-    }
 
 }

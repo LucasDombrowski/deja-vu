@@ -37,6 +37,8 @@ open class Character(
 
     var alive = true
 
+    var mobile = true
+
     var currentAnimationSequence = basicAnimationSequence
 
     var animationLoop : Job = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
@@ -82,7 +84,11 @@ open class Character(
         animationLoop = setInterval(0,maxAnimationSequence().toLong()*animationDelay){
             animation = playAnimation(currentAnimationSequence)
         }
+    }
 
+    fun stopAnimation(){
+        animationLoop.cancel()
+        animation.cancel()
     }
     fun maxAnimationSequence() : Int{
         return listOf<Int>(basicAnimationSequence.size, leftAnimationSequence.size, topAnimationSequence.size, bottomAnimationSequence.size, rightAnimationSequence.size).max()
@@ -97,67 +103,72 @@ open class Character(
     }
 
     fun moveTo(x: Float, y:Float){
+        if(mobile) {
             previousDirection = currentDirection
             movingAction.cancel()
             movingAction = GlobalScope.launch {
-                if(round(x)!= round(sprite.x) || round(y)!=round(sprite.y)){
-                    val xDifference = when{
-                        abs(x-sprite.x)>=realSpeed()->realSpeed()
-                        else->abs(x-sprite.x)%realSpeed()
+                if (round(x) != round(sprite.x) || round(y) != round(sprite.y)) {
+                    val xDifference = when {
+                        abs(x - sprite.x) >= realSpeed() -> realSpeed()
+                        else -> abs(x - sprite.x) % realSpeed()
                     }
-                    val yDifference = when{
-                        abs(y-sprite.y)>=realSpeed()->realSpeed()
-                        else->abs(y-sprite.y)%realSpeed()
+                    val yDifference = when {
+                        abs(y - sprite.y) >= realSpeed() -> realSpeed()
+                        else -> abs(y - sprite.y) % realSpeed()
                     }
-                    val nextX = when{
-                        x<sprite.x->sprite.x-xDifference
-                        x>sprite.x->sprite.x+xDifference
-                        else->sprite.x
+                    val nextX = when {
+                        x < sprite.x -> sprite.x - xDifference
+                        x > sprite.x -> sprite.x + xDifference
+                        else -> sprite.x
                     }
-                    val nextY = when{
-                        y<sprite.y->sprite.y-yDifference
-                        y>sprite.y->sprite.y+yDifference
-                        else->sprite.y
+                    val nextY = when {
+                        y < sprite.y -> sprite.y - yDifference
+                        y > sprite.y -> sprite.y + yDifference
+                        else -> sprite.y
                     }
-                    currentDirection = when{
-                        nextX<sprite.x && nextY == sprite.y-> "left"
-                        nextX>sprite.x&&nextY==sprite.y-> "right"
-                        nextX<sprite.x&&nextY<sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+                    currentDirection = when {
+                        nextX < sprite.x && nextY == sprite.y -> "left"
+                        nextX > sprite.x && nextY == sprite.y -> "right"
+                        nextX < sprite.x && nextY < sprite.y -> if (previousDirection == "top" || previousDirection == "bottom") {
                             "top"
                         } else {
                             "left"
                         }
-                        nextX<sprite.x&&nextY>sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+
+                        nextX < sprite.x && nextY > sprite.y -> if (previousDirection == "top" || previousDirection == "bottom") {
                             "bottom"
                         } else {
                             "left"
                         }
-                        nextX>sprite.x&&nextY<sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+
+                        nextX > sprite.x && nextY < sprite.y -> if (previousDirection == "top" || previousDirection == "bottom") {
                             "top"
                         } else {
                             "right"
                         }
-                        nextX>sprite.x&&nextY>sprite.y-> if(previousDirection=="top" || previousDirection=="bottom"){
+
+                        nextX > sprite.x && nextY > sprite.y -> if (previousDirection == "top" || previousDirection == "bottom") {
                             "bottom"
                         } else {
                             "right"
                         }
-                        nextX==sprite.x&&nextY<sprite.y-> "top"
-                        else-> "bottom"
+
+                        nextX == sprite.x && nextY < sprite.y -> "top"
+                        else -> "bottom"
                     }
-                    if(previousDirection!=currentDirection){
-                        currentAnimationSequence = when(currentDirection){
-                            "left"->leftAnimationSequence
-                            "right"->rightAnimationSequence
-                            "top"->topAnimationSequence
-                            "bottom"->bottomAnimationSequence
-                            else->basicAnimationSequence
+                    if (previousDirection != currentDirection) {
+                        currentAnimationSequence = when (currentDirection) {
+                            "left" -> leftAnimationSequence
+                            "right" -> rightAnimationSequence
+                            "top" -> topAnimationSequence
+                            "bottom" -> bottomAnimationSequence
+                            else -> basicAnimationSequence
                         }
                         resetAnimationSequence()
                     }
-                    changePos(nextX,nextY)
+                    changePos(nextX, nextY)
                     delay(33)
-                    moveTo(x,y)
+                    moveTo(x, y)
                 } else {
                     currentDirection = "static"
                     currentAnimationSequence = basicAnimationSequence
@@ -165,9 +176,20 @@ open class Character(
                 }
 
             }
+        }
 
     }
 
+    fun stun(){
+        movingAction.cancel()
+        mobile = false
+        stopAnimation()
+    }
+
+    fun restart(){
+        mobile = true
+        resetAnimationSequence()
+    }
     fun inBoundingBox(x: Float, y:Float) : Boolean{
         return (sprite.boundingBox.left < x &&
                 sprite.boundingBox.right > x &&
@@ -253,10 +275,13 @@ open class Character(
         game.deleteSprite(sprite)
         game.deleteCharacter(character = this)
         movingAction.cancel()
-        if(this is Enemy){
+        if(this is Enemy && this !is Boss){
             action.cancel()
             game.map.currentRoom().enemyList!!.remove(this)
             game.map.currentRoom().checkEnemyList()
+        }
+        if(this is Enemy && this is Boss){
+            game.onEnd()
         }
         game.invalidate()
     }
