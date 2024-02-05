@@ -16,10 +16,10 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.characters.TeleportNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.bosses.NinjaBoss
 import kotlin.reflect.KClass
 
-class Ninja : Game(
+class Test : Game(
     map = Map(
         roomInterval = 5..7,
-        drawable = R.drawable.decor,
+        drawable = R.drawable.decor_test,
         treasureRooms = 1
     )
 ) {
