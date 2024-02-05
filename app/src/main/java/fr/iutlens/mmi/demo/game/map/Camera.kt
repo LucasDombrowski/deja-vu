@@ -2,6 +2,8 @@ package fr.iutlens.mmi.demo.game.map
 
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
+import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -37,7 +39,14 @@ class Camera(val game: Game) {
                 delay(33)
                 moveTo(x,y)
             } else {
-                game.map.currentRoom().spawnEnemies()
+                game.controllableCharacter!!.restart()
+                delay(1000)
+                if(game.map.currentRoom() is BasicRoom){
+                    game.map.currentRoom().spawnEnemies()
+                }
+                if(game.map.currentRoom() is BossRoom){
+                    game.spawnBoss()
+                }
             }
         }
     }

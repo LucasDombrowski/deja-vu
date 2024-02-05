@@ -33,11 +33,11 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     val targetIndicator : BasicSprite = BasicSprite(R.drawable.arrow, sprite.x, sprite.y)
 
-    val directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
+    var directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
 
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
+    var projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
 
-    val items : MutableList<Item> = mutableListOf()
+    var items : MutableList<Item> = mutableListOf()
 
     var autoFire : Job = setInterval(0,fireRate){
         fireToTarget()

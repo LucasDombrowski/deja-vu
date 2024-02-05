@@ -128,9 +128,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
 
 
-        if(enter!=null || exit!=null) {
+        if(enter!=null && exit!=null) {
             val result = isPathAvailable(mapChars)
-
             if (!result) {
                 return create()
             }
@@ -150,8 +149,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
             return false
         }
 
-        queue.offer(start)
-        visited.add(start)
+        tryMove(queue,visited,map,start.first,start.second)
 
         while (queue.isNotEmpty()) {
             val current = queue.poll()
@@ -197,12 +195,15 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
             }
         }
 
-        Log.i("test entrée", "$doorStart")
-
         for (i in map.indices) {
             for (j in map[i].indices) {
                 if (map[i][j] == doorStart) {
-                    return Pair(i, j)
+                    return when(enter){
+                        "left"->Pair(i,j+1)
+                        "right"->Pair(i,j-1)
+                        "top"->Pair(i+1,j)
+                        else->Pair(i-1,j)
+                    }
                 }
             }
         }
@@ -211,27 +212,37 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
     fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
 
-        val doorEnd = when (exit) {
-            "top" -> {
-                'U'
+        val doorEnd =  when(open){
+            true -> when (exit) {
+                "top" -> {
+                    'U'
+                }
+                "left" -> {
+                    'W'
+                }
+                "right" -> {
+                    'X'
+                }
+                else -> {
+                    'V'
+                }
             }
-            "left" -> {
-                'W'
-            }
-            "right" -> {
-                'X'
-            }
-            else -> {
-                'V'
+            else->when (exit){
+                "top"->'O'
+                "left"->'Q'
+                "right"->'R'
+                else->'P'
             }
         }
-
-        Log.i("test sortie", "$doorEnd")
-
         for (i in map.indices) {
             for (j in map[i].indices) {
                 if (map[i][j] == doorEnd) {
-                    return Pair(i, j)
+                    return when(exit){
+                        "left"->Pair(i,j+1)
+                        "right"->Pair(i,j-1)
+                        "top"->Pair(i+1,j)
+                        else->Pair(i-1,j)
+                    }
                 }
             }
         }
@@ -281,6 +292,12 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         )
     }
 
+    fun getGlobalPosition(row: Int, col: Int) : Pair<Int,Int>{
+        return Pair(
+            row + topLeftCorner!!.first,
+            col + topLeftCorner!!.second
+        )
+    }
     fun getElement(x: Float, y: Float) : String{
         val globalPosition = map.getMapIndexFromPosition(x,y)
         val localPosition = getPosition(globalPosition.first, globalPosition.second)
@@ -288,8 +305,19 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun placeCharacter(game: Game){
-        game.controllableCharacter!!.sprite.x = getRoomCenter().first
-        game.controllableCharacter!!.sprite.y = getRoomCenter().second
+        val roomList = toList()
+
+        val startPosition = findStartPosition(roomList.map {
+            it.map {
+                it.single()
+            }.toList()
+        }.toList())
+        val globalPosition = getGlobalPosition(startPosition!!.first, startPosition!!.second)
+        val globalFloatPosition = map.getPositionFromMapIndex(globalPosition.first,globalPosition.second)
+        game.controllableCharacter!!.changePos(
+            globalFloatPosition.first + map.tileArea.w/2,
+            globalFloatPosition.second + map.tileArea.h/2
+        )
     }
 
     fun getMinMaxCoordinates() : Pair<Pair<Float,Float>,Pair<Float,Float>>{
@@ -324,8 +352,13 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun open(){
-        Log.i("OPEN","true")
         open = true
+        composition = when(exit){
+            "top"-> composition.replace("O","U")
+            "left"-> composition.replace("Q","W")
+            "bottom"-> composition.replace("P","V")
+            else-> composition.replace("R","X")
+        }
         map.reload()
     }
 
