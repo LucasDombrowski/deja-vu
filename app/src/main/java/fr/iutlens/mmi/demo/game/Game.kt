@@ -68,7 +68,9 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
 
 /**
@@ -120,6 +122,7 @@ open class Game(val map : Map,
      */
     var update: ((Game)-> Unit)? = null
 
+    var movingRestriction : Boolean = false
 
     var characterList : MutableList<Character> = mutableListOf()
 
@@ -153,20 +156,29 @@ open class Game(val map : Map,
             } else {
                 var targetChange = false
                 for(character in characterList){
-                    if(character.inBoundingBox(x,y) && character is Enemy && controllableCharacter!!.target!=character){
+                    if(character.inBoundingBox(x,y) && character is Enemy){
                         targetChange = true
-                        controllableCharacter!!.target = character
-                        controllableCharacter!!.setupTargetFollow()
+                        if(character!=controllableCharacter!!.target) {
+                            controllableCharacter!!.target = character
+                            controllableCharacter!!.setupTargetFollow()
+                        } else {
+                            controllableCharacter!!.target = null
+                        }
                     }
                 }
                 if(!targetChange){
-                    controllableCharacter!!.moveTo(x,y)
+                    controllableCharacter!!.movingBehavior(x,y)
                 }
             }
         }
         onDragMove = {
             (x,y)->
-            controllableCharacter!!.moveTo(x,y)
+            controllableCharacter!!.movingBehavior(x,y)
+            movingRestriction = true
+            GlobalScope.launch {
+                delay(33)
+                movingRestriction = false
+            }
         }
     }
     fun switchControllableCharacter(character : MainCharacter){

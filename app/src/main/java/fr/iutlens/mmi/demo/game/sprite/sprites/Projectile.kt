@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.round
 
-class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var speed: Float, var range: Float, var damages: Float, var knockback : Float, var aoe : Boolean = false, var onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
+class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var speed: Float, var range: Float, var damages: Float, var knockback : Float, var aoe : Boolean = false, var onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
 
     fun realSpeed(game: Game) : Float{
         return speed*((game.map.tileArea.w + game.map.tileArea.h)/2)
@@ -70,12 +70,17 @@ class Projectile(var sprite: BasicSprite, val friendly : Boolean = false, var sp
                                 game.deleteSprite(sprite)
                                 if(!aoe && !contact) {
                                     contact = true
-                                    it.hit(damages, knockback, direction)
-                                    val character = it
-                                    with(onHitEffects.iterator()) {
-                                        forEach {
-                                            it(character)
+                                    if(!it.reflect) {
+                                        it.hit(damages, knockback, direction)
+                                        val character = it
+                                        with(onHitEffects.iterator()) {
+                                            forEach {
+                                                it(character)
+                                            }
                                         }
+                                    } else {
+                                        friendly = !friendly
+                                        copy().fireProjectile(game, it.sprite.x, it.sprite.y, it.sprite.x - xStep, it.sprite.y - yStep)
                                     }
                                 }
                                 }

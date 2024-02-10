@@ -327,9 +327,9 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         )
     }
 
-    fun spawnEnemies(){
+    fun spawnEnemies(interval: IntRange = (3..5)){
         val list = mutableListOf<Enemy>()
-        repeat((3..5).random()){
+        repeat(interval.random()){
             val enemy = spawnEnemy()
             if(enemy is Enemy){
                 list.add(enemy)

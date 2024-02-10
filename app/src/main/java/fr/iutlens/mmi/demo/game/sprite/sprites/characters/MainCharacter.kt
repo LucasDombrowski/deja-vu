@@ -86,7 +86,6 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             }
         } else {
             targetIndicator.invisible()
-            getClosestEnemy()
         }
     }
 

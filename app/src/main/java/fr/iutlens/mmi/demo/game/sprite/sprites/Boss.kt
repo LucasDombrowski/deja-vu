@@ -36,7 +36,6 @@ open class Boss(
     target,
     fireRate,
     action){
-
     override fun hit(damages: Float, knockback: Float, direction: String){
         healthDown(damages, 0f, direction)
         GlobalScope.launch {

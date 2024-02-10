@@ -14,6 +14,9 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.RangeNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.TeleportNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.bosses.NinjaBoss
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.reflect.KClass
 
 class Ninja : Game(
@@ -36,5 +39,4 @@ class Ninja : Game(
         )
         map.boss = NinjaBoss(0f,0f,this)
     }
-
 }
