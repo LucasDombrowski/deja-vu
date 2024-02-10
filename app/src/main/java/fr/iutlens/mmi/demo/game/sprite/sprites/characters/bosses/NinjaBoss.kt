@@ -20,11 +20,11 @@ import kotlinx.coroutines.launch
 import kotlin.math.PI
 
 class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
-    sprite = BasicSprite(R.drawable.isaac,x,y,1),
+    sprite = BasicSprite(R.drawable.big_isaac,x,y,1),
     game = game,
     basicAnimationSequence = listOf(1),
     speed = 0.05f,
-    hearts = setBasicHearts(20),
+    hearts = setBasicHearts(40),
     leftAnimationSequence = listOf(3,4,5),
     topAnimationSequence = listOf(9,10,11),
     bottomAnimationSequence = listOf(0,1,2),
@@ -33,7 +33,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
 ) {
 
     var countdown : Job? = null
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 4f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f)
     var pattern = 0
     override fun copy() : NinjaBoss{
         return NinjaBoss(sprite.x,sprite.y, game)
@@ -48,22 +48,24 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
 
     fun randomPattern(){
         action.cancel()
-        if(countdown!=null) {
-            countdown!!.cancel()
-        }
-        var newPattern = (1..5).random()
-        while (newPattern==pattern){
-            newPattern = (1..5).random()
-        }
-        pattern = newPattern
-        GlobalScope.launch {
-            delay(1000)
-            when(pattern){
-                1->chasePlayer()
-                2->aimPlayer()
-                3->teleportToPlayer()
-                4->reflectShots()
-                else->spawnEnemies()
+        if(alive) {
+            if (countdown != null) {
+                countdown!!.cancel()
+            }
+            var newPattern = (1..5).random()
+            while (newPattern == pattern) {
+                newPattern = (1..5).random()
+            }
+            pattern = newPattern
+            GlobalScope.launch {
+                delay(1000)
+                when (pattern) {
+                    1 -> chasePlayer()
+                    2 -> aimPlayer()
+                    3 -> teleportToPlayer()
+                    4 -> reflectShots()
+                    else -> spawnEnemies()
+                }
             }
         }
 

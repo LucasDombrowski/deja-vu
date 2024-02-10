@@ -13,10 +13,13 @@ class Buddy(x: Float, y:Float, game: Game) : Enemy(
     game = game,
     basicAnimationSequence = listOf(1),
     speed = 0.05f,
-    hearts = setBasicHearts(20),
+    hearts = setBasicHearts(100),
     leftAnimationSequence = listOf(3,4,5),
     topAnimationSequence = listOf(9,10,11),
     bottomAnimationSequence = listOf(0,1,2),
     rightAnimationSequence = listOf(6,7,8),
     target = game.controllableCharacter!!){
+    override fun getKnockback(knockback: Float, direction: String){
+        return
+    }
 }

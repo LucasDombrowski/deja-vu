@@ -10,6 +10,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken
 import fr.iutlens.mmi.demo.game.map.Map
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.Buddy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.RangeNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.TeleportNinja
@@ -38,5 +39,11 @@ class Ninja : Game(
             NinjaBoots()
         )
         map.boss = NinjaBoss(0f,0f,this)
+        Buddy(
+            0f,
+            0f,
+            this
+        ).spawn(map.characterStartPosition().first,
+            map.characterStartPosition().second)
     }
 }

@@ -61,11 +61,9 @@ open class Character(
                 delay(33)
                 restart()
             }
-        } else if(!game.contactWithOtherCharacter(this,x,y)){
+        } else {
             sprite.x = x
             sprite.y = y
-        } else {
-            getKnockback(0.2f, currentDirection)
         }
         game.invalidate()
     }
@@ -204,7 +202,7 @@ open class Character(
         }
     }
 
-    fun getKnockback(knockback: Float, direction: String){
+    open fun getKnockback(knockback: Float, direction: String){
         movingAction.cancel()
         val xMultiplier= when(direction){
             "left"->-1
@@ -266,10 +264,6 @@ open class Character(
             game.controllableCharacter!!.getClosestEnemy()
         }
         game.invalidate()
-    }
-
-    init {
-
     }
 
 }

@@ -3,6 +3,7 @@ package fr.iutlens.mmi.demo.game.sprite.sprites
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
+import fr.iutlens.mmi.demo.utils.getAngle
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -51,6 +52,8 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
     }
 
     fun moveProjectile(xStep: Float, yStep: Float, game: Game){
+        sprite.rotate = -getAngle(sprite.x, sprite.y, sprite.x+xStep, sprite.y+yStep)
+        Log.i("rotate","${sprite.rotate}")
         val move = GlobalScope.launch {
             var contact = false
             repeat(round(realRange(game)/realSpeed(game)).toInt()){

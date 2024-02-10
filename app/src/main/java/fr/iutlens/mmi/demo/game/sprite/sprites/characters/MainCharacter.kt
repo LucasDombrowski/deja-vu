@@ -35,7 +35,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
 
-    var projectile : Projectile = Projectile(BasicSprite(R.drawable.tear, sprite.x, sprite.y), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
+    var projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
 
     var items : MutableList<Item> = mutableListOf()
 
@@ -61,9 +61,9 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 restart()
             }
         } else if(game.map.inOpenDoor(x,y)){
-            movingAction.cancel()
-            currentDirection = "static"
+            stun()
             game.map.nextRoom().placeCharacter(game)
+            Log.i("Next room","true")
             game.nextRoom()
         } else {
             sprite.x = x

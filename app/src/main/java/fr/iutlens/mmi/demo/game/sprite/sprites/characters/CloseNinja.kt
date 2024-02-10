@@ -79,22 +79,4 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
         }
 
     }
-
-    override fun changePos(x: Float, y: Float){
-        if(game.map.inForbiddenArea(
-                x,
-                y
-            )){
-            GlobalScope.launch {
-                stun()
-                delay(33)
-                restart()
-            }
-        } else if(!game.contactWithOtherCharacter(this,x,y)){
-            sprite.x = x
-            sprite.y = y
-        }
-        game.invalidate()
-    }
-
 }

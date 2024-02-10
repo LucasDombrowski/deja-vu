@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 open class BasicSprite(val spriteSheet: SpriteSheet,
                        var x: Float, var y: Float,
                        var scaleX : Float = 1f, var scaleY : Float = 1f,
+                       var rotate : Float = 0f,
                        var colorFilter : ColorFilter = ColorFilter.colorMatrix(ColorMatrix()),
                        var ndx : Int = 0,
                        var action: (BasicSprite.()->Unit)? = null,
@@ -46,8 +47,9 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
 
     override fun paint(drawScope: DrawScope, elapsed: Long) =
         drawScope.withTransform({
-            translate(x,y)
             scale(scaleX,scaleY)
+            rotate(rotate, Offset(x,y))
+            translate(x,y)
         }){
             spriteSheet.paint(this, ndx, -w2, -h2, colorFilter = colorFilter)
         }
