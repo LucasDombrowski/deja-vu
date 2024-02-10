@@ -51,16 +51,19 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     }
 
     override fun changePos(x: Float, y: Float){
-        if(game.map.inForbiddenArea(x,y)){
-            movingAction.cancel()
-            currentDirection = "static"
-            currentAnimationSequence = basicAnimationSequence
-            resetAnimationSequence()
+        if(game.map.inForbiddenArea(
+                x,
+                y + (sprite.boundingBox.bottom - sprite.boundingBox.top)/3
+        )){
+            GlobalScope.launch {
+                stun()
+                delay(33)
+                restart()
+            }
         } else if(game.map.inOpenDoor(x,y)){
             movingAction.cancel()
             currentDirection = "static"
-            currentAnimationSequence = basicAnimationSequence
-            resetAnimationSequence()
+            game.map.nextRoom().placeCharacter(game)
             game.nextRoom()
         } else {
             sprite.x = x

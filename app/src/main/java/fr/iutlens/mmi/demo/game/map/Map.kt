@@ -12,6 +12,7 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.tiledArea
 import fr.iutlens.mmi.demo.game.sprite.toMutableTileMap
+import java.util.BitSet
 import kotlin.collections.Map
 
 open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<Enemy> = listOf(), val treasureRooms : Int, var boss : Boss ? = null) {
@@ -45,13 +46,13 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         return drawable.tiledArea(tileMap)
     }
     fun getMapIndexFromPosition(x: Float, y: Float) : Pair<Int,Int>{
-        var row = (y/tileArea.h).toInt()
+        var row = ((y)/tileArea.h).toInt()
         if(row<0){
             row=0
         } else if(row>=tileArea.sizeY){
             row = tileArea.sizeY-1
         }
-        var column = (x/tileArea.w).toInt()
+        var column = ((x)/tileArea.w).toInt()
         if(column<0){
             column=0
         } else if(column>=tileArea.sizeX){
@@ -83,7 +84,6 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         val room = getRoomFromMapIndex(globalPosition.first, globalPosition.second)
         return room!!.getElement(x,y) !in authorizedTiles
     }
-
     fun generateMapPath() : List<List<String>>{
         var entranceDoor : String ?= null
         var n = 1
@@ -356,6 +356,14 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
 
     fun currentRoom() : Room{
         return rooms!![currentRoom]
+    }
+
+    fun previousRoom() : Room{
+        return rooms!![currentRoom-1]
+    }
+
+    fun nextRoom() : Room{
+        return rooms!![currentRoom+1]
     }
 
 

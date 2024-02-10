@@ -8,7 +8,7 @@ class NinjaBoots : Item(
     name = "Sandales de Ninja",
     description = "",
     effects = {
-        game -> game.controllableCharacter!!.speed+=0.5f
+        game -> game.controllableCharacter!!.speed+=0.05f
     }
 ) {
 }

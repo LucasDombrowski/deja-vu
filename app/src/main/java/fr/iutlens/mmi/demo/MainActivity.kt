@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         loadSpritesheet(R.drawable.decor, 6, 7)
-        loadSpritesheet(R.drawable.isaac, 3, 4)
+        loadSpritesheet(R.drawable.isaac, 9, 4)
         loadSpritesheet(R.drawable.tear,1,1)
         loadSpritesheet(R.drawable.transparent, 1,1)
         loadSpritesheet(R.drawable.arrow, 1,1)

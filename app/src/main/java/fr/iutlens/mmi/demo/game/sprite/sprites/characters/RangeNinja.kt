@@ -15,13 +15,13 @@ import kotlin.math.PI
 class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     sprite = BasicSprite(R.drawable.isaac,x,y,1),
     game = game,
-    basicAnimationSequence = listOf(1),
+    basicAnimationSequence = listOf(7),
     speed = 0.05f,
     hearts = setBasicHearts(6),
-    leftAnimationSequence = listOf(3,4,5),
-    topAnimationSequence = listOf(9,10,11),
-    bottomAnimationSequence = listOf(0,1,2),
-    rightAnimationSequence = listOf(6,7,8),
+    leftAnimationSequence = listOf(15,16,17),
+    topAnimationSequence = listOf(33,34,35),
+    bottomAnimationSequence = listOf(6,7,8),
+    rightAnimationSequence = listOf(24,25,26),
     target = game.controllableCharacter!!,
     fireRate = 3000
 ){

@@ -115,12 +115,12 @@ open class Game(val map : Map,
     /**
      * Nombre de milliseconde souhaité entre deux images
      */
-    var animationDelayMs: Int = 33
+    var animationDelayMs: Int ?= null
 
     /**
      * Update : action à réaliser entre deux images
      */
-    var update: ((Game)-> Unit)? = null
+    var update: ((Game)-> Unit) ? = null
 
     var movingRestriction : Boolean = false
 
@@ -244,10 +244,9 @@ open class Game(val map : Map,
         controllableCharacter!!.stun()
         map.currentRoom = ndx
         camera.moveTo(
-            map.rooms?.get(ndx)!!.getRoomCenter().first,
-            map.rooms?.get(ndx)!!.getRoomCenter().second
+            map.currentRoom().getRoomCenter().first,
+            map.currentRoom().getRoomCenter().second
         )
-        map.currentRoom().placeCharacter(this)
         if(map.currentRoom() is TreasureRoom){
             val chest = Chest(items)
             chest.setup(
@@ -261,6 +260,7 @@ open class Game(val map : Map,
     fun nextRoom(){
         if(map.currentRoom+1<map.rooms!!.size){
             switchRoom(map.currentRoom+1)
+            map.previousRoom().close()
         }
     }
 
@@ -273,6 +273,17 @@ open class Game(val map : Map,
             map.currentRoom().getRoomCenter().first,
             map.currentRoom().getRoomCenter().second
         )
+    }
+
+    fun contactWithOtherCharacter(character: Character, x: Float = character.sprite.x, y: Float = character.sprite.y) : Boolean{
+        with(characterList.iterator()){
+            forEach {
+                if(it!=character && it.inBoundingBox(x,y)){
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     /**
@@ -291,7 +302,6 @@ open class Game(val map : Map,
             .pointerInput(key1 = this) {
                 if (onTap != null) detectTapGestures {
                     onTap?.invoke(transform.getPoint(it))
-                    invalidate()
                 }
             }
             .pointerInput(key1 = this) {
@@ -313,7 +323,7 @@ open class Game(val map : Map,
         }
         // Gestion du rafraîssement automatique si update et animationDelay sont défnis
         update?.let{myUpdate->
-            animationDelayMs.let {delay ->
+            animationDelayMs?.let {delay ->
                 LaunchedEffect(elapsed){
                     //Calcul du temps avant d'afficher la prochaine image, et pause si nécessaire)
                     val current = (timeSource.markNow()-start).inWholeMilliseconds

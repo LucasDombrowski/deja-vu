@@ -342,12 +342,12 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         val minMaxCoordinates = getMinMaxCoordinates()
         val xVal = (minMaxCoordinates.first.first + Math.random() * (minMaxCoordinates.second.first - minMaxCoordinates.first.first)).toFloat()
         val yVal = (minMaxCoordinates.first.second + Math.random() * (minMaxCoordinates.second.second - minMaxCoordinates.first.second)).toFloat()
-        if(map.inForbiddenArea(xVal,yVal)){
+        return if(map.inForbiddenArea(xVal,yVal)){
             spawnEnemy()
-            return null
+            null
         } else {
             enemy.spawn(xVal,yVal)
-            return enemy
+            enemy
         }
     }
 
@@ -362,11 +362,24 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         map.reload()
     }
 
+    fun close(){
+        open = false
+        composition = when(exit){
+            "top"->composition.replace("U","O")
+            "left"->composition.replace("W","Q")
+            "bottom"->composition.replace("V","P")
+            else->composition.replace("X","R")
+        }
+        map.reload()
+    }
+
     fun checkEnemyList(){
         if(enemyList!!.isEmpty()){
             open()
         }
     }
+
+
 
 
 }

@@ -15,13 +15,13 @@ import kotlin.random.Random
 class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     sprite = BasicSprite(R.drawable.isaac,x,y,1),
     game = game,
-    basicAnimationSequence = listOf(1),
+    basicAnimationSequence = listOf(4),
     speed = 0.05f,
     hearts = setBasicHearts(6),
-    leftAnimationSequence = listOf(3,4,5),
-    topAnimationSequence = listOf(9,10,11),
-    bottomAnimationSequence = listOf(0,1,2),
-    rightAnimationSequence = listOf(6,7,8),
+    leftAnimationSequence = listOf(12,13,14),
+    topAnimationSequence = listOf(30,31,32),
+    bottomAnimationSequence = listOf(3,4,5),
+    rightAnimationSequence = listOf(21,22,23),
     target = game.controllableCharacter!!,
 ){
     var chasing = false
