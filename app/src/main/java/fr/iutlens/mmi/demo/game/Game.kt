@@ -181,17 +181,6 @@ open class Game(val map : Map,
             }
         }
     }
-    fun switchControllableCharacter(character : MainCharacter){
-        deleteCharacter(controllableCharacter!!)
-        deleteSprite(controllableCharacter!!.targetIndicator)
-        controllableCharacter = character
-        addCharacter(controllableCharacter!!)
-        addSprite(controllableCharacter!!.targetIndicator)
-        controllableCharacter!!.targetIndicator.invisible()
-        ath["hearts"] = controllableCharacter!!.hearts
-        setupControls()
-    }
-
     fun addCharacter(character: Character){
         addSprite(character.sprite)
         characterList.add(character)
@@ -280,17 +269,12 @@ open class Game(val map : Map,
         map.boss!!.spawn(xVal,yVal)
     }
 
-    fun contactWithOtherCharacter(character: Character, x: Float = character.sprite.x, y: Float = character.sprite.y) : Boolean{
-        with(characterList.iterator()){
-            forEach {
-                if(it!=character && it.inBoundingBox(x,y)){
-                    return true
-                }
-            }
-        }
-        return false
-    }
 
+    open fun copy() : Game{
+        return Game(
+            map = map
+        )
+    }
     /**
      * View
      * Composant affichant le jeu décrit dans cette classe
