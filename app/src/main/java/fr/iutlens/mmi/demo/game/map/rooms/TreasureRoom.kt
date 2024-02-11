@@ -10,7 +10,8 @@ class TreasureRoom(enter : String ?=null, exit : String?=null, map: Map) : Room(
     open = true,
     enter = enter,
     exit = exit,
-    map = map
+    map = map,
+    enemies = 0..0
 ){
     override fun create() : String {
         val theMap = StringBuilder()

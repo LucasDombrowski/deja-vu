@@ -47,6 +47,7 @@ class Camera(val game: Game) {
                 if(game.map.currentRoom() is BossRoom){
                     game.spawnBoss()
                 }
+                game.controllableCharacter!!.getClosestEnemy()
             }
         }
     }

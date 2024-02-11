@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 open class BasicSprite(val spriteSheet: SpriteSheet,
                        var x: Float, var y: Float,
                        var scaleX : Float = 1f, var scaleY : Float = 1f,
+                       var rotate : Float = 0f,
                        var colorFilter : ColorFilter = ColorFilter.colorMatrix(ColorMatrix()),
                        var ndx : Int = 0,
                        var action: (BasicSprite.()->Unit)? = null,
@@ -44,10 +45,12 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
     private val w2 = spriteSheet.spriteWidth / 2f
     private val h2 = spriteSheet.spriteHeight / 2f
 
+    var permanentColor = colorFilter
     override fun paint(drawScope: DrawScope, elapsed: Long) =
         drawScope.withTransform({
-            translate(x,y)
             scale(scaleX,scaleY)
+            rotate(rotate, Offset(x,y))
+            translate(x,y)
         }){
             spriteSheet.paint(this, ndx, -w2, -h2, colorFilter = colorFilter)
         }
@@ -67,20 +70,50 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
     }
 
     fun copy() : BasicSprite{
-        return BasicSprite(spriteSheet,x,y,scaleX,scaleY,ndx = ndx, colorFilter = colorFilter, action=action)
+        return BasicSprite(spriteSheet,x,y,scaleX,scaleY,ndx = ndx, colorFilter = colorFilter, action=action, rotate = rotate)
+    }
+
+    fun copyReset() : BasicSprite{
+        return BasicSprite(spriteSheet,x,y, ndx = ndx, action = action)
     }
 
     fun normalColor(){
         colorFilter = ColorFilter.colorMatrix(ColorMatrix())
     }
-
-    fun semiRedColor(){
+    fun semiWhiteColor(){
         colorFilter = ColorFilter.colorMatrix(ColorMatrix(floatArrayOf(
-            255f, 255f, 255f, 0f, 0f,
-            0f, 1f, 0f, 0f, 0f,
-            0f, 0f, 1f, 0f, 0f,
-            0f, 0f, 0f, 1f, 0f
+            1f,0f,0f,0.5f,0f,
+            0f,1f,0f,0.5f,0f,
+            0f,0f,1f,0.5f,0f,
+            0f,0f,0f,1f,0f
         )))
+    }
+
+    fun midLifeColor(){
+        colorFilter = ColorFilter.colorMatrix(ColorMatrix(floatArrayOf(
+            1f,0f,0f,0f,0f,
+            0f,1f,0f,0f,0f,
+            0f,0f,0.5f,0f,0f,
+            0f,0f,0f,1f,0f
+        )))
+        makeCurrentColorPermanent()
+    }
+    fun lowLifeColor(){
+        colorFilter = ColorFilter.colorMatrix(ColorMatrix(floatArrayOf(
+            1f,0f,0f,0f,0f,
+            0f,0.5f,0f,0f,0f,
+            0f,0f,0.5f,0f,0f,
+            0f,0f,0f,1f,0f
+        )))
+        makeCurrentColorPermanent()
+    }
+
+    fun makeCurrentColorPermanent(){
+        permanentColor = colorFilter
+    }
+
+    fun permanentColor(){
+        colorFilter = permanentColor
     }
 
 //rectangle occuppé par le sprite

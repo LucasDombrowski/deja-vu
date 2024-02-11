@@ -68,7 +68,9 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
 
 /**
@@ -113,13 +115,14 @@ open class Game(val map : Map,
     /**
      * Nombre de milliseconde souhaité entre deux images
      */
-    var animationDelayMs: Int = 33
+    var animationDelayMs: Int ?= null
 
     /**
      * Update : action à réaliser entre deux images
      */
-    var update: ((Game)-> Unit)? = null
+    var update: ((Game)-> Unit) ? = null
 
+    var movingRestriction : Boolean = false
 
     var characterList : MutableList<Character> = mutableListOf()
 
@@ -153,20 +156,29 @@ open class Game(val map : Map,
             } else {
                 var targetChange = false
                 for(character in characterList){
-                    if(character.inBoundingBox(x,y) && character is Enemy && controllableCharacter!!.target!=character){
+                    if(character.inBoundingBox(x,y) && character is Enemy){
                         targetChange = true
-                        controllableCharacter!!.target = character
-                        controllableCharacter!!.setupTargetFollow()
+                        if(character!=controllableCharacter!!.target) {
+                            controllableCharacter!!.target = character
+                            controllableCharacter!!.setupTargetFollow()
+                        } else {
+                            controllableCharacter!!.target = null
+                        }
                     }
                 }
                 if(!targetChange){
-                    controllableCharacter!!.moveTo(x,y)
+                    controllableCharacter!!.movingBehavior(x,y)
                 }
             }
         }
         onDragMove = {
             (x,y)->
-            controllableCharacter!!.moveTo(x,y)
+            controllableCharacter!!.movingBehavior(x,y)
+            movingRestriction = true
+            GlobalScope.launch {
+                delay(33)
+                movingRestriction = false
+            }
         }
     }
     fun switchControllableCharacter(character : MainCharacter){
@@ -194,6 +206,7 @@ open class Game(val map : Map,
     }
 
     fun deleteSprite(sprite : BasicSprite){
+        sprite.invisible()
         spriteList.remove(sprite)
     }
 
@@ -232,11 +245,11 @@ open class Game(val map : Map,
         controllableCharacter!!.stun()
         map.currentRoom = ndx
         camera.moveTo(
-            map.rooms?.get(ndx)!!.getRoomCenter().first,
-            map.rooms?.get(ndx)!!.getRoomCenter().second
+            map.currentRoom().getRoomCenter().first,
+            map.currentRoom().getRoomCenter().second
         )
-        map.currentRoom().placeCharacter(this)
         if(map.currentRoom() is TreasureRoom){
+            map.currentRoom().open()
             val chest = Chest(items)
             chest.setup(
                 map.currentRoom().getRoomCenter().first,
@@ -257,10 +270,25 @@ open class Game(val map : Map,
     }
 
     fun spawnBoss(){
-        map.boss!!.copy().spawn(
-            map.currentRoom().getRoomCenter().first,
-            map.currentRoom().getRoomCenter().second
-        )
+        val minMaxCoordinates = map.currentRoom().getMinMaxCoordinates()
+        var xVal = map.currentRoom().getRoomCenter().first
+        var yVal = map.currentRoom().getRoomCenter().second
+        while(map.inForbiddenArea(xVal,yVal)){
+            xVal = (minMaxCoordinates.first.first + Math.random() * (minMaxCoordinates.second.first - minMaxCoordinates.first.first)).toFloat()
+            yVal = (minMaxCoordinates.first.second + Math.random() * (minMaxCoordinates.second.second - minMaxCoordinates.first.second)).toFloat()
+        }
+        map.boss!!.spawn(xVal,yVal)
+    }
+
+    fun contactWithOtherCharacter(character: Character, x: Float = character.sprite.x, y: Float = character.sprite.y) : Boolean{
+        with(characterList.iterator()){
+            forEach {
+                if(it!=character && it.inBoundingBox(x,y)){
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     /**
@@ -279,7 +307,6 @@ open class Game(val map : Map,
             .pointerInput(key1 = this) {
                 if (onTap != null) detectTapGestures {
                     onTap?.invoke(transform.getPoint(it))
-                    invalidate()
                 }
             }
             .pointerInput(key1 = this) {
@@ -301,7 +328,7 @@ open class Game(val map : Map,
         }
         // Gestion du rafraîssement automatique si update et animationDelay sont défnis
         update?.let{myUpdate->
-            animationDelayMs.let {delay ->
+            animationDelayMs?.let {delay ->
                 LaunchedEffect(elapsed){
                     //Calcul du temps avant d'afficher la prochaine image, et pause si nécessaire)
                     val current = (timeSource.markNow()-start).inWholeMilliseconds

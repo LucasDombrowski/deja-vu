@@ -8,7 +8,7 @@ class LessFireRateLessDamages() : Item(
     name = "Cadence augmentée, dégats réduits",
     description = "Blablablablablabla",
     effects =  {
-            game ->  game.controllableCharacter!!.projectile.damages/=2
+        game ->  game.controllableCharacter!!.projectile.damages/=2
         game.controllableCharacter!!.fireRate = (game.controllableCharacter!!.fireRate.toFloat()/2f).toLong()
         game.controllableCharacter!!.fitToFireRate()
     }

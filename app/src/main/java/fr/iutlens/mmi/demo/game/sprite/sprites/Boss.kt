@@ -36,15 +36,20 @@ open class Boss(
     target,
     fireRate,
     action){
-
     override fun hit(damages: Float, knockback: Float, direction: String){
         healthDown(damages, 0f, direction)
         GlobalScope.launch {
-            sprite.semiRedColor()
+            sprite.semiWhiteColor()
             delay(100)
-            sprite.normalColor()
+            sprite.permanentColor()
+            if(filledHeart()<=hearts.size/2 && filledHeart()>hearts.size/4){
+                sprite.midLifeColor()
+            } else if(filledHeart()<=hearts.size/4){
+                sprite.lowLifeColor()
+            }
         }
         refreshHeathBar()
+
     }
 
     fun refreshHeathBar(){
@@ -54,6 +59,7 @@ open class Boss(
         }
         game.ath["boss"] = newHearts
     }
+
 
 
 }

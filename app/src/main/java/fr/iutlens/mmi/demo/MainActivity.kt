@@ -12,8 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import fr.iutlens.mmi.demo.boot.newLevel
-import fr.iutlens.mmi.demo.boot.switchLevel
 import fr.iutlens.mmi.demo.components.Level
 import fr.iutlens.mmi.demo.components.MainMenu
 import fr.iutlens.mmi.demo.game.Game
@@ -35,13 +33,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         loadSpritesheet(R.drawable.decor, 6, 7)
-        loadSpritesheet(R.drawable.decor_test, 6, 7)
-        loadSpritesheet(R.drawable.isaac, 3, 4)
-        loadSpritesheet(R.drawable.tear,1,1)
+        loadSpritesheet(R.drawable.isaac, 9, 4)
+        loadSpritesheet(R.drawable.big_isaac, 3, 4)
+        loadSpritesheet(R.drawable.projectiles,6,1)
         loadSpritesheet(R.drawable.transparent, 1,1)
         loadSpritesheet(R.drawable.arrow, 1,1)
         loadSpritesheet(R.drawable.treasure_chest,2,1)
         loadSpritesheet(R.drawable.chrono,6,4)
+        loadSpritesheet(R.drawable.smoke_animation,3,2)
 
         loadSound(R.raw.message)
 

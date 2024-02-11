@@ -10,10 +10,15 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken
 import fr.iutlens.mmi.demo.game.map.Map
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
+import fr.iutlens.mmi.demo.game.sprite.sprites.characters.Buddy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.RangeNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.TeleportNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.bosses.NinjaBoss
+import fr.iutlens.mmi.demo.utils.setInterval
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.reflect.KClass
 
 class Ninja : Game(
@@ -35,6 +40,22 @@ class Ninja : Game(
             NinjaBoots()
         )
         map.boss = NinjaBoss(0f,0f,this)
+        controllableCharacter!!.changeProjectileSkin(
+            4
+        ){
+            projectile -> setInterval(0,33){
+                if(projectile.sprite.rotate>=360f){
+                    projectile.sprite.rotate = 0f
+                } else {
+                    projectile.sprite.rotate+=36f
+                }
+        }
+        }
+        /*
+        Buddy(0f,0f,this).spawn(
+            map.currentRoom().getRoomCenter().first,
+            map.currentRoom().getRoomCenter().second
+        )
+         */
     }
-
 }

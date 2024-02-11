@@ -6,14 +6,13 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
-import androidx.compose.ui.graphics.ColorMatrix
 import androidx.core.content.ContextCompat.getDrawable
-import kotlinx.coroutines.Delay
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.abs
+import kotlin.math.PI
+import kotlin.math.acos
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -96,6 +95,31 @@ fun rotationFromPoint(x : Float, y: Float, rotationX: Float, rotationY: Float, v
         rotationFromCenter(x,y, value)[0] + centerTranslation[0],
         rotationFromCenter(x,y,value)[1] + centerTranslation[1]
     )
+}
+
+fun radiantToDegrees(radiant : Float) : Float{
+    return ((radiant*180)/ PI).toFloat()
+}
+
+fun degreesToRadiant(degrees: Float) : Float{
+    return ((degrees*PI)/180).toFloat()
+}
+
+fun getAngle(xCenter : Float, yCenter: Float, x : Float, y : Float) : Float{
+    val adjacent = getDistance(xCenter,yCenter, x, yCenter)
+    val hypotenuse = getDistance(xCenter,yCenter,x,y)
+    val cos = adjacent/hypotenuse
+    return when{
+        y>yCenter-> when{
+            x<xCenter-> radiantToDegrees(acos(cos)) - 180
+            else-> radiantToDegrees(-acos(cos))
+        }
+
+        else-> when{
+            x<xCenter-> radiantToDegrees(-acos(cos)) + 180
+            else-> radiantToDegrees(acos(cos))
+        }
+    }
 }
 
 
