@@ -206,6 +206,7 @@ open class Game(val map : Map,
     }
 
     fun deleteSprite(sprite : BasicSprite){
+        sprite.invisible()
         spriteList.remove(sprite)
     }
 
@@ -248,6 +249,7 @@ open class Game(val map : Map,
             map.currentRoom().getRoomCenter().second
         )
         if(map.currentRoom() is TreasureRoom){
+            map.currentRoom().open()
             val chest = Chest(items)
             chest.setup(
                 map.currentRoom().getRoomCenter().first,
@@ -260,7 +262,6 @@ open class Game(val map : Map,
     fun nextRoom(){
         if(map.currentRoom+1<map.rooms!!.size){
             switchRoom(map.currentRoom+1)
-            map.previousRoom().close()
         }
     }
 
@@ -269,10 +270,14 @@ open class Game(val map : Map,
     }
 
     fun spawnBoss(){
-        map.boss!!.copy().spawn(
-            map.currentRoom().getRoomCenter().first,
-            map.currentRoom().getRoomCenter().second
-        )
+        val minMaxCoordinates = map.currentRoom().getMinMaxCoordinates()
+        var xVal = map.currentRoom().getRoomCenter().first
+        var yVal = map.currentRoom().getRoomCenter().second
+        while(map.inForbiddenArea(xVal,yVal)){
+            xVal = (minMaxCoordinates.first.first + Math.random() * (minMaxCoordinates.second.first - minMaxCoordinates.first.first)).toFloat()
+            yVal = (minMaxCoordinates.first.second + Math.random() * (minMaxCoordinates.second.second - minMaxCoordinates.first.second)).toFloat()
+        }
+        map.boss!!.spawn(xVal,yVal)
     }
 
     fun contactWithOtherCharacter(character: Character, x: Float = character.sprite.x, y: Float = character.sprite.y) : Boolean{

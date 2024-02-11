@@ -111,12 +111,12 @@ fun getAngle(xCenter : Float, yCenter: Float, x : Float, y : Float) : Float{
     val cos = adjacent/hypotenuse
     return when{
         y>yCenter-> when{
-            x<xCenter-> radiantToDegrees(-acos(cos))-(180*cos)
+            x<xCenter-> radiantToDegrees(acos(cos)) - 180
             else-> radiantToDegrees(-acos(cos))
         }
 
         else-> when{
-            x<xCenter-> radiantToDegrees(acos(cos))+(180*cos)
+            x<xCenter-> radiantToDegrees(-acos(cos)) + 180
             else-> radiantToDegrees(acos(cos))
         }
     }

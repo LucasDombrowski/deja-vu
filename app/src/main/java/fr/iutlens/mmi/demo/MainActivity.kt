@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.arrow, 1,1)
         loadSpritesheet(R.drawable.treasure_chest,2,1)
         loadSpritesheet(R.drawable.chrono,6,4)
+        loadSpritesheet(R.drawable.smoke_animation,3,2)
 
         loadSound(R.raw.message)
 

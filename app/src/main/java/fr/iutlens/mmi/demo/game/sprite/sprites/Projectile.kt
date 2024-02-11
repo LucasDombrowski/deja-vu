@@ -26,6 +26,12 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
         sprite.y = y
     }
 
+    var animation : (Projectile)->Job =
+        {
+        projectile ->  GlobalScope.launch {
+            return@launch
+        }
+        }
     fun setup(game: Game, xStart: Float, yStart: Float) : Projectile{
         val newProjectile = copy()
         newProjectile.changePos(xStart,yStart)
@@ -53,8 +59,8 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
 
     fun moveProjectile(xStep: Float, yStep: Float, game: Game){
         sprite.rotate = -getAngle(sprite.x, sprite.y, sprite.x+xStep, sprite.y+yStep)
-        Log.i("rotate","${sprite.rotate}")
-        val move = GlobalScope.launch {
+        val spriteAnimation = animation(this)
+        GlobalScope.launch {
             var contact = false
             repeat(round(realRange(game)/realSpeed(game)).toInt()){
                 delay(33)
@@ -63,13 +69,13 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
                     with(game.copyCharacterList().iterator()){
                         forEach {
                             if (it.inBoundingBox(sprite.x, sprite.y) && it is Enemy && it.alive) {
-                                cancel()
                                 val direction = when {
                                     sprite.x < it.sprite.x -> "right"
                                     sprite.x > it.sprite.x -> "left"
                                     sprite.y < it.sprite.y -> "bottom"
                                     else -> "top"
                                 }
+                                spriteAnimation.cancel()
                                 game.deleteSprite(sprite)
                                 if(!aoe && !contact) {
                                     contact = true
@@ -86,24 +92,32 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
                                         copy().fireProjectile(game, it.sprite.x, it.sprite.y, it.sprite.x - xStep, it.sprite.y - yStep)
                                     }
                                 }
-                                }
+                                cancel()
                             }
                         }
+                    }
                 } else {
                     if(game.controllableCharacter!!.inBoundingBox(sprite.x, sprite.y)){
-                        this.cancel()
                         val direction = when{
                             sprite.x < game.controllableCharacter!!.sprite.x -> "right"
                             sprite.x > game.controllableCharacter!!.sprite.x -> "left"
                             sprite.y < game.controllableCharacter!!.sprite.y -> "bottom"
                             else -> "top"
                         }
+                        spriteAnimation.cancel()
                         game.deleteSprite(sprite)
                         game.controllableCharacter!!.healthDown(damages, knockback, direction)
+                        cancel()
                     }
+                }
+                if(game.map.inForbiddenArea(sprite.x, sprite.y)){
+                    spriteAnimation.cancel()
+                    game.deleteSprite(sprite)
+                    cancel()
                 }
                 game.invalidate()
             }
+            spriteAnimation.cancel()
             game.deleteSprite(sprite)
         }
     }
@@ -127,14 +141,16 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
     }
 
     fun copy() : Projectile{
-        return Projectile(
-            sprite = sprite.copy(),
+        val newProjectile = Projectile(
+            sprite = sprite.copyReset(),
             friendly = friendly,
             speed = speed,
             range = range,
             damages = damages,
-            knockback = knockback
+            knockback = knockback,
         )
+        newProjectile.animation = animation
+        return newProjectile
     }
 
 }

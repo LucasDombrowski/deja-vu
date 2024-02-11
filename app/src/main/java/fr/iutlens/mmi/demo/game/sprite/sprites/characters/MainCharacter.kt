@@ -23,7 +23,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     basicAnimationSequence = listOf(2),
     speed = 0.1f,
     invulnerability = 750,
-    hearts = setBasicHearts(3),
+    hearts = setBasicHearts(5),
     leftAnimationSequence = listOf(18,19,20,21,22,23),
     topAnimationSequence = listOf(6,7,8,9,10,11),
     rightAnimationSequence = listOf(12,13,14,15,16,17),
@@ -35,7 +35,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
 
-    var projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
+    var projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,4), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
 
     var items : MutableList<Item> = mutableListOf()
 
@@ -60,10 +60,10 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 delay(33)
                 restart()
             }
-        } else if(game.map.inOpenDoor(x,y)){
+        } else if(game.map.inOpenDoor(x,y) && game.map.currentRoom().open){
+            game.map.currentRoom().close()
             stun()
             game.map.nextRoom().placeCharacter(game)
-            Log.i("Next room","true")
             game.nextRoom()
         } else {
             sprite.x = x
@@ -90,6 +90,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         } else {
             targetIndicator.invisible()
         }
+        game.invalidate()
     }
 
     fun refreshHeathBar(){
@@ -123,21 +124,30 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     fun getClosestEnemy(){
         val distances : MutableMap<Float,Enemy> = mutableMapOf<Float,Enemy>()
-        if(game.map.currentRoom().enemyList!=null) {
-            with(game.map.currentRoom().enemyList!!.iterator()) {
-                forEach {
+        with(game.characterList.iterator()) {
+            forEach {
+                if(it is Enemy) {
                     distances[getDistance(sprite.x, sprite.y, it.sprite.x, it.sprite.y)] = it
                 }
             }
-            if (distances.isEmpty()) {
-                target = null
-            } else {
-                target = distances.toSortedMap().values.toList().first()
-                setupTargetFollow()
-            }
-        } else {
-            target = null
         }
+        if (distances.isEmpty()) {
+            target = null
+        } else {
+            target = distances.toSortedMap().values.toList().first()
+            setupTargetFollow()
+        }
+    }
+
+    fun changeProjectileSkin(ndx: Int, animation : (Projectile)->Job =
+        {
+        projectile->GlobalScope.launch {
+            return@launch
+        }
+        }
+    ){
+        projectile.sprite.ndx = ndx
+        projectile.animation = animation
     }
 
 

@@ -10,15 +10,15 @@ import java.util.Queue
 import kotlin.reflect.KClass
 import kotlin.math.log
 
-open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false) {
+open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false, val enemies : IntRange) {
 
     var composition : String = create().trimIndent()
     var topLeftCorner : Pair<Int,Int> ?= null
     var bottomRightCorner : Pair<Int,Int> ?= null
-    var enemyList : MutableList<Enemy> ?= null
+    var enemyCount = 0
 
     open fun copy() : Room{
-        return Room(row, col, map, enter, exit, open)
+        return Room(row, col, map, enter, exit, open, enemies)
     }
 
     fun randomTile(): Char {
@@ -128,7 +128,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
 
 
-        if(enter!=null && exit!=null) {
+        if(enter!=null || exit!=null) {
             val result = isPathAvailable(mapChars)
             if (!result) {
                 return create()
@@ -143,7 +143,10 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         val visited = mutableSetOf<Pair<Int, Int>>()
 
         val start = findStartPosition(map)
-        val end = findEndPosition(map)
+        val end = when(exit){
+            null->start
+            else->findEndPosition(map)
+        }
 
         if (start == null || end == null) {
             return false
@@ -327,15 +330,11 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         )
     }
 
-    fun spawnEnemies(interval: IntRange = (3..5)){
-        val list = mutableListOf<Enemy>()
-        repeat(interval.random()){
-            val enemy = spawnEnemy()
-            if(enemy is Enemy){
-                list.add(enemy)
-            }
+    fun spawnEnemies(){
+        repeat(enemies.random()){
+            spawnEnemy()
+            enemyCount++
         }
-        enemyList = list
     }
     fun spawnEnemy() : Enemy ?{
         val enemy = map.enemies.random().copy()
@@ -347,6 +346,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
             null
         } else {
             enemy.spawn(xVal,yVal)
+            enemy.smokeAnimation()
             enemy
         }
     }
@@ -374,7 +374,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun checkEnemyList(){
-        if(enemyList!!.isEmpty()){
+        if(enemyCount<=0){
             open()
         }
     }

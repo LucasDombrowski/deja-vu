@@ -147,8 +147,8 @@ open class Character(
                         delay(33)
                         moveTo(x, y)
                     } else {
-                        currentDirection = "static"
-                        currentAnimationSequence = basicAnimationSequence
+                        stun()
+                        restart()
                     }
                 }
             }
@@ -252,8 +252,10 @@ open class Character(
         game.deleteCharacter(character = this)
         movingAction.cancel()
         if(this is Enemy && this !is Boss){
+            smokeAnimation()
             action.cancel()
-            game.map.currentRoom().enemyList!!.remove(this)
+            game.map.currentRoom().enemyCount--
+            Log.i("Enemy count","${game.map.currentRoom().enemyCount},$this")
             game.map.currentRoom().checkEnemyList()
         }
         if(this is Enemy && this is Boss){

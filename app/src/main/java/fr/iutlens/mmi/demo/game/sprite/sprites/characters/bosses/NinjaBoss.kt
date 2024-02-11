@@ -8,7 +8,9 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
+import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.Projectile
+import fr.iutlens.mmi.demo.utils.degreesToRadiant
 import fr.iutlens.mmi.demo.utils.getCenter
 import fr.iutlens.mmi.demo.utils.getDistance
 import fr.iutlens.mmi.demo.utils.rotationFromPoint
@@ -95,16 +97,16 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
                 repeat(3){
                     val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
                     val rotationPoints = listOf(
-                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (PI/6).toFloat()),
-                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (PI/3).toFloat()),
-                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (-PI/6).toFloat()),
-                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (-PI/3).toFloat())
+                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], degreesToRadiant(40f)),
+                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], degreesToRadiant(80f)),
+                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], degreesToRadiant(-40f)),
+                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], degreesToRadiant(-80f))
                     )
                     projectile.aimTarget(target!!, sprite.x, sprite.y)
                     for(rotationPoint in rotationPoints){
                         projectile.fireProjectile(game, sprite.x, sprite.y, rotationPoint[0], rotationPoint[1])
                     }
-                    delay(1000)
+                    delay(1500)
                 }
                 randomPattern()
             }
@@ -155,7 +157,9 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     }
 
     fun spawnEnemies(){
-        game.map.currentRoom().spawnEnemies((1..3))
+        if(game.map.currentRoom().enemyCount<=0) {
+            game.map.currentRoom().spawnEnemies()
+        }
         randomPattern()
     }
 

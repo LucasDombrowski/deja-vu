@@ -23,7 +23,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     bottomAnimationSequence = listOf(6,7,8),
     rightAnimationSequence = listOf(24,25,26),
     target = game.controllableCharacter!!,
-    fireRate = 3000
+    fireRate = 1500
 ){
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 4f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f)
     override fun spawn(x: Float, y: Float){
