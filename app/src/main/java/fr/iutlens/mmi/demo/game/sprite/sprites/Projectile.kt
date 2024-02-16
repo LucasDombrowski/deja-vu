@@ -63,6 +63,9 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
         GlobalScope.launch {
             var contact = false
             repeat(round(realRange(game)/realSpeed(game)).toInt()){
+                while (game.pause){
+                    delay(33)
+                }
                 delay(33)
                 changePos(sprite.x+xStep, sprite.y+yStep)
                 if(friendly){

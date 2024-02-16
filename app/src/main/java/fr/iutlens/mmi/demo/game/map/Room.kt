@@ -15,7 +15,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     var composition : String = create().trimIndent()
     var topLeftCorner : Pair<Int,Int> ?= null
     var bottomRightCorner : Pair<Int,Int> ?= null
-    var enemyCount = 0
+    var enemyList : MutableList<Enemy> = mutableListOf()
 
     open fun copy() : Room{
         return Room(row, col, map, enter, exit, open, enemies)
@@ -331,9 +331,17 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun spawnEnemies(){
-        repeat(enemies.random()){
-            spawnEnemy()
-            enemyCount++
+        val n = enemies.random()
+        var enemy : Enemy ? = null
+        repeat(n){
+            enemy = spawnEnemy()
+        }
+        with(enemy!!.game.characterList.iterator()){
+            forEach {
+                if(it!=null && it is Enemy){
+                    enemyList.add(it)
+                }
+            }
         }
     }
     fun spawnEnemy() : Enemy ?{
@@ -362,6 +370,22 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         map.reload()
     }
 
+    fun enemiesAlive() : Boolean{
+        for(enemy in enemyList){
+            if(enemy.alive){
+                return true
+            }
+        }
+        return false
+    }
+
+    fun isOpenable(){
+        if(!enemiesAlive()){
+            open()
+            enemyList = mutableListOf()
+        }
+    }
+
     fun close(){
         open = false
         composition = when(exit){
@@ -371,12 +395,6 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
             else->composition.replace("X","R")
         }
         map.reload()
-    }
-
-    fun checkEnemyList(){
-        if(enemyCount<=0){
-            open()
-        }
     }
 
 

@@ -12,6 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import fr.iutlens.mmi.demo.boot.changeLevel
+import fr.iutlens.mmi.demo.boot.startFirstLevel
 import fr.iutlens.mmi.demo.components.Level
 import fr.iutlens.mmi.demo.components.MainMenu
 import fr.iutlens.mmi.demo.game.Game
@@ -50,7 +52,10 @@ class MainActivity : ComponentActivity() {
                 var game : Game ? by remember{ mutableStateOf(null) }
                 if(game == null){
                     MainMenu(){
-                        game = Ninja()
+                        game = startFirstLevel()
+                        game!!.onEnd = {
+                            game = changeLevel(game!!)
+                        }
                     }
                 } else {
                     Level(game = game!!)

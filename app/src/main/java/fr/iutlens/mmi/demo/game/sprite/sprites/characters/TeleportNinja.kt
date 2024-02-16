@@ -5,12 +5,9 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
-import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     sprite = BasicSprite(R.drawable.isaac,x,y,1),
@@ -35,6 +32,9 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     }
     fun pattern() {
         GlobalScope.launch {
+            while(game.pause){
+                delay(33)
+            }
             if(alive) {
                 if (!chasing) {
                     sprite.invisible()

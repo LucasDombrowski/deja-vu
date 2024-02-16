@@ -51,11 +51,9 @@ class Ninja : Game(
                 }
         }
         }
-        /*
-        Buddy(0f,0f,this).spawn(
-            map.currentRoom().getRoomCenter().first,
-            map.currentRoom().getRoomCenter().second
-        )
-         */
+    }
+
+    override fun copy() : Ninja{
+        return Ninja()
     }
 }
