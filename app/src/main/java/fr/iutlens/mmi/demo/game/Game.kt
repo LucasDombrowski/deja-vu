@@ -69,7 +69,9 @@ import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
 
@@ -151,7 +153,6 @@ open class Game(val map : Map,
             (x,y)->
             if(item["show"] as Boolean){
                 item["show"] = false
-                resumeGame()
                 controllableCharacter!!.restart()
             } else {
                 var targetChange = false
@@ -198,38 +199,6 @@ open class Game(val map : Map,
         sprite.invisible()
         spriteList.remove(sprite)
     }
-
-    var pause = false
-
-    var savedSpriteList = spriteList
-
-    val savedCharacterList : MutableMap<Character, List<Float>> = mutableMapOf()
-    fun saveGameStatus(){
-        savedSpriteList = spriteList.copy()
-        with(characterList.iterator()){
-            forEach {
-                savedCharacterList[it] = listOf(it.sprite.x, it.sprite.y)
-                savedSpriteList.remove(it.sprite)
-                savedSpriteList.add(it.sprite.copy())
-            }
-        }
-    }
-
-    fun pauseGame(){
-        pause = true
-        saveGameStatus()
-    }
-
-    fun resumeGame(){
-        pause = false
-        with(characterList.iterator()){
-            forEach {
-                it.sprite.x = savedCharacterList[it]!![0]
-                it.sprite.y = savedCharacterList[it]!![1]
-            }
-        }
-    }
-
     fun switchRoom(ndx : Int){
         controllableCharacter!!.stun()
         map.currentRoom = ndx
@@ -275,6 +244,8 @@ open class Game(val map : Map,
             map = map
         )
     }
+
+    var pause = false;
     /**
      * View
      * Composant affichant le jeu décrit dans cette classe
@@ -303,11 +274,7 @@ open class Game(val map : Map,
             // Dessin proprement dit. On précise la transformation à appliquer avant
             this.withTransform({ transform(transform.getMatrix(size)) }) {
                 background.paint(this, elapsed)
-                if(pause) {
-                    savedSpriteList.paint(this, elapsed)
-                } else {
-                    spriteList.paint(this, elapsed)
-                }
+                spriteList.paint(this, elapsed)
             }
         }
         // Gestion du rafraîssement automatique si update et animationDelay sont défnis
@@ -329,7 +296,6 @@ open class Game(val map : Map,
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
     @Composable
     fun Ath(){
-        Log.i("Ath reload","true")
         if(menu["open"] == false && item["show"] == false) {
             Box(
                 modifier = Modifier
@@ -354,7 +320,7 @@ open class Game(val map : Map,
                             .height(50.dp)
                             .clickable {
                                 menu["open"] = true
-                                pauseGame()
+                                pause = true;
                             }
                             .background(Color.White, shape = CircleShape)
                             .padding(5.dp)
@@ -411,7 +377,7 @@ open class Game(val map : Map,
         }
     }
 
-    var menu = mutableStateMapOf("open" to false, "items" to mutableListOf<Item>())
+    var menu = mutableStateMapOf("open" to false)
     @Composable fun Menu(modifier: Modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()
@@ -430,7 +396,7 @@ open class Game(val map : Map,
                     Column {
                         MenuButton(text = "REPRENDRE") {
                             menu["open"] = false
-                            resumeGame()
+                            pause = false
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                         MenuButton(text = "OPTIONS") {

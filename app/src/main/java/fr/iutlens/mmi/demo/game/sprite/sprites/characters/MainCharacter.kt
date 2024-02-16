@@ -40,7 +40,12 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     var items : MutableList<Item> = mutableListOf()
 
     var autoFire : Job = setInterval(0,fireRate){
-        fireToTarget()
+        GlobalScope.launch {
+            while (game.pause){
+                delay(fireRate)
+            }
+            fireToTarget()
+        }
     }
 
     var targetFollow : Job ?= null
@@ -74,7 +79,13 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     fun fitToFireRate(){
         autoFire.cancel()
         autoFire = setInterval(0,fireRate) {
-            fireToTarget()
+            GlobalScope.launch {
+                while (game.pause){
+                    delay(fireRate)
+                }
+                fireToTarget()
+            }
+
         }
     }
 
@@ -115,10 +126,16 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     fun setupTargetFollow(){
         targetFollow = setInterval(0, 33){
-            if(target is Enemy){
-                targetIndicator.x = target!!.sprite.x
-                targetIndicator.y = target!!.sprite.boundingBox.top
+            GlobalScope.launch {
+                while (game.pause){
+                    delay(33)
+                }
+                if(target is Enemy){
+                    targetIndicator.x = target!!.sprite.x
+                    targetIndicator.y = target!!.sprite.boundingBox.top
+                }
             }
+
         }
     }
 

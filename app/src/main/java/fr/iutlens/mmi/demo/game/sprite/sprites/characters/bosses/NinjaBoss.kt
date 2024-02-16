@@ -1,6 +1,5 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites.characters.bosses
 
-import android.util.Log
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import fr.iutlens.mmi.demo.R
@@ -8,7 +7,6 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
-import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.Projectile
 import fr.iutlens.mmi.demo.utils.degreesToRadiant
 import fr.iutlens.mmi.demo.utils.getCenter
@@ -19,7 +17,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.PI
 
 class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     sprite = BasicSprite(R.drawable.big_isaac,x,y,1),
@@ -95,6 +92,9 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         } else {
             action = GlobalScope.launch {
                 repeat(3){
+                    while(game.pause){
+                        delay(33)
+                    }
                     val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
                     val rotationPoints = listOf(
                         rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], degreesToRadiant(40f)),
@@ -125,6 +125,9 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
                 else -> target!!.sprite.y - 50f
             }
             delay(1000)
+            while (game.pause){
+                delay(33)
+            }
             changePos(xPos, yPos)
             sprite.visible()
             chasePlayer()
@@ -157,7 +160,8 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     }
 
     fun spawnEnemies(){
-        if(game.map.currentRoom().enemyCount<=0) {
+        if(!game.map.currentRoom().enemiesAlive()) {
+            game.map.currentRoom().enemyList = mutableListOf()
             game.map.currentRoom().spawnEnemies()
         }
         randomPattern()

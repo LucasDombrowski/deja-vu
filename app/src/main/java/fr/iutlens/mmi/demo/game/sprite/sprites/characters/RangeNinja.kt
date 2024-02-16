@@ -10,6 +10,9 @@ import fr.iutlens.mmi.demo.utils.getCenter
 import fr.iutlens.mmi.demo.utils.getDistance
 import fr.iutlens.mmi.demo.utils.rotationFromPoint
 import fr.iutlens.mmi.demo.utils.setInterval
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.PI
 
 class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
@@ -54,15 +57,21 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
         stun()
         restart()
         action = setInterval(0,fireRate){
-            val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
-            val firstProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (PI/6).toFloat())
-            val secondProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1],(-PI/6).toFloat())
-            projectile.aimTarget(target!!, sprite.x, sprite.y)
-            projectile.fireProjectile(game,sprite.x, sprite.y, firstProjectile[0], firstProjectile[1])
-            projectile.fireProjectile(game,sprite.x,sprite.y,secondProjectile[0],secondProjectile[1])
-            if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.realRange(game)){
-                reachPlayer()
+            GlobalScope.launch {
+                while(game.pause){
+                    delay(fireRate)
+                }
+                val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
+                val firstProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (PI/6).toFloat())
+                val secondProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1],(-PI/6).toFloat())
+                projectile.aimTarget(target!!, sprite.x, sprite.y)
+                projectile.fireProjectile(game,sprite.x, sprite.y, firstProjectile[0], firstProjectile[1])
+                projectile.fireProjectile(game,sprite.x,sprite.y,secondProjectile[0],secondProjectile[1])
+                if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.realRange(game)){
+                    reachPlayer()
+                }
             }
+
         }
     }
 

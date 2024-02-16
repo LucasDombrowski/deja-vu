@@ -4,7 +4,6 @@ import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
-import fr.iutlens.mmi.demo.game.sprite.TileMap
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
@@ -44,12 +43,18 @@ open class Character(
     var currentAnimationSequence = basicAnimationSequence
     var currentAnimationSequenceIndex : Int = 0
     val characterAnimation : Job = setInterval(0, animationDelay){
-        if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1){
-            currentAnimationSequenceIndex = 0
-        } else {
-            currentAnimationSequenceIndex ++
+        GlobalScope.launch {
+            while (game.pause){
+                delay(animationDelay)
+            }
+            if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1){
+                currentAnimationSequenceIndex = 0
+            } else {
+                currentAnimationSequenceIndex ++
+            }
+            sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
         }
-        sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
+
     }
     open fun changePos(x: Float, y: Float){
         if(game.map.inForbiddenArea(
@@ -87,6 +92,9 @@ open class Character(
                 previousDirection = currentDirection
                 movingAction.cancel()
                 movingAction = GlobalScope.launch {
+                    while (game.pause){
+                        delay(33)
+                    }
                     if (round(x) != round(sprite.x) || round(y) != round(sprite.y)) {
                         val xDifference = when {
                             abs(x - sprite.x) >= realSpeed() -> realSpeed()
@@ -254,9 +262,7 @@ open class Character(
         if(this is Enemy && this !is Boss){
             smokeAnimation()
             action.cancel()
-            game.map.currentRoom().enemyCount--
-            Log.i("Enemy count","${game.map.currentRoom().enemyCount},$this")
-            game.map.currentRoom().checkEnemyList()
+            game.map.currentRoom().isOpenable()
         }
         if(this is Enemy && this is Boss){
             game.onEnd()

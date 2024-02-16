@@ -1,17 +1,11 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites.characters
 
-import android.util.Log
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
-import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.utils.setInterval
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.math.abs
 import kotlin.math.round
 
 class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
@@ -49,34 +43,4 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
         }
     }
 
-    fun followShortestPath(damages: Float, knockback: Float){
-        action.cancel()
-        val path = getShortestPath(target!!.sprite.x, target!!.sprite.y)
-        if(path.isNotEmpty()) {
-            val pathPositions = mutableListOf<Pair<Float, Float>>()
-            with(path.iterator()) {
-                forEach {
-                    pathPositions.add(
-                        Pair(
-                            game.map.getPositionFromMapIndex(it.first, it.second).first,
-                            game.map.getPositionFromMapIndex(it.first, it.second).second
-                        )
-                    )
-                }
-            }
-            var pathIndex = 0
-            action = setInterval(0, 100) {
-                if (round(sprite.x) != pathPositions[pathIndex].first || round(sprite.y) != pathPositions[pathIndex].second) {
-                    moveTo(pathPositions[pathIndex].first, pathPositions[pathIndex].second)
-                } else if (pathIndex == path.size - 1) {
-                    attackPlayer(damages, knockback)
-                } else {
-                    pathIndex++
-                }
-            }
-        } else {
-            attackPlayer(0.5f, 0.2f)
-        }
-
-    }
 }

@@ -7,6 +7,7 @@ import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class Chest(val itemList: List<Item>) {
@@ -27,7 +28,6 @@ class Chest(val itemList: List<Item>) {
         game.item["name"] = item.name
         game.item["description"] = item.description
         game.item["show"] = true
-        game.pauseGame()
         openable = GlobalScope.launch {
             return@launch
         }
