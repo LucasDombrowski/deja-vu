@@ -49,7 +49,7 @@ class Ninja : Game(
                 } else {
                     projectile.sprite.rotate+=36f
                 }
-        }
+            }
         }
     }
 

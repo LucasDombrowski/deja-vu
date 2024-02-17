@@ -18,15 +18,15 @@ class Chest(val itemList: List<Item>) {
         return@launch
     }
     fun open(game: Game){
+        game.pause = true
         openable.cancel()
-        game.controllableCharacter!!.stun()
         openSprite()
         val item = itemList.random()
         item.effects(game)
         game.controllableCharacter!!.items.add(item)
+        game.item["description"] = item.description
         game.item["image"] = item.image
         game.item["name"] = item.name
-        game.item["description"] = item.description
         game.item["show"] = true
         openable = GlobalScope.launch {
             return@launch

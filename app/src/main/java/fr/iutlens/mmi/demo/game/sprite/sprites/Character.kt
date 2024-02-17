@@ -45,14 +45,17 @@ open class Character(
     val characterAnimation : Job = setInterval(0, animationDelay){
         GlobalScope.launch {
             while (game.pause){
+                currentAnimationSequenceIndex = 0
                 delay(animationDelay)
             }
             if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1){
                 currentAnimationSequenceIndex = 0
+                sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
             } else {
                 currentAnimationSequenceIndex ++
+                sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
             }
-            sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
+
         }
 
     }
@@ -144,6 +147,9 @@ open class Character(
                             nextX == sprite.x && nextY < sprite.y -> "top"
                             else -> "bottom"
                         }
+                        if(previousDirection!=currentDirection){
+                            currentAnimationSequenceIndex = 0
+                        }
                         currentAnimationSequence = when(currentDirection){
                             "left"->leftAnimationSequence
                             "right"->rightAnimationSequence
@@ -151,6 +157,7 @@ open class Character(
                             "bottom"->bottomAnimationSequence
                             else->basicAnimationSequence
                         }
+
                         changePos(nextX, nextY)
                         delay(33)
                         moveTo(x, y)

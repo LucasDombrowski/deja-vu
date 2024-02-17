@@ -2,6 +2,7 @@ package fr.iutlens.mmi.demo.game.sprite.sprites
 
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -58,6 +59,14 @@ open class Boss(
             newHearts.add(heart.copy())
         }
         game.ath["boss"] = newHearts
+    }
+
+    open fun startCinematic() : Cinematic{
+        return Cinematic(game = game)
+    }
+
+    open fun endCinematic() : Cinematic{
+        return Cinematic(game = game)
     }
 
 

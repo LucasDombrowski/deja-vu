@@ -334,7 +334,10 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         val n = enemies.random()
         var enemy : Enemy ? = null
         repeat(n){
-            enemy = spawnEnemy()
+            val newEnemy = spawnEnemy()
+            if(newEnemy!=null){
+                enemy = newEnemy
+            }
         }
         with(enemy!!.game.characterList.iterator()){
             forEach {
