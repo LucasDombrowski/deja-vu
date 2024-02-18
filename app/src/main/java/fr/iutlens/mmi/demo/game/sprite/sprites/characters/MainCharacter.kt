@@ -78,6 +78,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 restart()
             }
         } else if(game.map.inOpenDoor(x,y) && game.map.currentRoom().open){
+            disablePathFollowing()
             game.map.currentRoom().close()
             stun()
             game.map.nextRoom().placeCharacter(game)

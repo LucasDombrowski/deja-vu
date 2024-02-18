@@ -298,6 +298,7 @@ open class Game(val map : Map,
     }
 
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
+    var coins = mutableStateOf(0)
     @Composable
     fun Ath(){
         Box(
@@ -348,6 +349,7 @@ open class Game(val map : Map,
         .fillMaxWidth()
         .fillMaxHeight()
         ){
+        controllableCharacter!!.currentAnimationSequenceIndex = 0
         DialogScreen(text = item["description"] as String, onEnd = {
             item["show"] = false
             pause = false
@@ -372,6 +374,7 @@ open class Game(val map : Map,
         .fillMaxWidth()
         .fillMaxHeight()
         .padding(20.dp)){
+        controllableCharacter!!.currentAnimationSequenceIndex = 0
         Box(modifier=modifier.background(Color(0,0,0,128))){
             Column(
                 modifier = modifier,
@@ -422,6 +425,7 @@ open class Game(val map : Map,
         } else if(item["show"] == true){
             Item()
         } else if(cinematic.value.second) {
+            controllableCharacter!!.currentAnimationSequenceIndex = 0
             cinematic.value.first.Display()
         } else {
             Ath()

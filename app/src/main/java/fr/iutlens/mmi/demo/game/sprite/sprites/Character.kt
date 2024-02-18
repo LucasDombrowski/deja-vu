@@ -53,7 +53,7 @@ open class Character(
             }
             if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1){
                 currentAnimationSequenceIndex = 0
-                sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
+                sprite.ndx = currentAnimationSequence[0]
             } else {
                 currentAnimationSequenceIndex ++
                 sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
