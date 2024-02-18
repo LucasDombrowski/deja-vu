@@ -58,11 +58,12 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var tapMovingBehavior : (x: Float, y:Float)->Unit = {
         x,y->
-        findShortestPath(x,y)
+        setupPath(x,y)
     }
 
     var dragMovingBehavior : (x: Float, y:Float)->Unit = {
             x,y->
+            disablePathFollowing()
             moveTo(x,y)
     }
 

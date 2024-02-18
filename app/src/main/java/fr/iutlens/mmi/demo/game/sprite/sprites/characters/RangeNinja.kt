@@ -42,17 +42,35 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     }
 
     fun reachPlayer(){
+        disablePathFollowing()
         action.cancel()
         action = setInterval(0,100){
             if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.realRange(game)){
                 moveTo(target!!.sprite.x, target!!.sprite.y)
+                if(!isPathFree(target!!.sprite.x, target!!.sprite.y)){
+                    followPlayer()
+                }
             } else {
                 shotPlayer()
             }
         }
     }
 
+    fun followPlayer(){
+        action.cancel()
+        setupPath(target!!.sprite.x, target!!.sprite.y)
+        pathFollow = true
+        action = setInterval(0,100){
+            if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
+                reachPlayer()
+            } else if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)<projectile.realRange(game)){
+                shotPlayer()
+            }
+        }
+    }
+
     fun shotPlayer(){
+        disablePathFollowing()
         action.cancel()
         stun()
         restart()

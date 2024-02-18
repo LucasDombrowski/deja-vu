@@ -289,30 +289,99 @@ open class Character(
     var followingPath : Job = GlobalScope.launch {
         return@launch
     }
+    var pathFollow : Boolean = false
+
+    fun isPathFree(x: Float, y: Float) : Boolean{
+        val startTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
+        val aimedTile = game.map.getMapIndexFromPosition(x,y)
+        var startCol = when{
+            sprite.x<x->startTile.second
+            else->aimedTile.second
+        }
+        var startRow = when{
+            sprite.y<y->startTile.first
+            else->aimedTile.first
+        }
+        var endCol = when{
+            sprite.x<x->aimedTile.second
+            else->startTile.second
+        }
+        var endRow = when{
+            sprite.y<y->aimedTile.first
+            else->startTile.first
+        }
+        val startPosition = game.map.currentRoom().getPosition(startRow, startCol)
+        val endPosition = game.map.currentRoom().getPosition(endRow, endCol)
+        val roomList = game.map.currentRoom().toList()
+        for(i in startPosition.first..endPosition.first){
+            for(j in startPosition.second..endPosition.second){
+                if(roomList[i][j] !in game.map.authorizedTiles){
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    fun setupPath(x: Float,y: Float){
+        disablePathFollowing()
+        if(isPathFree(x,y)){
+            moveTo(x,y)
+        } else {
+            findShortestPath(x,y)
+        }
+    }
     fun findShortestPath(x: Float, y: Float){
         GlobalScope.launch {
             val currentTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
-            val aimedTile = game.map.getMapIndexFromPosition(x,y)
+            var aimedTile = game.map.getMapIndexFromPosition(x,y)
+            if(!isAvailableTile(row = aimedTile.first, col = aimedTile.second)){
+                aimedTile = closestAvailableTile(aimedTile.first, aimedTile.second)
+            }
             currentPath = getShortestPath(currentTile, aimedTile)
-            setupPathFollowing()
+            enablePathFollowing()
         }
+    }
+
+    fun closestAvailableTile(row: Int, col: Int, factor: Int = 1) : Pair<Int,Int>{
+        return if(isAvailableTile(row = row+factor, col = col)){
+            Pair(row+factor,col)
+        } else if(isAvailableTile(row = row-factor, col = col)){
+            Pair(row-factor,col)
+        } else if(isAvailableTile(row = row, col = col+factor)){
+            Pair(row,col+factor)
+        } else if(isAvailableTile(row = row, col = col-factor)){
+            Pair(row,col-factor)
+        } else {
+            closestAvailableTile(row,col,factor+1)
+        }
+
     }
 
     fun setupPathFollowing(){
         var currentPathIndex = 0
         followingPath = setInterval(0,33){
-            Log.i("Path index","${currentPath[currentPathIndex]}")
-            Log.i("CharacterIndex","${game.map.getMapIndexFromPosition(sprite.x, sprite.y)}")
-
-            if(game.map.getMapIndexFromPosition(sprite.x, sprite.y) == currentPath[currentPathIndex]){
+            val pathToFollow = currentPath.toList()
+            if(game.map.getMapIndexFromPosition(sprite.x, sprite.y) == pathToFollow[currentPathIndex]){
                 currentPathIndex++
             }
-            if(currentPathIndex >= currentPath.size-1){
-                followingPath.cancel()
+            if(currentPathIndex >= pathToFollow.size){
+                disablePathFollowing()
+            } else {
+                val floatValue = game.map.getPositionFromMapIndex(pathToFollow[currentPathIndex].first, pathToFollow[currentPathIndex].second)
+                moveTo(floatValue.first + game.map.tileArea.w/2, floatValue.second + game.map.tileArea.h/2)
             }
-            val floatValue = game.map.getPositionFromMapIndex(currentPath[currentPathIndex].first, currentPath[currentPathIndex].second)
-            moveTo(floatValue.first + game.map.tileArea.w/2, floatValue.second + game.map.tileArea.h/2)
         }
+    }
+
+    fun disablePathFollowing(){
+        pathFollow = false
+        followingPath.cancel()
+    }
+
+    fun enablePathFollowing(){
+        pathFollow = true
+        setupPathFollowing()
     }
 
     fun getShortestPath(start: Pair<Int,Int>, end: Pair<Int,Int>) : List<Pair<Int,Int>>{
@@ -366,7 +435,7 @@ open class Character(
 
 
 
-    fun isAvailableTile(visited : MutableList<Pair<Int,Int>>, row: Int, col: Int) : Boolean{
+    fun isAvailableTile(visited : MutableList<Pair<Int,Int>> = mutableListOf(), row: Int, col: Int) : Boolean{
         val floatCoordinates = game.map.getPositionFromMapIndex(row,col)
         return inCurrentRoom(row,col) && !game.map.inForbiddenArea(floatCoordinates.first, floatCoordinates.second) && Pair(row, col) !in visited
     }
