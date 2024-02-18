@@ -1,11 +1,9 @@
 package fr.iutlens.mmi.demo.game
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -21,36 +19,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.iutlens.mmi.demo.R
-import fr.iutlens.mmi.demo.components.DialogBox
 import fr.iutlens.mmi.demo.components.DialogScreen
 import fr.iutlens.mmi.demo.game.ath.BossBar
+import fr.iutlens.mmi.demo.game.ath.Coins
 import fr.iutlens.mmi.demo.game.ath.Hearts
 import fr.iutlens.mmi.demo.game.gameplayResources.Chest
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
@@ -64,12 +54,8 @@ import fr.iutlens.mmi.demo.game.screens.ItemImage
 import fr.iutlens.mmi.demo.game.screens.MenuButton
 import fr.iutlens.mmi.demo.game.screens.MenuItem
 import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
-import fr.iutlens.mmi.demo.game.screens.cinematic.CinematicPart
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
-import fr.iutlens.mmi.demo.game.sprite.Sprite
-import fr.iutlens.mmi.demo.game.sprite.TiledArea
-import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
@@ -77,10 +63,7 @@ import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
 
@@ -315,7 +298,12 @@ open class Game(val map : Map,
             ) {
 
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    ath["hearts"]?.let { Hearts(hearts = it) }
+                    Column {
+                        ath["hearts"]?.let { Hearts(hearts = it) }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Coins(n = coins)
+                    }
+
                 }
 
                 Row(modifier = Modifier.fillMaxWidth()) {
