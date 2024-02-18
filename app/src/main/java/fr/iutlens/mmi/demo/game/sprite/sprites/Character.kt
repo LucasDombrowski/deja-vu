@@ -3,6 +3,7 @@ package fr.iutlens.mmi.demo.game.sprite.sprites
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.gameplayResources.HeartContainer
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.utils.setInterval
@@ -10,6 +11,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.LinkedList
+import java.util.Queue
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -272,13 +275,111 @@ open class Character(
             game.map.currentRoom().isOpenable()
         }
         if(this is Enemy && this is Boss){
-            game.onEnd()
             action.cancel()
+            HeartContainer().setup(sprite.x,sprite.y,game)
         }
         if(this==game.controllableCharacter!!.target){
             game.controllableCharacter!!.getClosestEnemy()
         }
         game.invalidate()
+    }
+
+    var currentPath : List<Pair<Int,Int>> = listOf()
+
+    var followingPath : Job = GlobalScope.launch {
+        return@launch
+    }
+    fun findShortestPath(x: Float, y: Float){
+        GlobalScope.launch {
+            val currentTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
+            val aimedTile = game.map.getMapIndexFromPosition(x,y)
+            currentPath = getShortestPath(currentTile, aimedTile)
+            setupPathFollowing()
+        }
+    }
+
+    fun setupPathFollowing(){
+        var currentPathIndex = 0
+        followingPath = setInterval(0,33){
+            Log.i("Path index","${currentPath[currentPathIndex]}")
+            Log.i("CharacterIndex","${game.map.getMapIndexFromPosition(sprite.x, sprite.y)}")
+
+            if(game.map.getMapIndexFromPosition(sprite.x, sprite.y) == currentPath[currentPathIndex]){
+                currentPathIndex++
+            }
+            if(currentPathIndex >= currentPath.size-1){
+                followingPath.cancel()
+            }
+            val floatValue = game.map.getPositionFromMapIndex(currentPath[currentPathIndex].first, currentPath[currentPathIndex].second)
+            moveTo(floatValue.first + game.map.tileArea.w/2, floatValue.second + game.map.tileArea.h/2)
+        }
+    }
+
+    fun getShortestPath(start: Pair<Int,Int>, end: Pair<Int,Int>) : List<Pair<Int,Int>>{
+        val ways = mutableMapOf<Int,List<List<Pair<Int,Int>>>>(0 to listOf(listOf(start)))
+        val visited = mutableListOf<Pair<Int,Int>>()
+        var currentTilesNumber = 0
+
+        fun endTileFound() : Boolean{
+            return ways.filterValues {
+                it.filter {
+                    it.contains(end)
+                }.isNotEmpty()
+            }.isNotEmpty()
+        }
+
+
+        while (!endTileFound()){
+            val list = ways[currentTilesNumber]
+            val newList = mutableListOf<List<Pair<Int,Int>>>()
+            with(list!!.iterator()){
+                forEach {
+                    val last = it.last()
+                    if(isAvailableTile(visited,last.first + 1,last.second)){
+                        newList.add(it.toList() + Pair(last.first+1, last.second))
+                    }
+                    if(isAvailableTile(visited,last.first - 1,last.second)){
+                        newList.add(it.toList() + Pair(last.first-1, last.second))
+                    }
+                    if(isAvailableTile(visited,last.first,last.second+1)){
+                        newList.add(it.toList() + Pair(last.first, last.second+1))
+                    }
+                    if(isAvailableTile(visited,last.first,last.second-1)){
+                        newList.add(it.toList() + Pair(last.first, last.second-1))
+                    }
+                    visited.add(last)
+                }
+            }
+            currentTilesNumber++
+            ways[currentTilesNumber] = newList.toList()
+        }
+
+        return ways.filterValues {
+            it.filter {
+                it.contains(end)
+            }.isNotEmpty()
+        }.values.first().filter {
+            it.contains(end)
+        }.first()
+
+    }
+
+
+
+    fun isAvailableTile(visited : MutableList<Pair<Int,Int>>, row: Int, col: Int) : Boolean{
+        val floatCoordinates = game.map.getPositionFromMapIndex(row,col)
+        return inCurrentRoom(row,col) && !game.map.inForbiddenArea(floatCoordinates.first, floatCoordinates.second) && Pair(row, col) !in visited
+    }
+    fun inCurrentRoom(row: Int, column : Int) : Boolean{
+        val minMaxIndices = game.map.currentRoom().getMinMaxIndices()
+        return row in minMaxIndices.first.first..minMaxIndices.second.first && column in minMaxIndices.first.second..minMaxIndices.second.second
+    }
+
+    fun getTileDifferences(x1: Int, y1: Int, x2: Int, y2: Int) : Pair<Int,Int>{
+        return Pair(
+            abs(x1-x2),
+            abs(y1-y2)
+        )
     }
 
 }

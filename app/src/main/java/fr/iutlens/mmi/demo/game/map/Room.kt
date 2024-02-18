@@ -330,6 +330,17 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         )
     }
 
+    fun getMinMaxIndices() : Pair<Pair<Int,Int>,Pair<Int,Int>>{
+        return Pair(
+            Pair(
+                topLeftCorner!!.first+1, topLeftCorner!!.second+1
+            ),
+            Pair(
+                bottomRightCorner!!.first-1, bottomRightCorner!!.second-1
+            )
+        )
+    }
+
     fun spawnEnemies(){
         val n = enemies.random()
         var enemy : Enemy ? = null

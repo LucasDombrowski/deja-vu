@@ -173,12 +173,12 @@ open class Game(val map : Map,
                 }
             }
             if(!targetChange){
-                controllableCharacter!!.movingBehavior(x,y)
+                controllableCharacter!!.tapMovingBehavior(x,y)
             }
         }
         onDragMove = {
             (x,y)->
-            controllableCharacter!!.movingBehavior(x,y)
+            controllableCharacter!!.dragMovingBehavior(x,y)
             movingRestriction = true
             GlobalScope.launch {
                 delay(33)
