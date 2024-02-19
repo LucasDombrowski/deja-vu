@@ -87,6 +87,14 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             temporaryMovingInteraction(x,y)
             sprite.x = x
             sprite.y = y
+            with(game.collectibleList.iterator()){
+                forEach {
+                    if(inBoundingBox(it.sprite.x, it.sprite.y)){
+                        it.collectEffect()
+                        it.destroy()
+                    }
+                }
+            }
         }
         game.invalidate()
     }

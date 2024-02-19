@@ -31,6 +31,7 @@ fun changeLevel(game: Game) : Game{
     saveMainCharacter(game)
     val level = randomLevel()
     level.onEnd = game.onEnd
+    level.coins = game.coins
     return level
 }
 

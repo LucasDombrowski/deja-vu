@@ -1,9 +1,9 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites
 
-import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
-import fr.iutlens.mmi.demo.game.gameplayResources.HeartContainer
+import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.Coin
+import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HeartContainer
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.utils.setInterval
@@ -11,8 +11,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.LinkedList
-import java.util.Queue
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -273,10 +271,11 @@ open class Character(
             smokeAnimation()
             action.cancel()
             game.map.currentRoom().isOpenable()
+            Coin(game).drop(sprite.x, sprite.y)
         }
         if(this is Enemy && this is Boss){
             action.cancel()
-            HeartContainer().setup(sprite.x,sprite.y,game)
+            HeartContainer(game).setup(sprite.x, sprite.y)
         }
         if(this==game.controllableCharacter!!.target){
             game.controllableCharacter!!.getClosestEnemy()

@@ -43,6 +43,7 @@ import fr.iutlens.mmi.demo.game.ath.BossBar
 import fr.iutlens.mmi.demo.game.ath.Coins
 import fr.iutlens.mmi.demo.game.ath.Hearts
 import fr.iutlens.mmi.demo.game.gameplayResources.Chest
+import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.Item
 import fr.iutlens.mmi.demo.game.gameplayResources.items.LessFireRateLessDamages
@@ -120,9 +121,19 @@ open class Game(val map : Map,
 
     var characterList : MutableList<Character> = mutableListOf()
 
+    var collectibleList : MutableList<Collectible> = mutableListOf()
+
     var onEnd : ()->Unit = {}
     fun copyCharacterList() : MutableList<Character>{
         return characterList.toMutableList()
+    }
+
+    fun resetCollectibles(){
+        with(collectibleList.iterator()){
+            forEach {
+                it.destroy()
+            }
+        }
     }
     /**
      * Invalidate demande une nouvelle image, en général parce que les données du jeu ont changé

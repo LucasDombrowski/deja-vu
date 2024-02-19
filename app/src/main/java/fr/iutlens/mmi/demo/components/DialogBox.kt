@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,10 +33,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.iutlens.mmi.demo.R
+import fr.iutlens.mmi.demo.ui.theme.Dogica
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -98,6 +102,7 @@ fun DialogBox(text : String, boxWidth : Double, boxHeight: Double){
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun WritingText(text: String, stopWriting : ()->Unit){
@@ -121,7 +126,6 @@ fun WritingText(text: String, stopWriting : ()->Unit){
                 previousText = text
                 currentText = previousText[0].toString()
             }
-
         }
 
         if (writing == null) {
@@ -140,7 +144,10 @@ fun WritingText(text: String, stopWriting : ()->Unit){
             text = currentText,
             color = Color.Black,
             textAlign = TextAlign.Left,
-            fontSize = fontSize
+            fontSize = fontSize,
+            style = TextStyle(
+                fontFamily = Dogica,
+            )
         )
     }
 }
@@ -166,7 +173,8 @@ fun WritingAnimation(images : List<Bitmap>, writing: Boolean, modifier: Modifier
     Image(bitmap = images[imageIndex].asImageBitmap(),
         contentDescription = "Writing",
         contentScale = ContentScale.Fit,
-        modifier = modifier)
+        modifier = modifier,
+        )
 
 
 }
