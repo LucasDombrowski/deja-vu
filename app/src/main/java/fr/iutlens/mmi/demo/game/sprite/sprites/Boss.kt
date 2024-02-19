@@ -2,6 +2,7 @@ package fr.iutlens.mmi.demo.game.sprite.sprites
 
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -36,15 +37,20 @@ open class Boss(
     target,
     fireRate,
     action){
-
     override fun hit(damages: Float, knockback: Float, direction: String){
         healthDown(damages, 0f, direction)
         GlobalScope.launch {
-            sprite.semiRedColor()
+            sprite.semiWhiteColor()
             delay(100)
-            sprite.normalColor()
+            sprite.permanentColor()
+            if(filledHeart()<=hearts.size/2 && filledHeart()>hearts.size/4){
+                sprite.midLifeColor()
+            } else if(filledHeart()<=hearts.size/4){
+                sprite.lowLifeColor()
+            }
         }
         refreshHeathBar()
+
     }
 
     fun refreshHeathBar(){
@@ -54,6 +60,15 @@ open class Boss(
         }
         game.ath["boss"] = newHearts
     }
+
+    open fun startCinematic() : Cinematic{
+        return Cinematic(game = game)
+    }
+
+    open fun endCinematic() : Cinematic{
+        return Cinematic(game = game)
+    }
+
 
 
 }

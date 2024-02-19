@@ -9,10 +9,5 @@ import fr.iutlens.mmi.demo.game.Game
 
 @Composable
 fun Level(game: Game){
-    game.View(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.Black))
-    game.Ath()
-    game.Item()
-    game.Menu()
+    game.GameScreen()
 }

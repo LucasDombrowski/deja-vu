@@ -10,15 +10,15 @@ import java.util.Queue
 import kotlin.reflect.KClass
 import kotlin.math.log
 
-open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false) {
+open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false, val enemies : IntRange) {
 
     var composition : String = create().trimIndent()
     var topLeftCorner : Pair<Int,Int> ?= null
     var bottomRightCorner : Pair<Int,Int> ?= null
-    var enemyList : MutableList<Enemy> ?= null
+    var enemyList : MutableList<Enemy> = mutableListOf()
 
     open fun copy() : Room{
-        return Room(row, col, map, enter, exit, open)
+        return Room(row, col, map, enter, exit, open, enemies)
     }
 
     fun randomTile(): Char {
@@ -128,7 +128,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
 
 
-        if(enter!=null && exit!=null) {
+        if(enter!=null || exit!=null) {
             val result = isPathAvailable(mapChars)
             if (!result) {
                 return create()
@@ -143,7 +143,10 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         val visited = mutableSetOf<Pair<Int, Int>>()
 
         val start = findStartPosition(map)
-        val end = findEndPosition(map)
+        val end = when(exit){
+            null->start
+            else->findEndPosition(map)
+        }
 
         if (start == null || end == null) {
             return false
@@ -327,27 +330,46 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         )
     }
 
+    fun getMinMaxIndices() : Pair<Pair<Int,Int>,Pair<Int,Int>>{
+        return Pair(
+            Pair(
+                topLeftCorner!!.first+1, topLeftCorner!!.second+1
+            ),
+            Pair(
+                bottomRightCorner!!.first-1, bottomRightCorner!!.second-1
+            )
+        )
+    }
+
     fun spawnEnemies(){
-        val list = mutableListOf<Enemy>()
-        repeat((3..5).random()){
-            val enemy = spawnEnemy()
-            if(enemy is Enemy){
-                list.add(enemy)
+        val n = enemies.random()
+        var enemy : Enemy ? = null
+        repeat(n){
+            val newEnemy = spawnEnemy()
+            if(newEnemy!=null){
+                enemy = newEnemy
             }
         }
-        enemyList = list
+        with(enemy!!.game.characterList.iterator()){
+            forEach {
+                if(it!=null && it is Enemy){
+                    enemyList.add(it)
+                }
+            }
+        }
     }
     fun spawnEnemy() : Enemy ?{
         val enemy = map.enemies.random().copy()
         val minMaxCoordinates = getMinMaxCoordinates()
         val xVal = (minMaxCoordinates.first.first + Math.random() * (minMaxCoordinates.second.first - minMaxCoordinates.first.first)).toFloat()
         val yVal = (minMaxCoordinates.first.second + Math.random() * (minMaxCoordinates.second.second - minMaxCoordinates.first.second)).toFloat()
-        if(map.inForbiddenArea(xVal,yVal)){
+        return if(map.inForbiddenArea(xVal,yVal)){
             spawnEnemy()
-            return null
+            null
         } else {
             enemy.spawn(xVal,yVal)
-            return enemy
+            enemy.smokeAnimation()
+            enemy
         }
     }
 
@@ -362,11 +384,34 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         map.reload()
     }
 
-    fun checkEnemyList(){
-        if(enemyList!!.isEmpty()){
+    fun enemiesAlive() : Boolean{
+        for(enemy in enemyList){
+            if(enemy.alive){
+                return true
+            }
+        }
+        return false
+    }
+
+    fun isOpenable(){
+        if(!enemiesAlive()){
             open()
+            enemyList = mutableListOf()
         }
     }
+
+    fun close(){
+        open = false
+        composition = when(exit){
+            "top"->composition.replace("U","O")
+            "left"->composition.replace("W","Q")
+            "bottom"->composition.replace("V","P")
+            else->composition.replace("X","R")
+        }
+        map.reload()
+    }
+
+
 
 
 }
