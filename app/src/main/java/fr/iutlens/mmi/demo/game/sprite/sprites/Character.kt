@@ -1,8 +1,9 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites
 
-import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.Coin
+import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HeartContainer
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.utils.setInterval
@@ -45,14 +46,17 @@ open class Character(
     val characterAnimation : Job = setInterval(0, animationDelay){
         GlobalScope.launch {
             while (game.pause){
+                currentAnimationSequenceIndex = 0
                 delay(animationDelay)
             }
             if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1){
                 currentAnimationSequenceIndex = 0
+                sprite.ndx = currentAnimationSequence[0]
             } else {
                 currentAnimationSequenceIndex ++
+                sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
             }
-            sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
+
         }
 
     }
@@ -144,6 +148,9 @@ open class Character(
                             nextX == sprite.x && nextY < sprite.y -> "top"
                             else -> "bottom"
                         }
+                        if(previousDirection!=currentDirection){
+                            currentAnimationSequenceIndex = 0
+                        }
                         currentAnimationSequence = when(currentDirection){
                             "left"->leftAnimationSequence
                             "right"->rightAnimationSequence
@@ -151,6 +158,7 @@ open class Character(
                             "bottom"->bottomAnimationSequence
                             else->basicAnimationSequence
                         }
+
                         changePos(nextX, nextY)
                         delay(33)
                         moveTo(x, y)
@@ -263,15 +271,183 @@ open class Character(
             smokeAnimation()
             action.cancel()
             game.map.currentRoom().isOpenable()
+            Coin(game).drop(sprite.x, sprite.y)
         }
         if(this is Enemy && this is Boss){
-            game.onEnd()
             action.cancel()
+            HeartContainer(game).setup(sprite.x, sprite.y)
         }
         if(this==game.controllableCharacter!!.target){
             game.controllableCharacter!!.getClosestEnemy()
         }
         game.invalidate()
+    }
+
+    var currentPath : List<Pair<Int,Int>> = listOf()
+
+    var followingPath : Job = GlobalScope.launch {
+        return@launch
+    }
+    var pathFollow : Boolean = false
+
+    fun isPathFree(x: Float, y: Float) : Boolean{
+        val startTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
+        val aimedTile = game.map.getMapIndexFromPosition(x,y)
+        var startCol = when{
+            sprite.x<x->startTile.second
+            else->aimedTile.second
+        }
+        var startRow = when{
+            sprite.y<y->startTile.first
+            else->aimedTile.first
+        }
+        var endCol = when{
+            sprite.x<x->aimedTile.second
+            else->startTile.second
+        }
+        var endRow = when{
+            sprite.y<y->aimedTile.first
+            else->startTile.first
+        }
+        val startPosition = game.map.currentRoom().getPosition(startRow, startCol)
+        val endPosition = game.map.currentRoom().getPosition(endRow, endCol)
+        val roomList = game.map.currentRoom().toList()
+        for(i in startPosition.first..endPosition.first){
+            for(j in startPosition.second..endPosition.second){
+                if(roomList[i][j] !in game.map.authorizedTiles){
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    fun setupPath(x: Float,y: Float){
+        disablePathFollowing()
+        if(isPathFree(x,y)){
+            moveTo(x,y)
+        } else {
+            findShortestPath(x,y)
+        }
+    }
+    fun findShortestPath(x: Float, y: Float){
+        GlobalScope.launch {
+            val currentTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
+            var aimedTile = game.map.getMapIndexFromPosition(x,y)
+            if(!isAvailableTile(row = aimedTile.first, col = aimedTile.second)){
+                aimedTile = closestAvailableTile(aimedTile.first, aimedTile.second)
+            }
+            currentPath = getShortestPath(currentTile, aimedTile)
+            enablePathFollowing()
+        }
+    }
+
+    fun closestAvailableTile(row: Int, col: Int, factor: Int = 1) : Pair<Int,Int>{
+        return if(isAvailableTile(row = row+factor, col = col)){
+            Pair(row+factor,col)
+        } else if(isAvailableTile(row = row-factor, col = col)){
+            Pair(row-factor,col)
+        } else if(isAvailableTile(row = row, col = col+factor)){
+            Pair(row,col+factor)
+        } else if(isAvailableTile(row = row, col = col-factor)){
+            Pair(row,col-factor)
+        } else {
+            closestAvailableTile(row,col,factor+1)
+        }
+
+    }
+
+    fun setupPathFollowing(){
+        var currentPathIndex = 0
+        followingPath = setInterval(0,33){
+            val pathToFollow = currentPath.toList()
+            if(game.map.getMapIndexFromPosition(sprite.x, sprite.y) == pathToFollow[currentPathIndex]){
+                currentPathIndex++
+            }
+            if(currentPathIndex >= pathToFollow.size){
+                disablePathFollowing()
+            } else {
+                val floatValue = game.map.getPositionFromMapIndex(pathToFollow[currentPathIndex].first, pathToFollow[currentPathIndex].second)
+                moveTo(floatValue.first + game.map.tileArea.w/2, floatValue.second + game.map.tileArea.h/2)
+            }
+        }
+    }
+
+    fun disablePathFollowing(){
+        pathFollow = false
+        followingPath.cancel()
+    }
+
+    fun enablePathFollowing(){
+        pathFollow = true
+        setupPathFollowing()
+    }
+
+    fun getShortestPath(start: Pair<Int,Int>, end: Pair<Int,Int>) : List<Pair<Int,Int>>{
+        val ways = mutableMapOf<Int,List<List<Pair<Int,Int>>>>(0 to listOf(listOf(start)))
+        val visited = mutableListOf<Pair<Int,Int>>()
+        var currentTilesNumber = 0
+
+        fun endTileFound() : Boolean{
+            return ways.filterValues {
+                it.filter {
+                    it.contains(end)
+                }.isNotEmpty()
+            }.isNotEmpty()
+        }
+
+
+        while (!endTileFound()){
+            val list = ways[currentTilesNumber]
+            val newList = mutableListOf<List<Pair<Int,Int>>>()
+            with(list!!.iterator()){
+                forEach {
+                    val last = it.last()
+                    if(isAvailableTile(visited,last.first + 1,last.second)){
+                        newList.add(it.toList() + Pair(last.first+1, last.second))
+                    }
+                    if(isAvailableTile(visited,last.first - 1,last.second)){
+                        newList.add(it.toList() + Pair(last.first-1, last.second))
+                    }
+                    if(isAvailableTile(visited,last.first,last.second+1)){
+                        newList.add(it.toList() + Pair(last.first, last.second+1))
+                    }
+                    if(isAvailableTile(visited,last.first,last.second-1)){
+                        newList.add(it.toList() + Pair(last.first, last.second-1))
+                    }
+                    visited.add(last)
+                }
+            }
+            currentTilesNumber++
+            ways[currentTilesNumber] = newList.toList()
+        }
+
+        return ways.filterValues {
+            it.filter {
+                it.contains(end)
+            }.isNotEmpty()
+        }.values.first().filter {
+            it.contains(end)
+        }.first()
+
+    }
+
+
+
+    fun isAvailableTile(visited : MutableList<Pair<Int,Int>> = mutableListOf(), row: Int, col: Int) : Boolean{
+        val floatCoordinates = game.map.getPositionFromMapIndex(row,col)
+        return inCurrentRoom(row,col) && !game.map.inForbiddenArea(floatCoordinates.first, floatCoordinates.second) && Pair(row, col) !in visited
+    }
+    fun inCurrentRoom(row: Int, column : Int) : Boolean{
+        val minMaxIndices = game.map.currentRoom().getMinMaxIndices()
+        return row in minMaxIndices.first.first..minMaxIndices.second.first && column in minMaxIndices.first.second..minMaxIndices.second.second
+    }
+
+    fun getTileDifferences(x1: Int, y1: Int, x2: Int, y2: Int) : Pair<Int,Int>{
+        return Pair(
+            abs(x1-x2),
+            abs(y1-y2)
+        )
     }
 
 }

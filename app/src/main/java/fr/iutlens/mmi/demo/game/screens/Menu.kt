@@ -1,5 +1,7 @@
 package fr.iutlens.mmi.demo.game.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,9 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import fr.iutlens.mmi.demo.ui.theme.Dogica
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun MenuButton(text: String, action : ()->Unit){
     Text(text = text,
@@ -27,7 +33,11 @@ fun MenuButton(text: String, action : ()->Unit){
             }
             .background(Color.White)
             .padding(3.dp, 5.dp)
-            .widthIn(min = 150.dp, max = 150.dp))
+            .widthIn(min = 150.dp, max = 150.dp),
+        style = TextStyle(
+            fontFamily = Dogica,
+            fontWeight = FontWeight.Bold
+        ))
 }
 
 @Composable

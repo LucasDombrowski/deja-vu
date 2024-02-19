@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites.characters
 
 import android.util.Log
+import androidx.compose.ui.geometry.Offset
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
@@ -48,11 +49,22 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         }
     }
 
+    var temporaryMovingInteraction : (x: Float, y: Float) -> Unit = {
+        x, y ->  
+    }
+
     var targetFollow : Job ?= null
 
 
-    var movingBehavior : (x: Float, y:Float)->Unit = {
-        x,y->moveTo(x,y)
+    var tapMovingBehavior : (x: Float, y:Float)->Unit = {
+        x,y->
+        setupPath(x,y)
+    }
+
+    var dragMovingBehavior : (x: Float, y:Float)->Unit = {
+            x,y->
+            disablePathFollowing()
+            moveTo(x,y)
     }
 
     override fun changePos(x: Float, y: Float){
@@ -66,13 +78,23 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 restart()
             }
         } else if(game.map.inOpenDoor(x,y) && game.map.currentRoom().open){
+            disablePathFollowing()
             game.map.currentRoom().close()
             stun()
             game.map.nextRoom().placeCharacter(game)
             game.nextRoom()
         } else {
+            temporaryMovingInteraction(x,y)
             sprite.x = x
             sprite.y = y
+            with(game.collectibleList.iterator()){
+                forEach {
+                    if(inBoundingBox(it.sprite.x, it.sprite.y)){
+                        it.collectEffect()
+                        it.destroy()
+                    }
+                }
+            }
         }
         game.invalidate()
     }
@@ -109,6 +131,10 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         for(heart in hearts){
             newHearts.add(heart.copy())
         }
+        newHearts.sortBy {
+            it.permanent
+        }
+        hearts = newHearts
         game.ath["hearts"] = newHearts
     }
 

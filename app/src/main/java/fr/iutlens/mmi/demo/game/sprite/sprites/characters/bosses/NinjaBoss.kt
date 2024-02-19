@@ -46,6 +46,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     }
 
     fun randomPattern(){
+        disablePathFollowing()
         action.cancel()
         if(alive) {
             if (countdown != null) {
@@ -70,23 +71,47 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
 
     }
     fun chasePlayer(){
+        disablePathFollowing()
         action = setInterval(0,33){
             moveTo(target!!.sprite.x, target!!.sprite.y)
             if(target!!.inBoundingBox(sprite.x, sprite.y)){
                 target!!.healthDown(1f, 0.2f, currentDirection)
                 randomPattern()
+            } else if(!isPathFree(target!!.sprite.x, target!!.sprite.y)){
+                followPlayer()
             }
         }
         patternCountdown()
     }
 
+    fun followPlayer(){
+        action.cancel()
+        setupPath(target!!.sprite.x, target!!.sprite.y)
+        pathFollow = true
+        action = setInterval(0,100){
+            if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
+                randomPattern()
+            }
+        }
+    }
+
     fun aimPlayer(){
+        disablePathFollowing()
         if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.realRange(game)){
             action = setInterval(0,33){
                 moveTo(target!!.sprite.x, target!!.sprite.y)
                 if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)<projectile.realRange(game)){
                     action.cancel()
                     aimPlayer()
+                } else if(!isPathFree(target!!.sprite.x, target!!.sprite.y)){
+                    action.cancel()
+                    setupPath(target!!.sprite.x, target!!.sprite.y)
+                    pathFollow = true
+                    action = setInterval(0,100){
+                        if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
+                            randomPattern()
+                        }
+                    }
                 }
             }
         } else {
@@ -115,6 +140,12 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
 
     fun teleportToPlayer(){
         GlobalScope.launch {
+            sprite.setTransparencyLevel(0.75f)
+            delay(33)
+            sprite.setTransparencyLevel(0.5f)
+            delay(33)
+            sprite.setTransparencyLevel(0.25f)
+            delay(33)
             sprite.invisible()
             val xPos = when (Math.random()) {
                 in 0f..0.5f -> target!!.sprite.x - 50f
@@ -130,6 +161,13 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
             }
             changePos(xPos, yPos)
             sprite.visible()
+            sprite.setTransparencyLevel(0.25f)
+            delay(15)
+            sprite.setTransparencyLevel(0.5f)
+            delay(15)
+            sprite.setTransparencyLevel(0.75f)
+            delay(15)
+            sprite.setTransparencyLevel(1f)
             chasePlayer()
         }
 

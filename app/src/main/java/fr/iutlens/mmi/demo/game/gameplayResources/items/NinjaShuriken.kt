@@ -9,7 +9,7 @@ import kotlin.math.PI
 class NinjaShuriken() : Item(
     image = R.drawable.sandal,
     name = "Shuriken Ninja",
-    description = "Blablabla",
+    description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque pulvinar tempor neque at eleifend. Nam odio nunc, placerat volutpat tempor non, iaculis nec lectus. Curabitur in nulla fermentum, aliquam velit eu, mattis ipsum. Suspendisse eget lectus ex. Nulla sed nisl consequat, sodales nulla eget, blandit nulla. Nunc eget rutrum est, nec euismod leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque pulvinar tempor neque at eleifend. Nam odio nunc, placerat volutpat tempor non, iaculis nec lectus. Curabitur in nulla fermentum, aliquam velit eu, mattis ipsum. Suspendisse eget lectus ex. Nulla sed nisl consequat, sodales nulla eget, blandit nulla. Nunc eget rutrum est, nec euismod leo.",
     effects = {
         game ->  game.controllableCharacter!!.directProjectileBehaviors.add {
         val center = getCenter(game.controllableCharacter!!.target!!.sprite.x, game.controllableCharacter!!.target!!.sprite.y, game.controllableCharacter!!.sprite.x, game.controllableCharacter!!.sprite.y)

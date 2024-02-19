@@ -46,6 +46,8 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
     private val h2 = spriteSheet.spriteHeight / 2f
 
     var permanentColor = colorFilter
+
+    var colorMatrix = ColorMatrix()
     override fun paint(drawScope: DrawScope, elapsed: Long) =
         drawScope.withTransform({
             scale(scaleX,scaleY)
@@ -90,21 +92,23 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
     }
 
     fun midLifeColor(){
-        colorFilter = ColorFilter.colorMatrix(ColorMatrix(floatArrayOf(
+        colorMatrix = ColorMatrix(floatArrayOf(
             1f,0f,0f,0f,0f,
             0f,1f,0f,0f,0f,
             0f,0f,0.5f,0f,0f,
             0f,0f,0f,1f,0f
-        )))
+        ))
+        colorFilter = ColorFilter.colorMatrix(colorMatrix)
         makeCurrentColorPermanent()
     }
     fun lowLifeColor(){
-        colorFilter = ColorFilter.colorMatrix(ColorMatrix(floatArrayOf(
+        colorMatrix = ColorMatrix(floatArrayOf(
             1f,0f,0f,0f,0f,
             0f,0.5f,0f,0f,0f,
             0f,0f,0.5f,0f,0f,
             0f,0f,0f,1f,0f
-        )))
+        ))
+        colorFilter = ColorFilter.colorMatrix(colorMatrix)
         makeCurrentColorPermanent()
     }
 
@@ -114,6 +118,11 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
 
     fun permanentColor(){
         colorFilter = permanentColor
+    }
+
+    fun setTransparencyLevel(n: Float){
+        colorMatrix.values[18] = 1f*n
+        colorFilter = ColorFilter.colorMatrix(colorMatrix)
     }
 
 //rectangle occuppé par le sprite

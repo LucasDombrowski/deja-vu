@@ -39,6 +39,7 @@ class Camera(val game: Game) {
                 delay(33)
                 moveTo(x,y)
             } else {
+                game.resetCollectibles()
                 game.controllableCharacter!!.restart()
                 delay(1000)
                 if(game.map.currentRoom() is BasicRoom){

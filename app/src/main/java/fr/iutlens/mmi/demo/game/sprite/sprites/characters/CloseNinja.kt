@@ -33,12 +33,27 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
     }
 
     fun attackPlayer(damages: Float, knockback: Float){
+        disablePathFollowing()
         action.cancel()
         action = setInterval(0,100){
             if(!target!!.inBoundingBox(sprite.x,sprite.y)) {
                 moveTo(target!!.sprite.x, target!!.sprite.y)
+                if(!isPathFree(target!!.sprite.x, target!!.sprite.y)){
+                    followPlayer()
+                }
             } else {
                 target!!.healthDown(damages, knockback, currentDirection)
+            }
+        }
+    }
+
+    fun followPlayer(){
+        action.cancel()
+        setupPath(target!!.sprite.x, target!!.sprite.y)
+        pathFollow = true
+        action = setInterval(0,100){
+            if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
+                attackPlayer(0.5f, 0.2f)
             }
         }
     }

@@ -14,23 +14,19 @@ class Chest(val itemList: List<Item>) {
 
     val sprite : BasicSprite = BasicSprite(R.drawable.treasure_chest,0f,0f)
 
-    var openable : Job = GlobalScope.launch {
-        return@launch
-    }
     fun open(game: Game){
-        openable.cancel()
-        game.controllableCharacter!!.stun()
+        game.controllableCharacter!!.temporaryMovingInteraction = {
+            x, y ->
+        }
+        game.pause = true
         openSprite()
         val item = itemList.random()
         item.effects(game)
         game.controllableCharacter!!.items.add(item)
+        game.item["description"] = item.description
         game.item["image"] = item.image
         game.item["name"] = item.name
-        game.item["description"] = item.description
         game.item["show"] = true
-        openable = GlobalScope.launch {
-            return@launch
-        }
     }
 
     fun openSprite(){
@@ -41,14 +37,19 @@ class Chest(val itemList: List<Item>) {
         sprite.ndx = 0
     }
 
+    fun setCharacterInteraction(game: Game) : (x:Float, y:Float)->Unit{
+        return {
+                x, y ->
+                if(x in sprite.boundingBox.left..sprite.boundingBox.right && y in sprite.boundingBox.top..sprite.boundingBox.bottom){
+                    open(game)
+                }
+        }
+    }
+
     fun setup(x: Float, y:Float, game: Game){
         sprite.x = x
         sprite.y = y
         game.addSprite(sprite)
-        openable = setInterval(0,33){
-            if(game.controllableCharacter!!.inBoundingBox(sprite.x,sprite.y)){
-                open(game);
-            }
-        }
+        game.controllableCharacter!!.temporaryMovingInteraction = setCharacterInteraction(game)
     }
 }

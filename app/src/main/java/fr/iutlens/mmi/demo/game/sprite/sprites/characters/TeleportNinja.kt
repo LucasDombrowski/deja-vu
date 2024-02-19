@@ -5,6 +5,7 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
+import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,12 +32,19 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
         }
     }
     fun pattern() {
+        disablePathFollowing()
         GlobalScope.launch {
             while(game.pause){
                 delay(33)
             }
             if(alive) {
                 if (!chasing) {
+                    sprite.setTransparencyLevel(0.75f)
+                    delay(33)
+                    sprite.setTransparencyLevel(0.5f)
+                    delay(33)
+                    sprite.setTransparencyLevel(0.25f)
+                    delay(33)
                     sprite.invisible()
                     val xPos = when (Math.random()) {
                         in 0f..0.5f -> target!!.sprite.x - 50f
@@ -50,6 +58,13 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                     delay(2000)
                     changePos(xPos, yPos)
                     sprite.visible()
+                    sprite.setTransparencyLevel(0.25f)
+                    delay(15)
+                    sprite.setTransparencyLevel(0.5f)
+                    delay(15)
+                    sprite.setTransparencyLevel(0.75f)
+                    delay(15)
+                    sprite.setTransparencyLevel(1f)
                     action = GlobalScope.launch {
                         pattern()
                     }
@@ -62,11 +77,16 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                         pattern()
                     }
                 } else {
-                    moveTo(target!!.sprite.x, target!!.sprite.y)
-                    action = GlobalScope.launch {
-                        delay(100)
-                        pattern()
+                    if(isPathFree(target!!.sprite.x, target!!.sprite.y)){
+                        moveTo(target!!.sprite.x, target!!.sprite.y)
+                        action = GlobalScope.launch {
+                            delay(100)
+                            pattern()
+                        }
+                    } else {
+                        followPlayer()
                     }
+
                 }
             }
         }
@@ -75,6 +95,18 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
         val newCharacter = TeleportNinja(sprite.x, sprite.y, game)
         newCharacter.sprite = newCharacter.sprite.copy()
         return newCharacter
+    }
+
+    fun followPlayer(){
+        action.cancel()
+        setupPath(target!!.sprite.x, target!!.sprite.y)
+        pathFollow = true
+        action = setInterval(0,100){
+            if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
+                action.cancel()
+                pattern()
+            }
+        }
     }
 
 }

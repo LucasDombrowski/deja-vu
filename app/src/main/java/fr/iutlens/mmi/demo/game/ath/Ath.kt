@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -69,10 +72,26 @@ fun BossBar(hearts : MutableList<Heart>){
         Box(modifier = Modifier
             .fillMaxWidth(0.25f)
             .fillMaxHeight()){
-            Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().background(Color(0,0,0,128)))
-            Box(modifier = Modifier.fillMaxWidth(currentHealth/maxHealth).fillMaxHeight().background(Color.Red))
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(Color(0, 0, 0, 128)))
+            Box(modifier = Modifier
+                .fillMaxWidth(currentHealth / maxHealth)
+                .fillMaxHeight()
+                .background(Color.Red))
         }
 
+    }
+}
+
+@Composable
+fun Coins(n: MutableState<Int>){
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(modifier = Modifier.width(48.dp).height(48.dp)){
+            Image(painter = painterResource(id = R.drawable.coin), contentDescription = "Pièce", contentScale = ContentScale.Fit)
+        }
+        Text(text = n.value.toString(), color = Color.White)
     }
 }
 
