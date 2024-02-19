@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +40,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,6 +71,7 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
+import fr.iutlens.mmi.demo.ui.theme.Dogica
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -304,6 +308,10 @@ open class Game(val map : Map,
     var coins = mutableStateOf(0)
     @Composable
     fun Ath(){
+        val configuration = LocalConfiguration.current
+        val screenWidth = with(configuration){
+            this.screenWidthDp
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -328,14 +336,14 @@ open class Game(val map : Map,
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Box(modifier = Modifier
-                        .width(50.dp)
-                        .height(50.dp)
+                        .width((screenWidth/15).dp)
+                        .aspectRatio(1f)
                         .clickable {
                             menu["open"] = true
                             pause = true;
                         }
                         .background(Color.White, shape = CircleShape)
-                        .padding(5.dp)
+                        .padding((screenWidth/150).dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.home_icon),
@@ -363,7 +371,7 @@ open class Game(val map : Map,
             this.screenWidthDp
         }
         val fontSize = with(density){
-            (screenWidth/30).sp
+            (screenWidth/50).sp
         }
         controllableCharacter!!.currentAnimationSequenceIndex = 0
         DialogScreen(text = item["description"] as String, onEnd = {
@@ -378,7 +386,11 @@ open class Game(val map : Map,
                 Text(
                     text = item["name"] as String,
                     color = Color.White,
-                    fontSize = fontSize
+                    fontSize = fontSize,
+                    style = TextStyle(
+                        fontFamily = Dogica,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
             }
             Spacer(modifier = Modifier.height(30.dp))

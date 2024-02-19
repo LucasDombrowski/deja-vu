@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,8 +18,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ItemImage(id: Any, imageDescription: Any, size: Dp){
     Box(
-        modifier = Modifier.width(size).aspectRatio(1f),
-        contentAlignment = Alignment.BottomEnd
+        modifier = Modifier.width(size).aspectRatio(1f).offset(y = (size/10)),
+        contentAlignment = Alignment.BottomEnd,
     ){
         Image(painter = painterResource(id = id as Int), contentDescription = imageDescription as String, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxWidth())
     }

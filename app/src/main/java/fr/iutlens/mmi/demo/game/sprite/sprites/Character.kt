@@ -322,10 +322,12 @@ open class Character(
 
     fun setupPath(x: Float,y: Float){
         disablePathFollowing()
-        if(isPathFree(x,y)){
-            moveTo(x,y)
-        } else {
-            findShortestPath(x,y)
+        if(!game.pause) {
+            if (isPathFree(x, y)) {
+                moveTo(x, y)
+            } else {
+                findShortestPath(x, y)
+            }
         }
     }
     fun findShortestPath(x: Float, y: Float){

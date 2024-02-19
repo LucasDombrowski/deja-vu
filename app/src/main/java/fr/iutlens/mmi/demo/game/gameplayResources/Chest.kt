@@ -21,12 +21,7 @@ class Chest(val itemList: List<Item>) {
         game.pause = true
         openSprite()
         val item = itemList.random()
-        item.effects(game)
-        game.controllableCharacter!!.items.add(item)
-        game.item["description"] = item.description
-        game.item["image"] = item.image
-        game.item["name"] = item.name
-        game.item["show"] = true
+        item.get(game)
     }
 
     fun openSprite(){
