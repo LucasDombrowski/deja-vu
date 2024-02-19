@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites
 
+import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.Coin
@@ -13,6 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.round
+import kotlin.reflect.typeOf
 
 
 open class Character(
@@ -45,11 +47,7 @@ open class Character(
     var currentAnimationSequenceIndex : Int = 0
     val characterAnimation : Job = setInterval(0, animationDelay){
         GlobalScope.launch {
-            while (game.pause){
-                currentAnimationSequenceIndex = 0
-                delay(animationDelay)
-            }
-            if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1){
+            if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1 || game.pause){
                 currentAnimationSequenceIndex = 0
                 sprite.ndx = currentAnimationSequence[0]
             } else {

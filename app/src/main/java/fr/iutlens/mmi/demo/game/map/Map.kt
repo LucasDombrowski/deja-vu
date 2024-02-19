@@ -200,7 +200,6 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             }
         }
         rooms = roomList.toSortedMap().values.toList()
-        Log.i("test Rooms", "$rooms")
 
         for(i in 0..<roomSequence!!.size){
             when{

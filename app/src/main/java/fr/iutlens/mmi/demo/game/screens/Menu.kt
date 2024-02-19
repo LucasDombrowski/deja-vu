@@ -33,7 +33,7 @@ fun MenuButton(text: String, action : ()->Unit){
             }
             .background(Color.White)
             .padding(3.dp, 5.dp)
-            .widthIn(min = 150.dp, max = 150.dp),
+            .width(200.dp),
         style = TextStyle(
             fontFamily = Dogica,
             fontWeight = FontWeight.Bold
