@@ -19,7 +19,7 @@ import kotlin.reflect.KClass
 class Test : Game(
     map = Map(
         roomInterval = 5..7,
-        drawable = R.drawable.decor_test,
+        drawable = R.drawable.decor,
         treasureRooms = 1
     )
 ) {
