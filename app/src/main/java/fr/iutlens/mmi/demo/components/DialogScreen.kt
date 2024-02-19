@@ -59,14 +59,23 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
         return (5 * lineWidth).toInt()
     }
 
-    fun getFirstSpace(text: String, index: Int): Int {
-        return text.indexOf("", index)
+    fun splitChars() : List<Char>{
+        return listOf<Char>('!','.',',','?',':',';')
+    }
+
+    fun getFirstSplit(text: String, index: Int): Int {
+        for(i in index..<text.length){
+            if(text[i] in splitChars()){
+                return i
+            }
+        }
+        return -1
     }
 
     fun getNextWordIndex(text: String, index: Int): Int {
-        val firstSpace = getFirstSpace(text, index)
-        for (i in firstSpace..<text.length) {
-            if (text[i].toString() != " ") {
+        val firstSplit = getFirstSplit(text, index)
+        for (i in firstSplit..<text.length) {
+            if (text[i] !in splitChars() && text[i]!=' ') {
                 return i
             }
         }
@@ -79,6 +88,7 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
         if(textPart.length<=getMaxChars()){
             textSequence.add(textPart)
         } else {
+            Log.i("Max chars","${getMaxChars()}")
             var endIndex = getNextWordIndex(textPart, getMaxChars()-1)
             while (endIndex<textPart.length){
                 textSequence.add(textPart.substring(0,endIndex))

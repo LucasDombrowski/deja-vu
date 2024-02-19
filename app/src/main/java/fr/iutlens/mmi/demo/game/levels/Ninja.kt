@@ -49,6 +49,12 @@ class Ninja : Game(
                 }
             }
         }
+        val chest = Chest(listOf(NinjaScarf()))
+        chest.setup(
+            map.currentRoom().getRoomCenter().first,
+            map.currentRoom().getRoomCenter().second,
+            this
+        )
     }
 
     override fun copy() : Ninja{
