@@ -65,6 +65,7 @@ import fr.iutlens.mmi.demo.game.screens.MenuItem
 import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
+import fr.iutlens.mmi.demo.game.sprite.Sprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
@@ -202,7 +203,7 @@ open class Game(val map : Map,
         characterList.remove(character)
     }
 
-    fun addSprite(sprite: BasicSprite){
+    fun addSprite(sprite: Sprite){
         spriteList.add(sprite)
     }
 
