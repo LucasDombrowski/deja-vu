@@ -11,6 +11,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaBoots
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken
 import fr.iutlens.mmi.demo.game.map.Map
+import fr.iutlens.mmi.demo.game.sprite.ImageSprite
 import fr.iutlens.mmi.demo.game.sprite.TextSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.Buddy
@@ -52,17 +53,6 @@ class Ninja : Game(
                 }
             }
         }
-        addSprite(
-            TextSprite(
-                "Test",
-                50f,
-                Color.White,
-                false,
-                map.currentRoom().getRoomCenter().first,
-                map.currentRoom().getRoomCenter().second
-            )
-        )
-
     }
 
     override fun copy() : Ninja{
