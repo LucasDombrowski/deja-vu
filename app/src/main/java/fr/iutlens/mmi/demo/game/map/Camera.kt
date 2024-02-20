@@ -4,6 +4,7 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
+import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -47,6 +48,9 @@ class Camera(val game: Game) {
                 }
                 if(game.map.currentRoom() is BossRoom){
                     game.spawnBoss()
+                }
+                if(game.map.currentRoom() is ShopRoom){
+                    (game.map.currentRoom() as ShopRoom).launchCinematic(game)
                 }
                 game.controllableCharacter!!.getClosestEnemy()
             }

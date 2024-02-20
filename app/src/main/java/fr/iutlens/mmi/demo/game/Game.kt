@@ -58,6 +58,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.LessFireRateLessDamages
 import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
 import fr.iutlens.mmi.demo.game.map.Camera
 import fr.iutlens.mmi.demo.game.map.Map
+import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
 import fr.iutlens.mmi.demo.game.screens.ItemImage
 import fr.iutlens.mmi.demo.game.screens.MenuButton
@@ -205,10 +206,15 @@ open class Game(val map : Map,
 
     fun addSprite(sprite: Sprite){
         spriteList.add(sprite)
+        spriteList.sortBy {
+            it == controllableCharacter!!.sprite
+        }
     }
 
-    fun deleteSprite(sprite : BasicSprite){
-        sprite.invisible()
+    fun deleteSprite(sprite : Sprite){
+        if(sprite is BasicSprite) {
+            sprite.invisible()
+        }
         spriteList.remove(sprite)
     }
     fun switchRoom(ndx : Int){
@@ -226,6 +232,10 @@ open class Game(val map : Map,
                 map.currentRoom().getRoomCenter().second,
                 this
             )
+        }
+        if(map.currentRoom() is ShopRoom){
+            map.currentRoom().open()
+            (map.currentRoom() as ShopRoom).setup(this)
         }
     }
 
@@ -306,7 +316,7 @@ open class Game(val map : Map,
     }
 
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
-    var coins = mutableStateOf(0)
+    var coins = mutableStateOf(10)
     @Composable
     fun Ath(){
         val configuration = LocalConfiguration.current

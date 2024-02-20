@@ -74,42 +74,49 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
 
     fun getNextWordIndex(text: String, index: Int): Int {
         val firstSplit = getFirstSplit(text, index)
-        for (i in firstSplit..<text.length) {
-            if (text[i] !in splitChars() && text[i]!=' ') {
-                return i
+        if(firstSplit!=-1) {
+            for (i in firstSplit..<text.length) {
+                if (text[i] !in splitChars() && text[i] != ' ') {
+                    return i
+                }
             }
         }
         return -1
     }
 
     fun generateTextSequence() : List<String>{
-        val textSequence : MutableList<String> = mutableListOf()
+        val localTextSequence : MutableList<String> = mutableListOf()
         var textPart = fullText
         if(textPart.length<=getMaxChars()){
-            textSequence.add(textPart)
+            localTextSequence.add(textPart)
         } else {
-            Log.i("Max chars","${getMaxChars()}")
             var endIndex = getNextWordIndex(textPart, getMaxChars()-1)
-            while (endIndex<textPart.length){
-                textSequence.add(textPart.substring(0,endIndex))
-                textPart = textPart.substring(endIndex)
-                if(textPart.length>=getMaxChars()) {
+            while (endIndex<textPart.length && endIndex!=-1){
+                if(textPart.length>getMaxChars()) {
+                    if(endIndex==-1){
+                        break
+                    }
+                    localTextSequence.add(textPart.substring(0,endIndex))
+                    textPart = textPart.substring(endIndex)
                     endIndex = getNextWordIndex(textPart, getMaxChars() - 1)
                 }
             }
-            textSequence.add(textPart)
+            localTextSequence.add(textPart)
         }
-        return textSequence.toList()
+        return localTextSequence.toList()
     }
 
     var textSequence = generateTextSequence()
-    var textSequenceIndex = 0
+    var textSequenceIndex by remember {
+        mutableStateOf(0)
+    }
 
     var currentText by remember {
         mutableStateOf(textSequence[textSequenceIndex])
     }
     if(fullText!=text){
         fullText = text
+        textSequenceIndex = 0
         textSequence = generateTextSequence()
         currentText = textSequence[textSequenceIndex]
     }
@@ -125,6 +132,8 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
         .fillMaxHeight()
         .pointerInput(key1 = "DialogScreen") {
             detectTapGestures {
+                Log.i("Index", "$textSequenceIndex")
+                Log.i("size", "${textSequence.size}")
                 if (textSequenceIndex < textSequence.size - 1) {
                     textSequenceIndex++
                     currentText = textSequence[textSequenceIndex]
@@ -133,7 +142,7 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
                 }
             }
         }
-        .background(Color(0,0,0,128))){
+        .background(Color(0, 0, 0, 128))){
         Column(
             modifier = Modifier
                 .fillMaxWidth()

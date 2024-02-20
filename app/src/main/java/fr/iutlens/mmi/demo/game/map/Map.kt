@@ -4,6 +4,7 @@ import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
+import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.map.rooms.StartingRoom
 import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
 import fr.iutlens.mmi.demo.game.sprite.ArrayTileMap
@@ -23,7 +24,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     var tileArea = makeTileArea()
     var mapString : String ? = null
     var mapPath : List<List<String>> ?= null
-    var rooms : List<Room> ?= null
+    var rooms : MutableList<Room> ?= null
     var roomSequence : List<String>? = null
     var currentRoom = 0
 
@@ -175,6 +176,10 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             }
             randomTreasureRooms.add(number)
         }
+        var shopRoom = (2..roomNumber).random().toString()
+        while(shopRoom in randomTreasureRooms){
+            shopRoom = (2..roomNumber).random().toString()
+        }
         with(mapPath!!.iterator()){
             forEach {
                 currentCol = 0
@@ -185,6 +190,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                                  "1"->StartingRoom(currentMap)
                                  lastRoom.toString()->BossRoom(currentMap)
                                  in randomTreasureRooms->TreasureRoom(map = currentMap)
+                                 shopRoom->ShopRoom(currentMap)
                                  else->BasicRoom(currentMap)
                              }
                             val newRoom = room
@@ -199,7 +205,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                 currentRow+=rowsToAdd
             }
         }
-        rooms = roomList.toSortedMap().values.toList()
+        rooms = roomList.toSortedMap().values.toMutableList()
 
         for(i in 0..<roomSequence!!.size){
             when{

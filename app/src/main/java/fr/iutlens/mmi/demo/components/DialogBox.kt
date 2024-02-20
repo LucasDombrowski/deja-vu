@@ -166,7 +166,6 @@ fun WritingAnimation(images : List<Bitmap>, writing: Boolean, modifier: Modifier
     }
     if(imageAnimation == null) {
         imageAnimation = setInterval(0, 200) {
-            Log.i("image","true")
             if (imageIndex >= images.size - 1) {
                 imageIndex = 0
             } else {

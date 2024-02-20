@@ -15,7 +15,7 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.getCurrentActivityContext
 import kotlin.math.roundToInt
 
-class TextSprite(val text: String, val textSize: Float, val textColor: Color, val bold : Boolean = false, val x: Float, val y: Float) : Sprite {
+class TextSprite(val text: String, val textSize: Float, val textColor: Color, val bold : Boolean = false, var x: Float, var y: Float) : Sprite {
 
     var bitmap : Bitmap = textToBitmap()
     private val w2 = bitmap.width / 2f

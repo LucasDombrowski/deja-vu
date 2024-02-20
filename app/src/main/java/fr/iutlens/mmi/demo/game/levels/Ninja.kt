@@ -10,7 +10,10 @@ import fr.iutlens.mmi.demo.game.gameplayResources.Item
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaBoots
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken
+import fr.iutlens.mmi.demo.game.gameplayResources.items.OneHeart
 import fr.iutlens.mmi.demo.game.map.Map
+import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
+import fr.iutlens.mmi.demo.game.map.shop.ShopItem
 import fr.iutlens.mmi.demo.game.sprite.ImageSprite
 import fr.iutlens.mmi.demo.game.sprite.TextSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
@@ -53,6 +56,7 @@ class Ninja : Game(
                 }
             }
         }
+
     }
 
     override fun copy() : Ninja{

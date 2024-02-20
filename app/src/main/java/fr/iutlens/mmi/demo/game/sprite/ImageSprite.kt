@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
 import fr.iutlens.mmi.demo.getCurrentActivityContext
 
-class ImageSprite(val imageId : Int, val imageSize: Int, val x: Float, val y: Float) : Sprite {
+class ImageSprite(val imageId : Int, val imageSize: Int, var x: Float, var y: Float) : Sprite {
 
     val bitmap : Bitmap = imageToBitmap()
     private val w2 = bitmap.width / 2f
