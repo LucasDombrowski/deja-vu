@@ -4,6 +4,8 @@ import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.map.rooms.StartingRoom
 import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
@@ -23,7 +25,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     var tileMap = makeTileMap()
     var tileArea = makeTileArea()
     var mapString : String ? = null
-    var mapPath : List<List<String>> ?= null
+    var mapPath : MutableList<MutableList<String>> ?= null
     var rooms : MutableList<Room> ?= null
     var roomSequence : List<String>? = null
     var currentRoom = 0
@@ -32,6 +34,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         if(mapString==null) {
             generateMap()
         }
+
         return mapString!!.trimIndent().toMutableTileMap(
             "012345"+
                     "6789AB"+
@@ -85,19 +88,18 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         val room = getRoomFromMapIndex(globalPosition.first, globalPosition.second)
         return room!!.getElement(x,y) !in authorizedTiles
     }
-    fun generateMapPath() : List<List<String>>{
+    fun generateMapPath() : MutableList<MutableList<String>>{
         var entranceDoor : String ?= null
         var n = 1
-
+        var bigRooms = 0
         val sequence = mutableListOf<String>()
-        val map = mutableListOf<MutableList<String>>(
-        )
-        repeat((roomNumber*2)+1){
-            val mapRow = mutableListOf<String>()
-            repeat((roomNumber*2)+1){
-                mapRow.add("")
+        val map = mutableListOf<MutableList<String>>()
+        repeat(4*roomNumber){
+            val row = mutableListOf<String>()
+            repeat(4*roomNumber){
+                row.add("")
             }
-            map.add(mapRow)
+            map.add(row)
         }
         var currentRow = roomNumber
         var currentCol = roomNumber
@@ -109,22 +111,31 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             currentCol = mapChanges["currentCol"] as Int
             entranceDoor = mapChanges["entranceDoor"] as String
             sequence.add(mapChanges["nextRoom"] as String)
+            if((1..4).random() == 1 && it<roomNumber-1 && it>0 && bigRooms<treasureRooms+1){
+                bigRooms++
+                val mapChanges = generateNextRoom(map,currentRow,currentCol,entranceDoor,"$n.5")
+                currentRow = mapChanges["currentRow"] as Int
+                currentCol = mapChanges["currentCol"] as Int
+                entranceDoor = mapChanges["entranceDoor"] as String
+            }
         }
-        map.map {
-            it.toList()
+        roomSequence = sequence.filter {
+            !it.contains(".5")
         }
-        roomSequence = sequence.toList()
-        return map.toList()
+        return map
     }
 
     fun generateMap(){
         if(mapPath==null){
             mapPath = generateMapPath()
         }
-        Log.i("monTest", "$mapPath")
+        mapPath!!.forEach{
+            Log.i("path","$it")
+        }
         if(rooms==null){
             generateRooms()
         }
+        Log.i("Room numbers","${rooms!!.size}")
         val mapList : MutableList<MutableList<String>> = mutableListOf()
         with(mapPath!!.iterator()){
             forEach {
@@ -134,10 +145,32 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                         if(it==""){
                             row.add(fillEmptySpace(7, 15))
                         } else {
-                            row.add(rooms!![it.toInt()-1].composition)
+                            if(!it.contains(".5")){
+                                val room = rooms!![it.toInt()-1]
+                                if(findDoubleRoom(it.toInt())!=null){
+                                    if(room is LargeRoom){
+                                        row.add(room.firstHalf)
+                                    }
+                                    if(room is LongRoom){
+                                        row.add(room.firstHalf)
+                                    }
+                                } else {
+                                    row.add(room.composition)
+                                }
+                            } else {
+                                val room = rooms!![it.replace(".5","").toInt()-1]
+                                if(room is LargeRoom){
+                                    row.add(room.secondHalf)
+                                }
+                                if(room is LongRoom){
+                                    row.add(room.secondHalf)
+                                }
+                            }
+
                         }
                     }
                 }
+
                 mapList.add(row)
             }
         }
@@ -156,30 +189,60 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         }
 
         mapString = map.toString()
+        Log.i("mapString","$mapString")
 
     }
 
+    fun findRoom(n: Int) : Pair<Int,Int>?{
+        for(i in 0..<mapPath!!.size){
+            for(j in 0..<mapPath!![i].size){
+                if(mapPath!![i][j]==n.toString()){
+                    return Pair(i,j)
+                }
+            }
+        }
+        return null
+    }
+
+    fun findDoubleRoom(n : Int) : Room ?{
+        val pos = findRoom(n)!!
+        if(mapPath!![pos.first+1][pos.second] == "$n.5"){
+            return LargeRoom(enterSide = "top", exitSide = "bottom", map = this)
+        } else if(mapPath!![pos.first-1][pos.second] == "$n.5"){
+            return LargeRoom(enterSide = "bottom", exitSide = "top", map = this)
+        } else if(mapPath!![pos.first][pos.second+1] == "$n.5"){
+            return LongRoom(enterSide = "left", exitSide = "right", map = this)
+        } else if(mapPath!![pos.first][pos.second-1] == "$n.5"){
+            return LongRoom(enterSide = "right", exitSide = "left", map = this)
+        } else {
+            return null
+        }
+    }
+
+
     fun generateRooms(){
         val currentMap = this
-        var room : Room = BasicRoom(currentMap)
+        var room : Room ? = BasicRoom(currentMap)
         val lastRoom = roomNumber+1
-        val rowsToAdd = room.row
-        val colsToAdd = room.col
+        val rowsToAdd = room!!.row
+        val colsToAdd = room!!.col
         var currentRow = 0
         var currentCol = 0
         val roomList : MutableMap<String,Room> = mutableMapOf()
         val randomTreasureRooms = mutableListOf<String>()
         repeat(treasureRooms){
             var number = (2..roomNumber).random().toString()
-            while(number in randomTreasureRooms){
+            while(number in randomTreasureRooms || findDoubleRoom(number.toInt())!=null){
                 number = (2..roomNumber).random().toString()
             }
             randomTreasureRooms.add(number)
         }
         var shopRoom = (2..roomNumber).random().toString()
-        while(shopRoom in randomTreasureRooms){
+        while(shopRoom in randomTreasureRooms || findDoubleRoom(shopRoom.toInt())!=null){
             shopRoom = (2..roomNumber).random().toString()
         }
+
+        Log.i("selected room","true")
         with(mapPath!!.iterator()){
             forEach {
                 currentCol = 0
@@ -191,12 +254,33 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                                  lastRoom.toString()->BossRoom(currentMap)
                                  in randomTreasureRooms->TreasureRoom(map = currentMap)
                                  shopRoom->ShopRoom(currentMap)
-                                 else->BasicRoom(currentMap)
+                                 else->{
+                                     if(!it.contains(".5")){
+                                         if(findDoubleRoom(it.toInt())!=null){
+                                             findDoubleRoom(it.toInt())
+                                         } else {
+                                             BasicRoom(currentMap)
+                                         }
+                                     } else {
+                                         null
+                                     }
+                                 }
                              }
-                            val newRoom = room
-                            newRoom.topLeftCorner = Pair(currentRow, currentCol)
-                            newRoom.bottomRightCorner = Pair(currentRow+rowsToAdd, currentCol+colsToAdd)
-                            roomList[it] = newRoom
+
+                             if(room!=null) {
+                                 val newRoom = room!!
+                                 if(newRoom !is LongRoom && room!is LargeRoom) {
+                                     newRoom.topLeftCorner = Pair(currentRow, currentCol)
+                                     newRoom.bottomRightCorner = Pair(currentRow + rowsToAdd, currentCol + colsToAdd)
+                                 } else if(newRoom is LongRoom){
+                                     newRoom.topLeftCorner = Pair(currentRow, currentCol)
+                                     newRoom.bottomRightCorner = Pair(currentRow+rowsToAdd, currentCol+(colsToAdd*2))
+                                 } else {
+                                     newRoom.topLeftCorner = Pair(currentRow, currentCol)
+                                     newRoom.bottomRightCorner = Pair(currentRow+(rowsToAdd*2), currentCol+colsToAdd)
+                                 }
+                                 roomList[it] = newRoom
+                             }
 
                         }
                         currentCol+=colsToAdd
@@ -204,12 +288,13 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                 }
                 currentRow+=rowsToAdd
             }
+
         }
+        Log.i("setup room","true")
         rooms = roomList.toSortedMap().values.toMutableList()
 
         for(i in 0..<roomSequence!!.size){
             when{
-
                 i==0->{
                     rooms!![i].exit = roomSequence!![i]
                     rooms!![i].open = true
@@ -222,7 +307,6 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             rooms!![i].refresh()
         }
         rooms!!.last().enter = getReverseDirection(roomSequence!!.last())
-
         rooms!!.last().refresh()
     }
     fun fillEmptySpace(row: Int, col: Int) : String{

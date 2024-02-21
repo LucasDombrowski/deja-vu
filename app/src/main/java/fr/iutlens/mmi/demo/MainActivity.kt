@@ -61,17 +61,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             currentContext = LocalContext.current
             MyApplicationTheme {
-                var game : Game ? by remember{ mutableStateOf(null) }
-                if(game == null){
-                    MainMenu(){
-                        game = startFirstLevel()
-                        game!!.onEnd = {
-                            game = changeLevel(game!!)
-                        }
-                    }
-                } else {
-                    Level(game = game!!)
-                }
+                Level(game = Ninja())
                 Music(id = R.raw.jungle)
             }
         }

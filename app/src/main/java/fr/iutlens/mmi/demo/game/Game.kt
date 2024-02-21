@@ -495,7 +495,6 @@ open class Game(val map : Map,
     fun initiate(){
         setupControllableCharacter()
         addSprite(camera.sprite)
-        setupCamera()
     }
 
     fun setupCamera(){

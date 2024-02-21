@@ -322,7 +322,7 @@ open class Character(
 
     fun setupPath(x: Float,y: Float){
         disablePathFollowing()
-        if(!game.pause) {
+        if(!game.pause && game.map.currentRoom().inMinMaxCoordinates(x,y)) {
             if (isPathFree(x, y)) {
                 moveTo(x, y)
             } else {
