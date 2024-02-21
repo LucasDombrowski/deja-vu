@@ -80,8 +80,10 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         } else if(game.map.inOpenDoor(x,y) && game.map.currentRoom().open){
             disablePathFollowing()
             game.map.currentRoom().close()
+            while (!game.map.nextRoom().characterInStartPosition(game)) {
+                game.map.nextRoom().placeCharacter(game)
+            }
             stun()
-            game.map.nextRoom().placeCharacter(game)
             game.nextRoom()
         } else {
             temporaryMovingInteraction(x,y)

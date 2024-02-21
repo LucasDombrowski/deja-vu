@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.demo.game
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -58,6 +59,8 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.LessFireRateLessDamages
 import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
 import fr.iutlens.mmi.demo.game.map.Camera
 import fr.iutlens.mmi.demo.game.map.Map
+import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
 import fr.iutlens.mmi.demo.game.screens.ItemImage
@@ -185,7 +188,7 @@ open class Game(val map : Map,
         }
         onDragMove = {
             (x,y)->
-            if(!pause) {
+            if(!pause && !movingRestriction) {
                 controllableCharacter!!.dragMovingBehavior(x, y)
                 movingRestriction = true
                 GlobalScope.launch {
@@ -220,10 +223,6 @@ open class Game(val map : Map,
     fun switchRoom(ndx : Int){
         controllableCharacter!!.stun()
         map.currentRoom = ndx
-        camera.moveTo(
-            map.currentRoom().getRoomCenter().first,
-            map.currentRoom().getRoomCenter().second
-        )
         if(map.currentRoom() is TreasureRoom){
             map.currentRoom().open()
             val chest = Chest(items)
@@ -237,6 +236,26 @@ open class Game(val map : Map,
             map.currentRoom().open()
             (map.currentRoom() as ShopRoom).setup(this)
         }
+        if(map.currentRoom() is LargeRoom){
+            camera.moveTo(
+                (map.currentRoom() as LargeRoom).getFirstHalfCenter().first,
+                (map.currentRoom() as LargeRoom).getFirstHalfCenter().second
+            )
+        }
+        if(map.currentRoom() is LongRoom){
+            camera.moveTo(
+                (map.currentRoom() as LongRoom).getFirstHalfCenter().first,
+                (map.currentRoom() as LongRoom).getFirstHalfCenter().second
+            )
+        }
+        if(map.currentRoom() !is LongRoom && map.currentRoom() !is LargeRoom){
+            camera.moveTo(
+                map.currentRoom().getRoomCenter().first,
+                map.currentRoom().getRoomCenter().second
+            )
+        }
+        Log.i("Top left corner","${map.currentRoom().topLeftCorner}")
+        Log.i("Bottom right corner","${map.currentRoom().bottomRightCorner}")
     }
 
     fun nextRoom(){
@@ -495,6 +514,7 @@ open class Game(val map : Map,
     fun initiate(){
         setupControllableCharacter()
         addSprite(camera.sprite)
+        setupCamera()
     }
 
     fun setupCamera(){

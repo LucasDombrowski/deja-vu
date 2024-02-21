@@ -4,12 +4,16 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class Camera(val game: Game) {
     val sprite = BasicSprite(R.drawable.transparent,game.map.characterStartPosition().first, game.map.characterStartPosition().second)
@@ -45,6 +49,46 @@ class Camera(val game: Game) {
                 delay(1000)
                 if(game.map.currentRoom() is BasicRoom){
                     game.map.currentRoom().spawnEnemies()
+                }
+                if(game.map.currentRoom() is LongRoom){
+                    val minXValue = min(
+                        (game.map.currentRoom() as LongRoom).getFirstHalfCenter().first,
+                        (game.map.currentRoom() as LongRoom).getSecondHalfCenter().first
+                    )
+                    val maxXValue = max(
+                        (game.map.currentRoom() as LongRoom).getFirstHalfCenter().first,
+                        (game.map.currentRoom() as LongRoom).getSecondHalfCenter().first
+                    )
+                    game.controllableCharacter!!.temporaryMovingInteraction = {
+                            x, y ->
+                        if(x<minXValue){
+                            sprite.x = minXValue
+                        } else if(x>maxXValue){
+                            sprite.x = maxXValue
+                        } else {
+                            sprite.x = x
+                        }
+                    }
+                }
+                if(game.map.currentRoom() is LargeRoom){
+                    val minYValue = min(
+                        (game.map.currentRoom() as LargeRoom).getFirstHalfCenter().second,
+                        (game.map.currentRoom() as LargeRoom).getSecondHalfCenter().second
+                    )
+                    val maxYValue = max(
+                        (game.map.currentRoom() as LargeRoom).getFirstHalfCenter().second,
+                        (game.map.currentRoom() as LargeRoom).getSecondHalfCenter().second
+                    )
+                    game.controllableCharacter!!.temporaryMovingInteraction = {
+                            x, y ->
+                        if(y<minYValue){
+                            sprite.y = minYValue
+                        } else if(x>maxYValue){
+                            sprite.x = maxYValue
+                        } else {
+                            sprite.x = x
+                        }
+                    }
                 }
                 if(game.map.currentRoom() is BossRoom){
                     game.spawnBoss()

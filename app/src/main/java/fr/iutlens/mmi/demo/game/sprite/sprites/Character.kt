@@ -268,7 +268,7 @@ open class Character(
         if(this is Enemy && this !is Boss){
             smokeAnimation()
             action.cancel()
-            game.map.currentRoom().isOpenable()
+            game.map.currentRoom().isOpenable(game)
             Coin(game).drop(sprite.x, sprite.y)
         }
         if(this is Enemy && this is Boss){

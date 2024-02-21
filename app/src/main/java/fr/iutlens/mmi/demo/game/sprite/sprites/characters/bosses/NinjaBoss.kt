@@ -198,7 +198,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     }
 
     fun spawnEnemies(){
-        if(!game.map.currentRoom().enemiesAlive()) {
+        if(!game.map.currentRoom().enemiesAlive(game)) {
             game.map.currentRoom().enemyList = mutableListOf()
             game.map.currentRoom().spawnEnemies()
         }

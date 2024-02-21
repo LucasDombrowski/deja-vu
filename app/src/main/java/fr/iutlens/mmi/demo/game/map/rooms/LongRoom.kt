@@ -1,7 +1,10 @@
 package fr.iutlens.mmi.demo.game.map.rooms
 
+import android.util.Log
+import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.Map
 import fr.iutlens.mmi.demo.game.map.Room
+import fr.iutlens.mmi.demo.utils.getCenter
 import java.lang.StringBuilder
 
 class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null, exit: String ?=null, map: Map) : Room(row = 7, col = 30, map,enter,exit,false, enemies =  4..6){
@@ -16,23 +19,6 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                     theMap.append("0122222O3333345")
                 } else {
                     theMap.append("012222233333345")
-                }
-
-                4 -> for (j in 1..col/2) {
-                    when (j) {
-                        1 -> if(enter=="left"){
-                            theMap.append('Q')
-                        } else {
-                            theMap.append('I')
-                        }
-
-                        col/2 -> if(enter=="right"){
-                            theMap.append('R')
-                        } else {
-                            theMap.append('L')
-                        }
-                        else -> theMap.append(randomTile())
-                    }
                 }
 
                 row -> if(enter=="bottom"){
@@ -113,28 +99,6 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                     theMap.append("012222233333345")
                 }
 
-                4 -> for (j in 1..col/2) {
-                    when (j) {
-                        1 -> if (exit=="left") {
-                            if(open){
-                                theMap.append('W')
-                            } else {
-                                theMap.append('Q')
-                            }
-                        } else {
-                            theMap.append('I')
-                        }
-
-                        col/2 -> if (exit=="right") {
-                            if(open) {
-                                theMap.append('X')
-                            }
-                            } else {
-                                theMap.append('L')
-                            }
-                        else -> theMap.append(randomTile())
-                    }
-                }
 
                 row -> if(exit=="bottom") {
                     if (open) {
@@ -206,4 +170,58 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
         firstHalf = createFirstHalf().trimIndent()
         secondHalf = createSecondHalf().trimIndent()
     }
+
+    fun firstHalfList() : MutableList<MutableList<String>>{
+        val list = firstHalf.split("\n").map {
+            it.split("").toMutableList()
+        }.toMutableList()
+        with(list.iterator()){
+            forEach {
+                it.removeAll(listOf(""))
+            }
+        }
+        return list
+    }
+
+    fun secondHalfList() : MutableList<MutableList<String>>{
+        val list = firstHalf.split("\n").map {
+            it.split("").toMutableList()
+        }.toMutableList()
+        with(list.iterator()){
+            forEach {
+                it.removeAll(listOf(""))
+            }
+        }
+        return list
+    }
+
+
+    fun getFirstHalfCenter() : Pair<Float,Float>{
+        val roomCenter = getRoomCenter()
+        val minMaxPos = getMinMaxCoordinates()
+        val topLeftCornerFloatPos = map.getPositionFromMapIndex(topLeftCorner!!.first, topLeftCorner!!.second)
+        val bottomRightCornerFloatPos = Pair(
+            roomCenter.first,
+            minMaxPos.second.second
+        )
+        val center = getCenter(topLeftCornerFloatPos.first, topLeftCornerFloatPos.second, bottomRightCornerFloatPos.first, bottomRightCornerFloatPos.second)
+        return Pair(center[0],center[1])
+    }
+
+    fun getSecondHalfCenter() : Pair<Float,Float>{
+        val roomCenter = getRoomCenter()
+        val minMaxPos = getMinMaxCoordinates()
+        val bottomRightCornerFloatPos = map.getPositionFromMapIndex(bottomRightCorner!!.first, bottomRightCorner!!.second)
+        val topLeftCornerFloatPos = Pair(
+            roomCenter.first,
+            minMaxPos.first.second
+        )
+        val center = getCenter(topLeftCornerFloatPos.first, topLeftCornerFloatPos.second, bottomRightCornerFloatPos.first, bottomRightCornerFloatPos.second)
+        return Pair(center[0],center[1])
+    }
+
+    override fun toList(): MutableList<MutableList<String>> {
+        return (firstHalfList() + secondHalfList()).toMutableList()
+    }
+
 }
