@@ -317,14 +317,15 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
     }
 
     override fun toList(): MutableList<MutableList<String>> {
-        val roomList = mutableListOf<MutableList<String>>()
+        val list = mutableListOf<MutableList<String>>()
         for(i in 0..<row){
             when(enterSide){
-                "left"->roomList.add((firstHalfList()[i]+secondHalfList()[i]).toMutableList())
-                else->roomList.add((secondHalfList()[i]+firstHalfList()[i]).toMutableList())
+                "left"->list.add((firstHalfList()[i]+secondHalfList()[i]).toMutableList())
+                else->list.add((secondHalfList()[i]+firstHalfList()[i]).toMutableList())
             }
         }
-        return roomList
+        roomList = list
+        return list
     }
 
     override fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {

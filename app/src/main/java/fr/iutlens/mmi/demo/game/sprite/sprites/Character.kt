@@ -332,6 +332,7 @@ open class Character(
                 findShortestPath(x, y)
             }
         }
+        moveTo(x,y)
     }
     fun findShortestPath(x: Float, y: Float){
         GlobalScope.launch {

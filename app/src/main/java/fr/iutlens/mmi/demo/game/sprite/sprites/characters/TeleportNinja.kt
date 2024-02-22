@@ -38,7 +38,6 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                 delay(33)
             }
             if(alive) {
-                if(distanceWith(target!!)<game.map.tileArea.w*4) {
                     if (!chasing) {
                         sprite.setTransparencyLevel(0.75f)
                         delay(33)
@@ -88,11 +87,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                             followPlayer()
                         }
                     }
-                } else {
-                    delay(100)
-                    pattern()
                 }
-            }
         }
     }
     override fun copy() : TeleportNinja{

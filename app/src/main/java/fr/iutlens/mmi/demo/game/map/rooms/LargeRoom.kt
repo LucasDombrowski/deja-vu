@@ -269,11 +269,12 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
 
 
     override fun toList(): MutableList<MutableList<String>> {
-        val roomList = when(enterSide){
+        val list = when(enterSide){
             "top"->(firstHalfList().toMutableList() + secondHalfList().toMutableList()).toMutableList()
             else->(secondHalfList().toMutableList() + firstHalfList().toMutableList()).toMutableList()
         }
-        return roomList
+        roomList = list
+        return list
     }
 
     override fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {

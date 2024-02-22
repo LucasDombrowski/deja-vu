@@ -486,6 +486,9 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         if(!enemies.isEmpty()){
             enemies[0].game.reloadBackground()
         }
+        rooms!!.forEach {
+            it.toList()
+        }
     }
 
     fun currentRoom() : Room{

@@ -19,6 +19,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     var topLeftCorner : Pair<Int,Int> ?= null
     var bottomRightCorner : Pair<Int,Int> ?= null
     var enemyList : MutableList<Enemy> = mutableListOf()
+    var roomList : MutableList<MutableList<String>> ? = null
 
     open fun copy() : Room{
         return Room(row, col, map, enter, exit, open, enemies)
@@ -268,6 +269,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 it.removeAll(listOf(""))
             }
         }
+        roomList = list
         return list
     }
 
@@ -283,6 +285,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
     open fun refresh(){
         composition = create().trimIndent()
+        toList()
     }
 
     fun getPosition(row: Int, column:Int) : Pair<Int,Int>{
@@ -311,13 +314,13 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     fun getElement(x: Float, y: Float) : String{
         val globalPosition = map.getMapIndexFromPosition(x,y)
         val localPosition = getPosition(globalPosition.first, globalPosition.second)
-        return toList()[localPosition.first][localPosition.second]
+        return roomList!![localPosition.first][localPosition.second]
     }
 
     open fun placeCharacter(game: Game){
-        val roomList = toList()
+        val roomList = roomList
 
-        val startPosition = findStartPosition(roomList.map {
+        val startPosition = findStartPosition(roomList!!.map {
             it.map {
                 it.single()
             }.toList()
@@ -331,8 +334,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun characterInStartPosition(game: Game) : Boolean{
-        val roomList = toList()
-        val startPosition = findStartPosition(roomList.map {
+        val roomList = roomList
+        val startPosition = findStartPosition(roomList!!.map {
             it.map {
                 it.single()
             }.toList()
