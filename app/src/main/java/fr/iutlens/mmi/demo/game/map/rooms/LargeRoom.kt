@@ -9,8 +9,25 @@ import java.lang.StringBuilder
 
 class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=null, exit: String ?=null, map: Map) : Room(row = 14, col = 15, map,enter,exit,false, enemies =  4..6){
 
-    var firstHalf = createFirstHalf().trimIndent()
-    var secondHalf = createSecondHalf().trimIndent()
+    var firstHalf = ""
+    var secondHalf = ""
+
+    override fun create() : String{
+        firstHalf = createFirstHalf().trimIndent()
+        secondHalf = createSecondHalf().trimIndent()
+        if(enter!=null || exit!=null) {
+            val roomList = toList()
+            val result = isPathAvailable(roomList.map {
+                it.map {
+                    it.single()
+                }.toList()
+            }.toList())
+            if (!result) {
+                return create()
+            }
+        }
+        return firstHalf+secondHalf
+    }
 
     fun createFirstHalf() : String {
         val theMap = StringBuilder()
@@ -199,8 +216,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
     }
 
     override fun refresh(){
-        firstHalf = createFirstHalf().trimIndent()
-        secondHalf = createSecondHalf().trimIndent()
+        create()
     }
 
     fun getFirstHalfCenter() : Pair<Float,Float>{
@@ -295,6 +311,62 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                     for(j in map[i].indices){
                         if (map[i][j] == doorStart) {
                             return when(enter){
+                                "left"->Pair(i,j+1)
+                                "right"->Pair(i,j-1)
+                                "top"->Pair(i+1,j)
+                                else->Pair(i-1,j)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    override fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
+        val doorEnd =  when(open){
+            true -> when (exit) {
+                "top" -> {
+                    'U'
+                }
+                "left" -> {
+                    'W'
+                }
+                "right" -> {
+                    'X'
+                }
+                else -> {
+                    'V'
+                }
+            }
+            else->when (exit){
+                "top"->'O'
+                "left"->'Q'
+                "right"->'R'
+                else->'P'
+            }
+        }
+        when(enterSide){
+            "bottom"->{
+                for(i in 0..<map.size/2){
+                    for(j in map[i].indices){
+                        if (map[i][j] == doorEnd) {
+                            return when(exit){
+                                "left"->Pair(i,j+1)
+                                "right"->Pair(i,j-1)
+                                "top"->Pair(i+1,j)
+                                else->Pair(i-1,j)
+                            }
+                        }
+                    }
+                }
+            }
+            else->{
+                for(i in map.size/2..<map.size){
+                    for(j in map[i].indices){
+                        if (map[i][j] == doorEnd) {
+                            return when(exit){
                                 "left"->Pair(i,j+1)
                                 "right"->Pair(i,j-1)
                                 "top"->Pair(i+1,j)

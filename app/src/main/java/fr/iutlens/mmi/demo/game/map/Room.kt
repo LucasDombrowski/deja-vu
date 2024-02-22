@@ -14,7 +14,7 @@ import kotlin.math.log
 
 open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false, val enemies : IntRange) {
 
-    var composition : String = create().trimIndent()
+    open var composition : String = create().trimIndent()
     var topLeftCorner : Pair<Int,Int> ?= null
     var bottomRightCorner : Pair<Int,Int> ?= null
     var enemyList : MutableList<Enemy> = mutableListOf()
@@ -141,6 +141,9 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
 
     fun isPathAvailable(map: List<List<Char>>): Boolean {
+        map.forEach {
+            Log.i("map","$it")
+        }
         val queue: Queue<Pair<Int, Int>> = LinkedList()
         val visited = mutableSetOf<Pair<Int, Int>>()
 
@@ -149,6 +152,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
             null->start
             else->findEndPosition(map)
         }
+        Log.i("start","$start")
+        Log.i("end","$end")
 
         if (start == null || end == null) {
             return false
@@ -215,8 +220,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         return null
     }
 
-    fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
-
+    open fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
         val doorEnd =  when(open){
             true -> when (exit) {
                 "top" -> {
