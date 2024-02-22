@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import fr.iutlens.mmi.demo.boot.changeLevel
 import fr.iutlens.mmi.demo.boot.startFirstLevel
 import fr.iutlens.mmi.demo.components.Level
-import fr.iutlens.mmi.demo.components.MainMenu
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.game.levels.Ninja

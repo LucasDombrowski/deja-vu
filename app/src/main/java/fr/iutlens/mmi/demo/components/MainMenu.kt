@@ -12,23 +12,3 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.screens.MenuButton
-
-@Composable
-fun MainMenu(action : ()->Unit){
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight()
-        .background(Color.Black)){
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            MenuButton(text = "START") {
-                action()
-            }
-        }
-    }
-}

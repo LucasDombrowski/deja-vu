@@ -95,9 +95,9 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         var bigRooms = 0
         val sequence = mutableListOf<String>()
         val map = mutableListOf<MutableList<String>>()
-        repeat(4*roomNumber){
+        repeat((4*roomNumber)+1){
             val row = mutableListOf<String>()
-            repeat(4*roomNumber){
+            repeat((4*roomNumber)+1){
                 row.add("")
             }
             map.add(row)

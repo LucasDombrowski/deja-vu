@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -461,10 +462,11 @@ open class Game(val map : Map,
             else->(screenWidth + (screenHeight-screenWidth)/4).dp
         }
         Box(modifier=modifier.background(Color(0,0,0,128))){
-            Box(modifier = Modifier
+            BoxWithConstraints(modifier = Modifier
                 .width(bookWidth)
                 .fillMaxHeight()
                 .align(Alignment.Center)){
+                val maxPageWidth = this.maxWidth/2
                 Image(painter = painterResource(id = R.drawable.pause_menu),
                     contentDescription = "Menu pause",
                     contentScale = ContentScale.FillWidth,
@@ -488,16 +490,16 @@ open class Game(val map : Map,
                             .fillMaxHeight(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                        MenuButton(text = "REPRENDRE") {
+                        MenuButton(text = "REPRENDRE", width = maxPageWidth*6/10) {
                             pause = false
                             menu["open"] = false
                         }
-                        Spacer(modifier = Modifier.height(20.dp))
-                        MenuButton(text = "PARAMETRES") {
+                        Spacer(modifier = Modifier.height((screenHeight*0.001).dp))
+                        MenuButton(text = "PARAMETRES", width = maxPageWidth*6/10) {
                             
                         }
-                        Spacer(modifier = Modifier.height(20.dp))
-                        MenuButton(text = "QUITTER") {
+                        Spacer(modifier = Modifier.height((screenHeight*0.001).dp))
+                        MenuButton(text = "QUITTER", width = maxPageWidth*6/10) {
                             
                         }
 
