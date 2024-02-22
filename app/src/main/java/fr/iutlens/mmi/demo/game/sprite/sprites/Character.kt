@@ -7,11 +7,14 @@ import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.Coin
 import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HeartContainer
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
+import fr.iutlens.mmi.demo.utils.getDistance
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.LinkedList
+import java.util.Queue
 import kotlin.math.abs
 import kotlin.math.round
 import kotlin.reflect.typeOf
@@ -268,7 +271,7 @@ open class Character(
         if(this is Enemy && this !is Boss){
             smokeAnimation()
             action.cancel()
-            game.map.currentRoom().isOpenable()
+            game.map.currentRoom().isOpenable(game)
             Coin(game).drop(sprite.x, sprite.y)
         }
         if(this is Enemy && this is Boss){
@@ -329,6 +332,7 @@ open class Character(
                 findShortestPath(x, y)
             }
         }
+        moveTo(x,y)
     }
     fun findShortestPath(x: Float, y: Float){
         GlobalScope.launch {
@@ -384,51 +388,53 @@ open class Character(
     }
 
     fun getShortestPath(start: Pair<Int,Int>, end: Pair<Int,Int>) : List<Pair<Int,Int>>{
-        val ways = mutableMapOf<Int,List<List<Pair<Int,Int>>>>(0 to listOf(listOf(start)))
-        val visited = mutableListOf<Pair<Int,Int>>()
-        var currentTilesNumber = 0
-
-        fun endTileFound() : Boolean{
-            return ways.filterValues {
-                it.filter {
-                    it.contains(end)
-                }.isNotEmpty()
-            }.isNotEmpty()
-        }
-
-
-        while (!endTileFound()){
-            val list = ways[currentTilesNumber]
-            val newList = mutableListOf<List<Pair<Int,Int>>>()
-            with(list!!.iterator()){
-                forEach {
-                    val last = it.last()
-                    if(isAvailableTile(visited,last.first + 1,last.second)){
-                        newList.add(it.toList() + Pair(last.first+1, last.second))
-                    }
-                    if(isAvailableTile(visited,last.first - 1,last.second)){
-                        newList.add(it.toList() + Pair(last.first-1, last.second))
-                    }
-                    if(isAvailableTile(visited,last.first,last.second+1)){
-                        newList.add(it.toList() + Pair(last.first, last.second+1))
-                    }
-                    if(isAvailableTile(visited,last.first,last.second-1)){
-                        newList.add(it.toList() + Pair(last.first, last.second-1))
-                    }
-                    visited.add(last)
+        var smallestScore = 0
+        val visited = mutableListOf<Pair<Int,Int>>(start)
+        val scoreMap = mutableMapOf<Pair<Int,Int>,Int>(start to 0)
+        val queue : Queue<Pair<Int, Int>> = LinkedList()
+        queue.offer(start)
+        while (queue.isNotEmpty()){
+            val current = queue.poll()!!
+            if(current==end){
+                smallestScore = scoreMap[current]!!-1
+                break
+            } else {
+                if(isAvailableTile(visited,current.first+1,current.second)){
+                    visited.add(Pair(current.first+1, current.second))
+                    scoreMap[Pair(current.first+1, current.second)] = scoreMap[current]!!+1
+                    queue.offer(Pair(current.first+1,current.second))
+                }
+                if(isAvailableTile(visited,current.first-1,current.second)){
+                    visited.add(Pair(current.first-1, current.second))
+                    scoreMap[Pair(current.first-1, current.second)] = scoreMap[current]!!+1
+                    queue.offer(Pair(current.first-1,current.second))
+                }
+                if(isAvailableTile(visited,current.first,current.second+1)){
+                    visited.add(Pair(current.first, current.second+1))
+                    scoreMap[Pair(current.first, current.second+1)] = scoreMap[current]!!+1
+                    queue.offer(Pair(current.first,current.second+1))
+                }
+                if(isAvailableTile(visited,current.first,current.second-1)){
+                    visited.add(Pair(current.first, current.second-1))
+                    scoreMap[Pair(current.first, current.second-1)] = scoreMap[current]!!+1
+                    queue.offer(Pair(current.first,current.second-1))
                 }
             }
-            currentTilesNumber++
-            ways[currentTilesNumber] = newList.toList()
         }
-
-        return ways.filterValues {
-            it.filter {
-                it.contains(end)
-            }.isNotEmpty()
-        }.values.first().filter {
-            it.contains(end)
-        }.first()
+        val reversedPath = mutableListOf<Pair<Int,Int>>(end)
+        for(i in smallestScore downTo 1){
+            reversedPath.add(
+                scoreMap.filterValues {
+                    it==i
+                }.filterKeys {
+                    it.first >= reversedPath.last().first-1
+                            && it.first <= reversedPath.last().first+1
+                            && it.second >= reversedPath.last().second-1
+                            && it.second <= reversedPath.last().second+1
+                }.keys.first()
+            )
+        }
+        return reversedPath.reversed()
 
     }
 
@@ -443,12 +449,10 @@ open class Character(
         return row in minMaxIndices.first.first..minMaxIndices.second.first && column in minMaxIndices.first.second..minMaxIndices.second.second
     }
 
-    fun getTileDifferences(x1: Int, y1: Int, x2: Int, y2: Int) : Pair<Int,Int>{
-        return Pair(
-            abs(x1-x2),
-            abs(y1-y2)
-        )
+    fun distanceWith(character: Character) : Float{
+        return getDistance(sprite.x, sprite.y, character.sprite.x, character.sprite.y)
     }
+
 
 }
 
