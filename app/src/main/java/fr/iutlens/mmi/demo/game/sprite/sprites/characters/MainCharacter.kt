@@ -7,6 +7,8 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.Item
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
+import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
@@ -82,6 +84,11 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             game.map.currentRoom().close()
             while (!game.map.nextRoom().characterInStartPosition(game)) {
                 game.map.nextRoom().placeCharacter(game)
+            }
+            if(game.map.currentRoom() is LongRoom || game.map.currentRoom() is LargeRoom){
+                temporaryMovingInteraction = {
+                    x, y ->  
+                }
             }
             stun()
             game.nextRoom()

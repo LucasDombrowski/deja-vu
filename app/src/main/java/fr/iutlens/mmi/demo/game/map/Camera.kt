@@ -47,7 +47,7 @@ class Camera(val game: Game) {
                 game.resetCollectibles()
                 game.controllableCharacter!!.restart()
                 delay(1000)
-                if(game.map.currentRoom() is BasicRoom){
+                if(game.map.currentRoom() is BasicRoom || game.map.currentRoom() is LongRoom || game.map.currentRoom() is LargeRoom){
                     game.map.currentRoom().spawnEnemies()
                 }
                 if(game.map.currentRoom() is LongRoom){

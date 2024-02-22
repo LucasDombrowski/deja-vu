@@ -2,6 +2,7 @@ package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
@@ -398,7 +399,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
     }
 
-    fun open(){
+    open fun open(){
         open = true
         composition = when(exit){
             "top"-> composition.replace("O","U")
@@ -421,13 +422,15 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun isOpenable(game: Game){
-        if(!enemiesAlive(game)){
-            open()
-            enemyList = mutableListOf()
+        if(this is BasicRoom || this is LargeRoom || this is LongRoom) {
+            if (!enemiesAlive(game)) {
+                open()
+                enemyList = mutableListOf()
+            }
         }
     }
 
-    fun close(){
+    open fun close(){
         open = false
         composition = when(exit){
             "top"->composition.replace("U","O")

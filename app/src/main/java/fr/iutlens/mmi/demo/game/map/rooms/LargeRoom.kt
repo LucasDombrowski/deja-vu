@@ -379,4 +379,26 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
         }
         return null
     }
+
+    override fun open(){
+        open = true
+        secondHalf = when(exit){
+            "top"-> secondHalf.replace("O","U")
+            "left"-> secondHalf.replace("Q","W")
+            "bottom"-> secondHalf.replace("P","V")
+            else-> secondHalf.replace("R","X")
+        }
+        map.reload()
+    }
+
+    override fun close(){
+        open = false
+        secondHalf = when(exit){
+            "top"-> secondHalf.replace("U","O")
+            "left"-> secondHalf.replace("W","Q")
+            "bottom"-> secondHalf.replace("V","P")
+            else-> secondHalf.replace("X","R")
+        }
+        map.reload()
+    }
 }
