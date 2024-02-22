@@ -2,6 +2,8 @@ package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.utils.getCenter
 import java.lang.StringBuilder
@@ -181,7 +183,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
     }
 
-    fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
+    open fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
 
         val doorStart = when (enter) {
             "top" -> {

@@ -237,16 +237,31 @@ open class Game(val map : Map,
             (map.currentRoom() as ShopRoom).setup(this)
         }
         if(map.currentRoom() is LargeRoom){
-            camera.moveTo(
-                (map.currentRoom() as LargeRoom).getFirstHalfCenter().first,
-                (map.currentRoom() as LargeRoom).getFirstHalfCenter().second
-            )
+            when((map.currentRoom() as LargeRoom).enterSide){
+                "top"->camera.moveTo(
+                    (map.currentRoom() as LargeRoom).getFirstHalfCenter().first,
+                    (map.currentRoom() as LargeRoom).getFirstHalfCenter().second
+                )
+                else->camera.moveTo(
+                    (map.currentRoom() as LargeRoom).getSecondHalfCenter().first,
+                    (map.currentRoom() as LargeRoom).getSecondHalfCenter().second
+                )
+            }
+
         }
         if(map.currentRoom() is LongRoom){
-            camera.moveTo(
-                (map.currentRoom() as LongRoom).getFirstHalfCenter().first,
-                (map.currentRoom() as LongRoom).getFirstHalfCenter().second
-            )
+            when((map.currentRoom() as LongRoom).enterSide){
+                "left"->camera.moveTo(
+                    (map.currentRoom() as LongRoom).getFirstHalfCenter().first,
+                    (map.currentRoom() as LongRoom).getFirstHalfCenter().second
+                )
+                else->camera.moveTo(
+                    (map.currentRoom() as LongRoom).getSecondHalfCenter().first,
+                    (map.currentRoom() as LongRoom).getSecondHalfCenter().second
+                )
+            }
+
+            Log.i("enterSide/exitSide","${(map.currentRoom() as LongRoom).enterSide}/${(map.currentRoom() as LongRoom).exitSide}")
         }
         if(map.currentRoom() !is LongRoom && map.currentRoom() !is LargeRoom){
             camera.moveTo(
@@ -254,11 +269,13 @@ open class Game(val map : Map,
                 map.currentRoom().getRoomCenter().second
             )
         }
-        Log.i("Top left corner","${map.currentRoom().topLeftCorner}")
-        Log.i("Bottom right corner","${map.currentRoom().bottomRightCorner}")
     }
 
     fun nextRoom(){
+        map.rooms!!.forEach {
+            Log.i("corners","${it.topLeftCorner},${it.bottomRightCorner}")
+        }
+        Log.i("map string","${map.mapString}")
         if(map.currentRoom+1<map.rooms!!.size){
             switchRoom(map.currentRoom+1)
         }

@@ -83,10 +83,10 @@ class Camera(val game: Game) {
                             x, y ->
                         if(y<minYValue){
                             sprite.y = minYValue
-                        } else if(x>maxYValue){
-                            sprite.x = maxYValue
+                        } else if(y>maxYValue){
+                            sprite.y = maxYValue
                         } else {
-                            sprite.x = x
+                            sprite.y = y
                         }
                     }
                 }

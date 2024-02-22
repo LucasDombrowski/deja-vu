@@ -33,8 +33,9 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     fun makeTileMap() : ArrayTileMap{
         if(mapString==null) {
             generateMap()
+            Log.i("mapString","$mapString")
         }
-        Log.i("mapString","$mapString")
+
         return mapString!!.trimIndent().toMutableTileMap(
             "012345"+
                     "6789AB"+
@@ -45,10 +46,6 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                     "!-*/=_"
         )
     }
-
-
-
-
 
     fun makeTileArea(): TiledArea {
         return drawable.tiledArea(tileMap)
@@ -303,30 +300,28 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                                      }
                                  }
                              }
-
                              if(room!=null) {
                                  val newRoom = room!!
-                                 if(newRoom !is LongRoom && room!is LargeRoom) {
+                                 if(newRoom !is LongRoom && room !is LargeRoom) {
                                      newRoom.topLeftCorner = Pair(currentRow, currentCol)
                                      newRoom.bottomRightCorner = Pair(currentRow + rowsToAdd, currentCol + colsToAdd)
                                  } else{
-                                     val firstHalfPosition = findRoom(it.toInt())
-                                     val secondHalfPosition = secondHalfPosition(it.toInt())
                                      if(newRoom is LongRoom){
-                                         if(firstHalfPosition!!.second<secondHalfPosition!!.second){
-                                             newRoom.topLeftCorner = Pair(currentRow, currentCol)
-                                             newRoom.bottomRightCorner = Pair(currentRow+rowsToAdd, currentCol+(colsToAdd*2))
+                                         if(newRoom.enterSide=="left"){
+                                             newRoom.topLeftCorner = Pair(currentRow,currentCol)
+                                             newRoom.bottomRightCorner = Pair(currentRow + rowsToAdd, currentCol + (colsToAdd*2))
                                          } else {
-                                             newRoom.topLeftCorner = Pair(currentRow, currentCol-colsToAdd)
-                                             newRoom.bottomRightCorner = Pair(currentRow+rowsToAdd, currentCol+colsToAdd)
+                                             newRoom.topLeftCorner = Pair(currentRow,currentCol-colsToAdd)
+                                             newRoom.bottomRightCorner = Pair(currentRow+rowsToAdd,currentCol+colsToAdd)
                                          }
-                                     } else {
-                                         if(firstHalfPosition!!.first<secondHalfPosition!!.second) {
-                                             newRoom.topLeftCorner = Pair(currentRow, currentCol)
-                                             newRoom.bottomRightCorner = Pair(currentRow + (rowsToAdd * 2), currentCol + colsToAdd)
+                                     }
+                                     if(newRoom is LargeRoom){
+                                         if(newRoom.enterSide=="top"){
+                                             newRoom.topLeftCorner = Pair(currentRow,currentCol)
+                                             newRoom.bottomRightCorner = Pair(currentRow+(rowsToAdd*2), currentCol+colsToAdd)
                                          } else {
-                                             newRoom.topLeftCorner = Pair(currentRow-rowsToAdd, currentCol)
-                                             newRoom.bottomRightCorner = Pair(currentRow + rowsToAdd, currentCol + colsToAdd)
+                                             newRoom.topLeftCorner = Pair(currentRow-rowsToAdd,currentCol)
+                                             newRoom.bottomRightCorner = Pair(currentRow+rowsToAdd,currentCol+colsToAdd)
                                          }
                                      }
                                  }
