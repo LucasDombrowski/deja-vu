@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +36,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.iutlens.mmi.demo.R
@@ -50,6 +58,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.LessFireRateLessDamages
 import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
 import fr.iutlens.mmi.demo.game.map.Camera
 import fr.iutlens.mmi.demo.game.map.Map
+import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
 import fr.iutlens.mmi.demo.game.screens.ItemImage
 import fr.iutlens.mmi.demo.game.screens.MenuButton
@@ -57,12 +66,14 @@ import fr.iutlens.mmi.demo.game.screens.MenuItem
 import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
+import fr.iutlens.mmi.demo.game.sprite.Sprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
+import fr.iutlens.mmi.demo.ui.theme.Dogica
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -154,29 +165,33 @@ open class Game(val map : Map,
     fun setupControls(){
         onTap = {
             (x,y)->
-            var targetChange = false
-            for(character in characterList){
-                if(character.inBoundingBox(x,y) && character is Enemy){
-                    targetChange = true
-                    if(character!=controllableCharacter!!.target) {
-                        controllableCharacter!!.target = character
-                        controllableCharacter!!.setupTargetFollow()
-                    } else {
-                        controllableCharacter!!.target = null
+            if(!pause) {
+                var targetChange = false
+                for (character in characterList) {
+                    if (character.inBoundingBox(x, y) && character is Enemy) {
+                        targetChange = true
+                        if (character != controllableCharacter!!.target) {
+                            controllableCharacter!!.target = character
+                            controllableCharacter!!.setupTargetFollow()
+                        } else {
+                            controllableCharacter!!.target = null
+                        }
                     }
                 }
-            }
-            if(!targetChange){
-                controllableCharacter!!.tapMovingBehavior(x,y)
+                if (!targetChange) {
+                    controllableCharacter!!.tapMovingBehavior(x, y)
+                }
             }
         }
         onDragMove = {
             (x,y)->
-            controllableCharacter!!.dragMovingBehavior(x,y)
-            movingRestriction = true
-            GlobalScope.launch {
-                delay(33)
-                movingRestriction = false
+            if(!pause) {
+                controllableCharacter!!.dragMovingBehavior(x, y)
+                movingRestriction = true
+                GlobalScope.launch {
+                    delay(33)
+                    movingRestriction = false
+                }
             }
         }
     }
@@ -189,12 +204,17 @@ open class Game(val map : Map,
         characterList.remove(character)
     }
 
-    fun addSprite(sprite: BasicSprite){
+    fun addSprite(sprite: Sprite){
         spriteList.add(sprite)
+        spriteList.sortBy {
+            it == controllableCharacter!!.sprite
+        }
     }
 
-    fun deleteSprite(sprite : BasicSprite){
-        sprite.invisible()
+    fun deleteSprite(sprite : Sprite){
+        if(sprite is BasicSprite) {
+            sprite.invisible()
+        }
         spriteList.remove(sprite)
     }
     fun switchRoom(ndx : Int){
@@ -212,6 +232,10 @@ open class Game(val map : Map,
                 map.currentRoom().getRoomCenter().second,
                 this
             )
+        }
+        if(map.currentRoom() is ShopRoom){
+            map.currentRoom().open()
+            (map.currentRoom() as ShopRoom).setup(this)
         }
     }
 
@@ -292,9 +316,13 @@ open class Game(val map : Map,
     }
 
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
-    var coins = mutableStateOf(0)
+    var coins = mutableStateOf(10)
     @Composable
     fun Ath(){
+        val configuration = LocalConfiguration.current
+        val screenWidth = with(configuration){
+            this.screenWidthDp
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -319,14 +347,14 @@ open class Game(val map : Map,
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Box(modifier = Modifier
-                        .width(50.dp)
-                        .height(50.dp)
+                        .width((screenWidth/15).dp)
+                        .aspectRatio(1f)
                         .clickable {
                             menu["open"] = true
                             pause = true;
                         }
                         .background(Color.White, shape = CircleShape)
-                        .padding(5.dp)
+                        .padding((screenWidth/150).dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.home_icon),
@@ -348,6 +376,14 @@ open class Game(val map : Map,
         .fillMaxWidth()
         .fillMaxHeight()
         ){
+        val configuration = LocalConfiguration.current
+        val density = LocalDensity.current
+        val screenWidth = with(configuration){
+            this.screenWidthDp
+        }
+        val fontSize = with(density){
+            (screenWidth/50).sp
+        }
         controllableCharacter!!.currentAnimationSequenceIndex = 0
         DialogScreen(text = item["description"] as String, onEnd = {
             item["show"] = false
@@ -356,12 +392,16 @@ open class Game(val map : Map,
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ItemImage(id = item["image"] as Int, item["name"] as String)
+                ItemImage(id = item["image"] as Int, item["name"] as String, (screenWidth*0.15).dp)
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = item["name"] as String,
                     color = Color.White,
-                    fontSize = 32.sp
+                    fontSize = fontSize,
+                    style = TextStyle(
+                        fontFamily = Dogica,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
             }
             Spacer(modifier = Modifier.height(30.dp))
@@ -369,42 +409,62 @@ open class Game(val map : Map,
     }
 
     var menu = mutableStateMapOf("open" to false)
-    @Composable fun Menu(modifier: Modifier = Modifier
+    @Composable
+    fun Menu(modifier: Modifier = Modifier
         .fillMaxWidth()
-        .fillMaxHeight()
-        .padding(20.dp)){
+        .fillMaxHeight()){
         controllableCharacter!!.currentAnimationSequenceIndex = 0
+        val configuration = LocalConfiguration.current
+        val screenWidth = configuration.screenWidthDp
+        val screenHeight = configuration.screenHeightDp
+        val bookWidth = when{
+            screenWidth>screenHeight->(screenHeight + (screenWidth-screenHeight)/4).dp
+            else->(screenWidth + (screenHeight-screenWidth)/4).dp
+        }
         Box(modifier=modifier.background(Color(0,0,0,128))){
-            Column(
-                modifier = modifier,
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Text(text = "PAUSE",
-                    fontSize = 32.sp,
-                    color = Color.White)
-                Spacer(modifier = Modifier.height(20.dp))
-                Column {
-                    MenuButton(text = "REPRENDRE") {
-                        menu["open"] = false
-                        pause = false
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    MenuButton(text = "OPTIONS") {
+            Box(modifier = Modifier
+                .width(bookWidth)
+                .fillMaxHeight()
+                .align(Alignment.Center)){
+                Image(painter = painterResource(id = R.drawable.open_book),
+                    contentDescription = "Livre",
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(0.925f)
+                        .fillMaxHeight()
+                ){
+                    Column(modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .fillMaxHeight()) {
 
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    MenuButton(text = "QUITTER") {
+                    Column(
+                        modifier
+                            .fillMaxWidth(0.5f)
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally) {
+                        MenuButton(text = "REPRENDRE") {
+                            pause = false
+                            menu["open"] = false
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                        MenuButton(text = "PARAMETRES") {
+                            
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                        MenuButton(text = "QUITTER") {
+                            
+                        }
 
                     }
                 }
-            }
-            Column {
-                with(controllableCharacter!!.items.iterator()){
-                    forEach {
-                        MenuItem(id = it.image, name = it.name)
-                    }
-                }
+
             }
         }
     }
@@ -435,11 +495,10 @@ open class Game(val map : Map,
     fun initiate(){
         setupControllableCharacter()
         addSprite(camera.sprite)
-        setupCamera()
     }
 
     fun setupCamera(){
-        transform = FocusTransform(background,camera.sprite,8)
+        transform = FocusTransform(background,camera.sprite,15f)
     }
 
     init {

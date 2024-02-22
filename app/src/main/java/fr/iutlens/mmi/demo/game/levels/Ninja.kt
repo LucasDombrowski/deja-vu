@@ -1,6 +1,8 @@
 package fr.iutlens.mmi.demo.game.levels
 
 import android.util.Log
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Chest
@@ -8,7 +10,12 @@ import fr.iutlens.mmi.demo.game.gameplayResources.Item
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaBoots
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken
+import fr.iutlens.mmi.demo.game.gameplayResources.items.OneHeart
 import fr.iutlens.mmi.demo.game.map.Map
+import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
+import fr.iutlens.mmi.demo.game.map.shop.ShopItem
+import fr.iutlens.mmi.demo.game.sprite.ImageSprite
+import fr.iutlens.mmi.demo.game.sprite.TextSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.Buddy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
@@ -49,6 +56,7 @@ class Ninja : Game(
                 }
             }
         }
+
     }
 
     override fun copy() : Ninja{

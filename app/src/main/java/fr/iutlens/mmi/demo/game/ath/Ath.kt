@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,16 +18,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.ui.theme.Dogica
 
 @Composable
 fun Heart(permanent: Boolean, filled: Float){
+    val configuration = LocalConfiguration.current
+    val screenWidth = with(configuration){
+        this.screenWidthDp
+    }
     Box(modifier = Modifier
-        .width(24.dp)
-        .height(24.dp)) {
+        .width((screenWidth / 40).dp)
+        .aspectRatio(1f)) {
         val image = when{
             permanent->when(filled){
                 1f->R.drawable.permanent_heart_4_4
@@ -87,11 +99,25 @@ fun BossBar(hearts : MutableList<Heart>){
 
 @Composable
 fun Coins(n: MutableState<Int>){
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+    val screenWidth = with(configuration){
+        this.screenWidthDp
+    }
+    val fontSize = with(density){
+        (screenWidth/60).dp.toSp()
+    }
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.width(48.dp).height(48.dp)){
+        Box(modifier = Modifier
+            .width((screenWidth / 35).dp)
+            .aspectRatio(1f)){
             Image(painter = painterResource(id = R.drawable.coin), contentDescription = "Pièce", contentScale = ContentScale.Fit)
         }
-        Text(text = n.value.toString(), color = Color.White)
+        Spacer(modifier = Modifier.width(5.dp))
+        Text(text = n.value.toString(), color = Color.White, fontSize = fontSize, style = TextStyle(
+            fontFamily = Dogica,
+            fontWeight = FontWeight.Normal
+        ))
     }
 }
 

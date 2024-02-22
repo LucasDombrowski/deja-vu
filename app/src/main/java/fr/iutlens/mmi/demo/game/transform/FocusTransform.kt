@@ -17,7 +17,7 @@ import fr.iutlens.mmi.demo.game.sprite.TiledArea
  * @constructor Crée une camera suivant le sprite, en affichant toujours au moins minTiles tuiles
  * de tiledArea dans chaque direction
  */
-class FocusTransform(val tiledArea: TiledArea, var sprite: Sprite, var minTiles: Int) :
+class FocusTransform(val tiledArea: TiledArea, var sprite: Sprite, var minTiles: Float) :
     CameraTransform {
 
     private val transform = Matrix()
@@ -28,10 +28,8 @@ class FocusTransform(val tiledArea: TiledArea, var sprite: Sprite, var minTiles:
     override fun getMatrix(size: Size): Matrix {
         val boundingBox = sprite.boundingBox
         val tilesX = size.width / tiledArea.w
-        val tilesY = size.height / tiledArea.h
-        val sizeTiles = tilesX.coerceAtMost(tilesY)
 
-        val scale = sizeTiles / minTiles
+        val scale = (tilesX / minTiles)
 
         transform.reset()
         transform.translate(size.width/2, size.height/2)

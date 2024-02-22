@@ -1,5 +1,7 @@
 package fr.iutlens.mmi.demo.game.sprite
 
+import android.util.Log
+
 
 /**
  * TileMap représente un tableau à deux dimensions d'entiers
@@ -60,12 +62,29 @@ fun TileMap.toMutableTileMap() = ArrayTileMap(this)
  *
  * @param code liste des caractères utilisés pour coder la TileMap
  */
+
+
 fun String.toTileMap(code: String) = object : TileMap {
-    val data = this@toTileMap.split('\n')
+    var data = this@toTileMap.split('\n')
+    init {
+        val maxLength = data.maxBy {
+            it.length
+        }.length
+        val dataCopy = data.toMutableList()
+        for(i in 0..<dataCopy.size){
+            while (dataCopy[i].length<maxLength){
+                dataCopy[i]+="!"
+            }
+        }
+        data = dataCopy.toList()
+
+    }
     override fun get(x: Int, y: Int): Int  = code.indexOf(data[y][x])
     override val sizeX = data[0].length
     override val sizeY = data.size
+
 }
+
 
 /**
  * Construit une ArrayTileMap en découpant une chaîne en lignes.

@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -12,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import fr.iutlens.mmi.demo.boot.changeLevel
 import fr.iutlens.mmi.demo.boot.startFirstLevel
 import fr.iutlens.mmi.demo.components.Level
@@ -30,7 +32,14 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+var currentContext : Context ?= null
+
+fun getCurrentActivityContext() : Context{
+    return currentContext!!
+}
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,18 +59,9 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
+            currentContext = LocalContext.current
             MyApplicationTheme {
-                var game : Game ? by remember{ mutableStateOf(null) }
-                if(game == null){
-                    MainMenu(){
-                        game = startFirstLevel()
-                        game!!.onEnd = {
-                            game = changeLevel(game!!)
-                        }
-                    }
-                } else {
-                    Level(game = game!!)
-                }
+                Level(game = Ninja())
                 Music(id = R.raw.jungle)
             }
         }

@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,8 +34,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.iutlens.mmi.demo.R
@@ -48,10 +53,9 @@ import java.security.AccessController.getContext
 
 var writing : Job ?= null
 var imageAnimation : Job ?= null
-val fontSize = 16.sp
 
 @Composable
-fun DialogBox(text : String, boxWidth : Double, boxHeight: Double){
+fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit){
 
     var currentText by remember {
         mutableStateOf(text)
@@ -84,28 +88,29 @@ fun DialogBox(text : String, boxWidth : Double, boxHeight: Double){
             )
         )
     }
-    Box(modifier = Modifier
-        .width(boxWidth.dp)
-        .height(boxHeight.dp)
-        .background(Color.White)
+    BoxWithConstraints(modifier = Modifier
+        .width(boxWidth)
         .padding(5.dp)
         ){
-        WritingText(text = currentText, {
+        val textHeight = boxWidth/5
+        Image(painter = painterResource(id = R.drawable.dialog_box),
+            contentDescription = "Dialog Box",
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.fillMaxWidth())
+        WritingText(text = currentText, fontSize = fontSize, lineHeight = lineHeight, modifier = Modifier.align(Alignment.Center).width(textWidth)) {
             stopWriting()
-        })
+        }
         WritingAnimation(images.toList(), isWriting,
             Modifier
                 .align(Alignment.BottomEnd)
-                .width(200.dp)
-                .height(200.dp)
-                .offset(x = 100.dp, y = 50.dp))
+                .height(textHeight))
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun WritingText(text: String, stopWriting : ()->Unit){
+fun WritingText(text: String, modifier : Modifier, fontSize : TextUnit, lineHeight: TextUnit, stopWriting : ()->Unit){
     val scope = rememberCoroutineScope()
     if(text.isNotEmpty()) {
         var currentText by remember {
@@ -145,9 +150,11 @@ fun WritingText(text: String, stopWriting : ()->Unit){
             color = Color.Black,
             textAlign = TextAlign.Left,
             fontSize = fontSize,
+            lineHeight = lineHeight,
             style = TextStyle(
                 fontFamily = Dogica,
-            )
+            ),
+            modifier = modifier
         )
     }
 }
@@ -159,7 +166,6 @@ fun WritingAnimation(images : List<Bitmap>, writing: Boolean, modifier: Modifier
     }
     if(imageAnimation == null) {
         imageAnimation = setInterval(0, 200) {
-            Log.i("image","true")
             if (imageIndex >= images.size - 1) {
                 imageIndex = 0
             } else {
@@ -172,7 +178,7 @@ fun WritingAnimation(images : List<Bitmap>, writing: Boolean, modifier: Modifier
     }
     Image(bitmap = images[imageIndex].asImageBitmap(),
         contentDescription = "Writing",
-        contentScale = ContentScale.Fit,
+        contentScale = ContentScale.FillHeight,
         modifier = modifier,
         )
 

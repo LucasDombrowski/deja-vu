@@ -330,6 +330,13 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         )
     }
 
+    fun inMinMaxCoordinates(x: Float, y:Float) : Boolean{
+        val minMaxCoordinates = getMinMaxCoordinates()
+        Log.i("Min Max coordinates","$minMaxCoordinates")
+        Log.i("x,y","$x,$y")
+        return x in minMaxCoordinates.first.first..minMaxCoordinates.second.first && y in minMaxCoordinates.first.second..minMaxCoordinates.second.second
+    }
+
     fun getMinMaxIndices() : Pair<Pair<Int,Int>,Pair<Int,Int>>{
         return Pair(
             Pair(

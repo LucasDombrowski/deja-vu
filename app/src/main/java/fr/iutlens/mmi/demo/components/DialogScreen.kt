@@ -1,6 +1,9 @@
 package fr.iutlens.mmi.demo.components
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -26,73 +30,101 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
         mutableStateOf(text)
     }
 
-    val boxWidth = LocalConfiguration.current.screenWidthDp*0.8
-    val boxHeight = boxWidth*0.1
-    val pxBoxWidth = with(LocalDensity.current) {
-        boxWidth.dp.toPx()
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+
+    val boxWidth = with(configuration){
+        (this.screenWidthDp*0.6).dp
     }
-    val pxBoxHeight = with(LocalDensity.current) {
-        boxHeight.dp.toPx()
+    val pxTextWidth = with(density){
+        boxWidth.toPx()*0.7
     }
-    val pxFontSize = with(LocalDensity.current) {
-        fontSize.toPx()
+    val textWidth = with(density){
+        pxTextWidth.toFloat().toDp()
     }
+
+    val pxFontSize = pxTextWidth/40
+
+    val fontSize = with(density){
+        pxFontSize.toFloat().toSp()
+    }
+
+    val lineHeight = fontSize*1.25
+
+    val lineWidth = (pxTextWidth / pxFontSize)
+
+
 
     fun getMaxChars(): Int {
-        return ((pxBoxHeight / pxFontSize) * (pxBoxWidth / pxFontSize)).toInt()
+        return (5 * lineWidth).toInt()
     }
 
-    fun getFirstSpace(text: String, index: Int): Int {
-        return text.indexOf("", index)
+    fun splitChars() : List<Char>{
+        return listOf<Char>('!','.',',','?',':',';')
     }
 
-    fun getNextWordIndex(text: String, index: Int): Int {
-        val firstSpace = getFirstSpace(text, index)
-        for (i in firstSpace..<text.length) {
-            if (text[i].toString() != "") {
+    fun getFirstSplit(text: String, index: Int): Int {
+        for(i in index..<text.length){
+            if(text[i] in splitChars()){
                 return i
             }
         }
         return -1
     }
 
+    fun getNextWordIndex(text: String, index: Int): Int {
+        val firstSplit = getFirstSplit(text, index)
+        if(firstSplit!=-1) {
+            for (i in firstSplit..<text.length) {
+                if (text[i] !in splitChars() && text[i] != ' ') {
+                    return i
+                }
+            }
+        }
+        return -1
+    }
+
     fun generateTextSequence() : List<String>{
-        val textSequence : MutableList<String> = mutableListOf()
+        val localTextSequence : MutableList<String> = mutableListOf()
         var textPart = fullText
         if(textPart.length<=getMaxChars()){
-            textSequence.add(textPart)
+            localTextSequence.add(textPart)
         } else {
             var endIndex = getNextWordIndex(textPart, getMaxChars()-1)
-            while (endIndex<textPart.length){
-                textSequence.add(textPart.substring(0,endIndex))
-                textPart = textPart.substring(endIndex)
-                if(textPart.length>=getMaxChars()) {
+            while (endIndex<textPart.length && endIndex!=-1){
+                if(textPart.length>getMaxChars()) {
+                    if(endIndex==-1){
+                        break
+                    }
+                    localTextSequence.add(textPart.substring(0,endIndex))
+                    textPart = textPart.substring(endIndex)
                     endIndex = getNextWordIndex(textPart, getMaxChars() - 1)
                 }
             }
-            textSequence.add(textPart)
+            localTextSequence.add(textPart)
         }
-        return textSequence.toList()
+        return localTextSequence.toList()
     }
 
-    Log.i("generated text sequence","${generateTextSequence()}")
     var textSequence = generateTextSequence()
-    Log.i("text sequence","$textSequence")
-    var textSequenceIndex = 0
+    var textSequenceIndex by remember {
+        mutableStateOf(0)
+    }
 
     var currentText by remember {
         mutableStateOf(textSequence[textSequenceIndex])
     }
     if(fullText!=text){
         fullText = text
+        textSequenceIndex = 0
         textSequence = generateTextSequence()
         currentText = textSequence[textSequenceIndex]
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     @Composable
     fun DialogScreenBox(text : String){
-        Log.i("Recompose","true")
-        DialogBox(text = text, boxWidth = boxWidth, boxHeight = boxHeight)
+        DialogBox(text = text, boxWidth = boxWidth, textWidth = textWidth,  fontSize = fontSize, lineHeight = lineHeight)
     }
 
     Box(modifier = Modifier
@@ -100,6 +132,8 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
         .fillMaxHeight()
         .pointerInput(key1 = "DialogScreen") {
             detectTapGestures {
+                Log.i("Index", "$textSequenceIndex")
+                Log.i("size", "${textSequence.size}")
                 if (textSequenceIndex < textSequence.size - 1) {
                     textSequenceIndex++
                     currentText = textSequence[textSequenceIndex]
@@ -107,7 +141,8 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
                     onEnd()
                 }
             }
-        }){
+        }
+        .background(Color(0, 0, 0, 128))){
         Column(
             modifier = Modifier
                 .fillMaxWidth()

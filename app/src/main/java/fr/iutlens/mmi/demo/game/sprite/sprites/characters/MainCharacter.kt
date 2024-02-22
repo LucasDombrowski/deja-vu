@@ -87,7 +87,8 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             temporaryMovingInteraction(x,y)
             sprite.x = x
             sprite.y = y
-            with(game.collectibleList.iterator()){
+            val collectibleListCopy = game.collectibleList.toList()
+            with(collectibleListCopy.iterator()){
                 forEach {
                     if(inBoundingBox(it.sprite.x, it.sprite.y)){
                         it.collectEffect()
@@ -132,7 +133,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             newHearts.add(heart.copy())
         }
         newHearts.sortBy {
-            it.permanent
+            !it.permanent
         }
         hearts = newHearts
         game.ath["hearts"] = newHearts
