@@ -426,8 +426,8 @@ open class Game(val map : Map,
                 .width(bookWidth)
                 .fillMaxHeight()
                 .align(Alignment.Center)){
-                Image(painter = painterResource(id = R.drawable.open_book),
-                    contentDescription = "Livre",
+                Image(painter = painterResource(id = R.drawable.pause_menu),
+                    contentDescription = "Menu pause",
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier
                         .fillMaxWidth()
