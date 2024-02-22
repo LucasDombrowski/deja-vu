@@ -209,6 +209,9 @@ open class Game(val map : Map,
 
     fun addSprite(sprite: Sprite){
         spriteList.add(sprite)
+    }
+
+    fun sortSpriteList(){
         spriteList.sortBy {
             it == controllableCharacter!!.sprite
         }

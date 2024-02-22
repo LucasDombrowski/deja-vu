@@ -45,13 +45,15 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
         disablePathFollowing()
         action.cancel()
         action = setInterval(0,100){
-            if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.realRange(game)){
-                moveTo(target!!.sprite.x, target!!.sprite.y)
-                if(!isPathFree(target!!.sprite.x, target!!.sprite.y)){
-                    followPlayer()
+            if(distanceWith(target!!)<game.map.tileArea.w*4) {
+                if (distanceWith(target!!) > projectile.realRange(game)) {
+                    moveTo(target!!.sprite.x, target!!.sprite.y)
+                    if (!isPathFree(target!!.sprite.x, target!!.sprite.y)) {
+                        followPlayer()
+                    }
+                } else {
+                    shotPlayer()
                 }
-            } else {
-                shotPlayer()
             }
         }
     }
@@ -63,7 +65,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
         action = setInterval(0,100){
             if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
                 reachPlayer()
-            } else if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)<projectile.realRange(game)){
+            } else if(distanceWith(target!!)<projectile.realRange(game)){
                 shotPlayer()
             }
         }
@@ -85,7 +87,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
                 projectile.aimTarget(target!!, sprite.x, sprite.y)
                 projectile.fireProjectile(game,sprite.x, sprite.y, firstProjectile[0], firstProjectile[1])
                 projectile.fireProjectile(game,sprite.x,sprite.y,secondProjectile[0],secondProjectile[1])
-                if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.realRange(game)){
+                if(distanceWith(target!!)>projectile.realRange(game)){
                     reachPlayer()
                 }
             }
