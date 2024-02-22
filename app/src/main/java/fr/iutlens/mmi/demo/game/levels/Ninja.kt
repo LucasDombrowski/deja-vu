@@ -12,6 +12,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken
 import fr.iutlens.mmi.demo.game.gameplayResources.items.OneHeart
 import fr.iutlens.mmi.demo.game.map.Map
+import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.map.shop.ShopItem
 import fr.iutlens.mmi.demo.game.sprite.ImageSprite
@@ -37,7 +38,7 @@ class Ninja : Game(
 ) {
     init {
         map.enemies = listOf(
-            TeleportNinja(0f,0f,this),
+            CloseNinja(0f,0f,this),
         )
         items += mutableListOf<Item>(
             NinjaScarf(),

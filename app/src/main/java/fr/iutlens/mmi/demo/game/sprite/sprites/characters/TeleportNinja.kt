@@ -38,57 +38,56 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                 delay(33)
             }
             if(alive) {
-                if (!chasing) {
-                    sprite.setTransparencyLevel(0.75f)
-                    delay(33)
-                    sprite.setTransparencyLevel(0.5f)
-                    delay(33)
-                    sprite.setTransparencyLevel(0.25f)
-                    delay(33)
-                    sprite.invisible()
-                    val xPos = when (Math.random()) {
-                        in 0f..0.5f -> target!!.sprite.x - 50f
-                        else -> target!!.sprite.x + 50f
-                    }
-                    val yPos = when (Math.random()) {
-                        in 0f..0.5f -> target!!.sprite.y + 50f
-                        else -> target!!.sprite.y - 50f
-                    }
-                    chasing = true
-                    delay(2000)
-                    changePos(xPos, yPos)
-                    sprite.visible()
-                    sprite.setTransparencyLevel(0.25f)
-                    delay(15)
-                    sprite.setTransparencyLevel(0.5f)
-                    delay(15)
-                    sprite.setTransparencyLevel(0.75f)
-                    delay(15)
-                    sprite.setTransparencyLevel(1f)
-                    action = GlobalScope.launch {
-                        pattern()
-                    }
+                    if (!chasing) {
+                        sprite.setTransparencyLevel(0.75f)
+                        delay(33)
+                        sprite.setTransparencyLevel(0.5f)
+                        delay(33)
+                        sprite.setTransparencyLevel(0.25f)
+                        delay(33)
+                        sprite.invisible()
+                        val xPos = when (Math.random()) {
+                            in 0f..0.5f -> target!!.sprite.x - 50f
+                            else -> target!!.sprite.x + 50f
+                        }
+                        val yPos = when (Math.random()) {
+                            in 0f..0.5f -> target!!.sprite.y + 50f
+                            else -> target!!.sprite.y - 50f
+                        }
+                        chasing = true
+                        delay(2000)
+                        changePos(xPos, yPos)
+                        sprite.visible()
+                        sprite.setTransparencyLevel(0.25f)
+                        delay(15)
+                        sprite.setTransparencyLevel(0.5f)
+                        delay(15)
+                        sprite.setTransparencyLevel(0.75f)
+                        delay(15)
+                        sprite.setTransparencyLevel(1f)
+                        action = GlobalScope.launch {
+                            pattern()
+                        }
 
-                } else if (target!!.inBoundingBox(sprite.x, sprite.y)) {
-                    target!!.healthDown(0.5f, 0.2f, currentDirection)
-                    chasing = false
-                    action = GlobalScope.launch {
-                        delay(100)
-                        pattern()
-                    }
-                } else {
-                    if(isPathFree(target!!.sprite.x, target!!.sprite.y)){
-                        moveTo(target!!.sprite.x, target!!.sprite.y)
+                    } else if (target!!.inBoundingBox(sprite.x, sprite.y)) {
+                        target!!.healthDown(0.5f, 0.2f, currentDirection)
+                        chasing = false
                         action = GlobalScope.launch {
                             delay(100)
                             pattern()
                         }
                     } else {
-                        followPlayer()
+                        if (isPathFree(target!!.sprite.x, target!!.sprite.y)) {
+                            moveTo(target!!.sprite.x, target!!.sprite.y)
+                            action = GlobalScope.launch {
+                                delay(100)
+                                pattern()
+                            }
+                        } else {
+                            followPlayer()
+                        }
                     }
-
                 }
-            }
         }
     }
     override fun copy() : TeleportNinja{

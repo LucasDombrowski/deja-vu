@@ -4,18 +4,27 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class Camera(val game: Game) {
     val sprite = BasicSprite(R.drawable.transparent,game.map.characterStartPosition().first, game.map.characterStartPosition().second)
-    val speed = 100f
 
     fun moveTo(x: Float, y:Float){
+        moveCamera(x,y,{
+            action()
+        })
+    }
+
+    fun moveCamera(x: Float, y: Float, after : ()->Unit = {}, speed: Float = 100f){
         GlobalScope.launch {
             if(x!=sprite.x || y!=sprite.y){
                 val xChangeValue = when{
@@ -38,22 +47,73 @@ class Camera(val game: Game) {
                 }
                 game.invalidate()
                 delay(33)
-                moveTo(x,y)
+                moveCamera(x,y,after)
             } else {
-                game.resetCollectibles()
-                game.controllableCharacter!!.restart()
-                delay(1000)
-                if(game.map.currentRoom() is BasicRoom){
-                    game.map.currentRoom().spawnEnemies()
-                }
-                if(game.map.currentRoom() is BossRoom){
-                    game.spawnBoss()
-                }
-                if(game.map.currentRoom() is ShopRoom){
-                    (game.map.currentRoom() as ShopRoom).launchCinematic(game)
-                }
-                game.controllableCharacter!!.getClosestEnemy()
+                after()
             }
+        }
+    }
+
+    fun action(){
+        GlobalScope.launch {
+            game.resetCollectibles()
+            game.controllableCharacter!!.restart()
+            delay(1000)
+            if (game.map.currentRoom() is BasicRoom || game.map.currentRoom() is LongRoom || game.map.currentRoom() is LargeRoom) {
+                game.map.currentRoom().spawnEnemies()
+            }
+            if (game.map.currentRoom() is LongRoom) {
+                val minXValue = min(
+                    (game.map.currentRoom() as LongRoom).getFirstHalfCenter().first,
+                    (game.map.currentRoom() as LongRoom).getSecondHalfCenter().first
+                )
+                val midXValue = game.map.currentRoom().getRoomCenter().first
+                val maxXValue = max(
+                    (game.map.currentRoom() as LongRoom).getFirstHalfCenter().first,
+                    (game.map.currentRoom() as LongRoom).getSecondHalfCenter().first
+                )
+                val firstCamTrigger = minXValue + (midXValue - minXValue) / 2
+                val secondCamTrigger = midXValue + (maxXValue - midXValue) / 2
+                game.controllableCharacter!!.temporaryMovingInteraction = { x, y ->
+                    if (x < firstCamTrigger) {
+                        moveCamera(minXValue, sprite.y, speed = 5f)
+                    } else if(x>secondCamTrigger){
+                        moveCamera(maxXValue, sprite.y, speed = 5f)
+                    } else {
+                        moveCamera(midXValue,sprite.y, speed = 5f)
+                    }
+                }
+            }
+            if (game.map.currentRoom() is LargeRoom) {
+                val minYValue = min(
+                    (game.map.currentRoom() as LargeRoom).getFirstHalfCenter().second,
+                    (game.map.currentRoom() as LargeRoom).getSecondHalfCenter().second
+                )
+                val midYValue = game.map.currentRoom().getRoomCenter().second
+                val maxYValue = max(
+                    (game.map.currentRoom() as LargeRoom).getFirstHalfCenter().second,
+                    (game.map.currentRoom() as LargeRoom).getSecondHalfCenter().second
+                )
+                val firstCamTrigger = minYValue + (midYValue - minYValue) / 2
+                val secondCamTrigger = midYValue + (maxYValue - midYValue) / 2
+                game.controllableCharacter!!.temporaryMovingInteraction = {
+                    x, y ->
+                    if(y<firstCamTrigger){
+                        moveCamera(sprite.x, minYValue, speed = 5f)
+                    } else if(y>secondCamTrigger){
+                        moveCamera(sprite.x, maxYValue, speed = 5f)
+                    } else {
+                        moveCamera(sprite.x, midYValue, speed = 5f)
+                    }
+                }
+            }
+            if (game.map.currentRoom() is BossRoom) {
+                game.spawnBoss()
+            }
+            if (game.map.currentRoom() is ShopRoom) {
+                (game.map.currentRoom() as ShopRoom).launchCinematic(game)
+            }
+            game.controllableCharacter!!.getClosestEnemy()
         }
     }
 }

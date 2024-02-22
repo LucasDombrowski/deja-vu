@@ -132,8 +132,6 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
         .fillMaxHeight()
         .pointerInput(key1 = "DialogScreen") {
             detectTapGestures {
-                Log.i("Index", "$textSequenceIndex")
-                Log.i("size", "${textSequence.size}")
                 if (textSequenceIndex < textSequence.size - 1) {
                     textSequenceIndex++
                     currentText = textSequence[textSequenceIndex]

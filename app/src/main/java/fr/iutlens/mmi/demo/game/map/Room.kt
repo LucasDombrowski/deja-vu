@@ -2,6 +2,9 @@ package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
+import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.utils.getCenter
 import java.lang.StringBuilder
@@ -12,10 +15,11 @@ import kotlin.math.log
 
 open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false, val enemies : IntRange) {
 
-    var composition : String = create().trimIndent()
+    open var composition : String = create().trimIndent()
     var topLeftCorner : Pair<Int,Int> ?= null
     var bottomRightCorner : Pair<Int,Int> ?= null
     var enemyList : MutableList<Enemy> = mutableListOf()
+    var roomList : MutableList<MutableList<String>> ? = null
 
     open fun copy() : Room{
         return Room(row, col, map, enter, exit, open, enemies)
@@ -139,6 +143,9 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
 
     fun isPathAvailable(map: List<List<Char>>): Boolean {
+        map.forEach {
+            Log.i("map","$it")
+        }
         val queue: Queue<Pair<Int, Int>> = LinkedList()
         val visited = mutableSetOf<Pair<Int, Int>>()
 
@@ -147,6 +154,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
             null->start
             else->findEndPosition(map)
         }
+        Log.i("start","$start")
+        Log.i("end","$end")
 
         if (start == null || end == null) {
             return false
@@ -181,7 +190,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
     }
 
-    fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
+    open fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
 
         val doorStart = when (enter) {
             "top" -> {
@@ -213,8 +222,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         return null
     }
 
-    fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
-
+    open fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
         val doorEnd =  when(open){
             true -> when (exit) {
                 "top" -> {
@@ -252,7 +260,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         return null
     }
 
-    fun toList() : MutableList<MutableList<String>>{
+    open fun toList() : MutableList<MutableList<String>>{
         val list = composition.split("\n").map {
             it.split("").toMutableList()
         }.toMutableList()
@@ -261,6 +269,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 it.removeAll(listOf(""))
             }
         }
+        roomList = list
         return list
     }
 
@@ -276,6 +285,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
     open fun refresh(){
         composition = create().trimIndent()
+        toList()
     }
 
     fun getPosition(row: Int, column:Int) : Pair<Int,Int>{
@@ -304,13 +314,13 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     fun getElement(x: Float, y: Float) : String{
         val globalPosition = map.getMapIndexFromPosition(x,y)
         val localPosition = getPosition(globalPosition.first, globalPosition.second)
-        return toList()[localPosition.first][localPosition.second]
+        return roomList!![localPosition.first][localPosition.second]
     }
 
-    fun placeCharacter(game: Game){
-        val roomList = toList()
+    open fun placeCharacter(game: Game){
+        val roomList = roomList
 
-        val startPosition = findStartPosition(roomList.map {
+        val startPosition = findStartPosition(roomList!!.map {
             it.map {
                 it.single()
             }.toList()
@@ -323,17 +333,27 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         )
     }
 
+    fun characterInStartPosition(game: Game) : Boolean{
+        val roomList = roomList
+        val startPosition = findStartPosition(roomList!!.map {
+            it.map {
+                it.single()
+            }.toList()
+        }.toList())
+        val globalPosition = getGlobalPosition(startPosition!!.first, startPosition!!.second)
+        val characterPosition = map.getMapIndexFromPosition(game.controllableCharacter!!.sprite.x, game.controllableCharacter!!.sprite.y)
+        return characterPosition.first == globalPosition.first && characterPosition.second == globalPosition.second
+    }
+
     fun getMinMaxCoordinates() : Pair<Pair<Float,Float>,Pair<Float,Float>>{
         return Pair(
-            map.getPositionFromMapIndex(topLeftCorner!!.first+1, topLeftCorner!!.second+1),
-            map.getPositionFromMapIndex(bottomRightCorner!!.first-1, bottomRightCorner!!.second-1)
+            map.getPositionFromMapIndex(topLeftCorner!!.first, topLeftCorner!!.second),
+            map.getPositionFromMapIndex(bottomRightCorner!!.first, bottomRightCorner!!.second)
         )
     }
 
     fun inMinMaxCoordinates(x: Float, y:Float) : Boolean{
         val minMaxCoordinates = getMinMaxCoordinates()
-        Log.i("Min Max coordinates","$minMaxCoordinates")
-        Log.i("x,y","$x,$y")
         return x in minMaxCoordinates.first.first..minMaxCoordinates.second.first && y in minMaxCoordinates.first.second..minMaxCoordinates.second.second
     }
 
@@ -357,10 +377,12 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 enemy = newEnemy
             }
         }
-        with(enemy!!.game.characterList.iterator()){
-            forEach {
-                if(it!=null && it is Enemy){
-                    enemyList.add(it)
+        if(enemy!=null) {
+            with(enemy!!.game.characterList.iterator()) {
+                forEach {
+                    if (it is Enemy) {
+                        enemyList.add(it)
+                    }
                 }
             }
         }
@@ -380,7 +402,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
     }
 
-    fun open(){
+    open fun open(){
         open = true
         composition = when(exit){
             "top"-> composition.replace("O","U")
@@ -391,23 +413,27 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         map.reload()
     }
 
-    fun enemiesAlive() : Boolean{
-        for(enemy in enemyList){
-            if(enemy.alive){
-                return true
+    fun enemiesAlive(game: Game) : Boolean{
+        with(game.characterList.iterator()){
+            forEach {
+                if(it is Enemy && it.alive){
+                    return true
+                }
             }
         }
         return false
     }
 
-    fun isOpenable(){
-        if(!enemiesAlive()){
-            open()
-            enemyList = mutableListOf()
+    fun isOpenable(game: Game){
+        if(this is BasicRoom || this is LargeRoom || this is LongRoom) {
+            if (!enemiesAlive(game)) {
+                open()
+                enemyList = mutableListOf()
+            }
         }
     }
 
-    fun close(){
+    open fun close(){
         open = false
         composition = when(exit){
             "top"->composition.replace("U","O")
@@ -417,6 +443,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
         map.reload()
     }
+
+
 
 
 
