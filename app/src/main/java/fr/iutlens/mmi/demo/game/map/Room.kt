@@ -10,6 +10,7 @@ import fr.iutlens.mmi.demo.utils.getCenter
 import java.lang.StringBuilder
 import java.util.LinkedList
 import java.util.Queue
+import kotlin.math.abs
 import kotlin.reflect.KClass
 import kotlin.math.log
 
@@ -392,7 +393,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         val minMaxCoordinates = getMinMaxCoordinates()
         val xVal = (minMaxCoordinates.first.first + Math.random() * (minMaxCoordinates.second.first - minMaxCoordinates.first.first)).toFloat()
         val yVal = (minMaxCoordinates.first.second + Math.random() * (minMaxCoordinates.second.second - minMaxCoordinates.first.second)).toFloat()
-        return if(map.inForbiddenArea(xVal,yVal)){
+        return if(map.inForbiddenArea(xVal,yVal) || !reachablePlayer(xVal,yVal,enemy.game)){
             spawnEnemy()
             null
         } else {
@@ -400,6 +401,16 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
             enemy.smokeAnimation()
             enemy
         }
+    }
+
+    fun reachablePlayer(x: Float, y:Float, game: Game) : Boolean{
+        val tileEnd = map.getMapIndexFromPosition(x,y)
+        val tileStart = map.getMapIndexFromPosition(
+            game.controllableCharacter!!.sprite.x,
+            game.controllableCharacter!!.sprite.y
+        )
+        val lastTileAvailable = game.controllableCharacter!!.getShortestPath(tileStart, tileEnd).last()
+        return abs(lastTileAvailable.first - tileEnd.first)<=1 || abs(lastTileAvailable.second-tileEnd.second)<=1
     }
 
     open fun open(){
