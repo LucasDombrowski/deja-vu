@@ -102,22 +102,24 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             }
             map.add(row)
         }
-        var currentRow = roomNumber
-        var currentCol = roomNumber
+        var currentRow = 2*roomNumber
+        var currentCol = 2*roomNumber
         map[currentRow][currentCol] = n.toString()
         repeat(roomNumber){
             n+=1
-            val mapChanges = generateNextRoom(map,currentRow,currentCol,entranceDoor,n.toString())
+            var mapChanges = generateNextRoom(map,currentRow,currentCol,entranceDoor,n.toString())
             currentRow = mapChanges["currentRow"] as Int
             currentCol = mapChanges["currentCol"] as Int
             entranceDoor = mapChanges["entranceDoor"] as String
             sequence.add(mapChanges["nextRoom"] as String)
+            Log.i("Given row / col","$currentRow, $currentCol")
             if((1..4).random() == 1 && it<roomNumber-1 && it>0 && bigRooms<treasureRooms+1){
                 bigRooms++
-                val mapChanges = generateNextRoom(map,currentRow,currentCol,entranceDoor,"$n.5")
+                mapChanges = generateNextRoom(map,currentRow,currentCol,entranceDoor,"$n.5")
                 currentRow = mapChanges["currentRow"] as Int
                 currentCol = mapChanges["currentCol"] as Int
                 entranceDoor = mapChanges["entranceDoor"] as String
+                Log.i("Given row / col","$currentRow, $currentCol")
             }
         }
         fun isOnlyEmpty(row: List<String>) : Boolean{
@@ -418,30 +420,30 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             }
         }
         when(nextRoom){
-            "left"->if(map[currentRow][currentCol-1]!=""){
+            "left"->if(currentCol<=0 || map[currentRow][currentCol-1]!=""){
                         forbiddenDirections.add(nextRoom)
-                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
+                        return generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
                     } else {
                         currentCol-=1
                         map[currentRow][currentCol] = number
                     }
-            "right"->if(map[currentRow][currentCol+1]!=""){
+            "right"->if(currentCol>=map[currentRow].size || map[currentRow][currentCol+1]!=""){
                         forbiddenDirections.add(nextRoom)
-                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
+                        return generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
                     } else {
                         currentCol+=1
                         map[currentRow][currentCol] = number
                     }
-            "top"->if(map[currentRow-1][currentCol]!=""){
+            "top"->if(currentRow<= 0 || map[currentRow-1][currentCol]!=""){
                         forbiddenDirections.add(nextRoom)
-                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
+                        return generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
                     } else {
                         currentRow-=1
                         map[currentRow][currentCol] = number
                     }
-            else -> if(map[currentRow+1][currentCol]!=""){
+            else -> if(currentRow>=map.size ||map[currentRow+1][currentCol]!=""){
                         forbiddenDirections.add(nextRoom)
-                        generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
+                        return generateNextRoom(map,currentRow,currentCol,entranceDoor,number, forbiddenDirections)
                     } else {
                         currentRow+=1
                         map[currentRow][currentCol] = number
@@ -449,6 +451,9 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             }
 
         entranceDoor = getReverseDirection(nextRoom)
+
+        Log.i("Generated row / col","$currentRow, $currentCol")
+
 
         return mapOf(
             "currentRow" to currentRow,
