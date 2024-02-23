@@ -72,18 +72,18 @@ class Camera(val game: Game) {
         val maxCameraDistance = 4*game.map.tileArea.w
         return {
             x, y ->
-            if(distanceWithCamera()>maxCameraDistance){
+            if(distanceXWithCamera()>maxCameraDistance){
                 when{
                     x<sprite.x->{
-                        if(sprite.x-(distanceWithCamera()-maxCameraDistance)>minXValue){
-                            sprite.x-=(distanceWithCamera()-maxCameraDistance)
+                        if(sprite.x-(distanceXWithCamera()-maxCameraDistance)>minXValue){
+                            sprite.x-=(distanceXWithCamera()-maxCameraDistance)
                         } else {
                             sprite.x = minXValue
                         }
                     }
                     else->{
-                        if(sprite.x+(distanceWithCamera()-maxCameraDistance)<maxXValue){
-                            sprite.x+=(distanceWithCamera()-maxCameraDistance)
+                        if(sprite.x+(distanceXWithCamera()-maxCameraDistance)<maxXValue){
+                            sprite.x+=(distanceXWithCamera()-maxCameraDistance)
                         } else {
                             sprite.x = maxXValue
                         }
@@ -93,13 +93,12 @@ class Camera(val game: Game) {
         }
     }
 
-    fun distanceWithCamera() : Float{
-        return getDistance(
-            game.controllableCharacter!!.sprite.x,
-            game.controllableCharacter!!.sprite.y,
-            sprite.x,
-            sprite.y
-        )
+    fun distanceXWithCamera() : Float{
+        return abs(game.controllableCharacter!!.sprite.x - sprite.x)
+    }
+
+    fun distanceYWithCamera() : Float{
+        return abs(game.controllableCharacter!!.sprite.y - sprite.y)
     }
 
     fun slideLargeRoomCamera() : (x: Float, y:Float)->Unit{
@@ -111,22 +110,21 @@ class Camera(val game: Game) {
             (game.map.currentRoom() as LargeRoom).getFirstHalfCenter().second,
             (game.map.currentRoom() as LargeRoom).getSecondHalfCenter().second
         )
-        val maxCameraDistance = 3*game.map.tileArea.h
+        val maxCameraDistance = 2*game.map.tileArea.h
         return {
             x, y ->
-            if(distanceWithCamera()>maxCameraDistance){
-                Log.i("Distance","$${distanceWithCamera()-maxCameraDistance}")
+            if(distanceYWithCamera()>maxCameraDistance){
                 when{
                     y<sprite.y->{
-                        if(sprite.y-(distanceWithCamera()-maxCameraDistance)>minYValue){
-                            sprite.y-=(distanceWithCamera()-maxCameraDistance)
+                        if(sprite.y-(distanceYWithCamera()-maxCameraDistance)>minYValue){
+                            sprite.y-=(distanceYWithCamera()-maxCameraDistance)
                         } else {
                             sprite.y = minYValue
                         }
                     }
                     else->{
-                        if(sprite.y+(distanceWithCamera()-maxCameraDistance)<maxYValue){
-                            sprite.y+=(distanceWithCamera()-maxCameraDistance)
+                        if(sprite.y+(distanceYWithCamera()-maxCameraDistance)<maxYValue){
+                            sprite.y+=(distanceYWithCamera()-maxCameraDistance)
                         } else {
                             sprite.y = maxYValue
                         }
