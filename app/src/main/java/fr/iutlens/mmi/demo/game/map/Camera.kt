@@ -8,6 +8,7 @@ import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
+import fr.iutlens.mmi.demo.utils.getDistance
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,6 +29,7 @@ class Camera(val game: Game) {
     }
 
     fun moveCamera(x: Float, y: Float, after : ()->Unit = {}, speed: Float = 100f){
+        cameraMoving.cancel()
         cameraMoving = GlobalScope.launch {
             if(x!=sprite.x || y!=sprite.y){
                 val xChangeValue = when{
@@ -62,40 +64,41 @@ class Camera(val game: Game) {
             (game.map.currentRoom() as LongRoom).getFirstHalfCenter().first,
             (game.map.currentRoom() as LongRoom).getSecondHalfCenter().first
         )
-        val midXValue = game.map.currentRoom().getRoomCenter().first
         val maxXValue = max(
             (game.map.currentRoom() as LongRoom).getFirstHalfCenter().first,
             (game.map.currentRoom() as LongRoom).getSecondHalfCenter().first
         )
-        val firstCamTrigger = minXValue + (midXValue - minXValue) / 2
-        val secondCamTrigger = midXValue + (maxXValue - midXValue) / 2
-        return{ x, y ->
-            if (x < firstCamTrigger) {
-                cameraMoving.cancel()
-                game.controllableCharacter!!.temporaryMovingInteraction = {
-                        x,y->
+        val maxCameraDistance = 4*game.map.tileArea.w
+        return {
+            x, y ->
+            if(distanceWithCamera()>maxCameraDistance){
+                when{
+                    x<sprite.x->{
+                        if(sprite.x-(distanceWithCamera()-maxCameraDistance)>minXValue){
+                            sprite.x-=(distanceWithCamera()-maxCameraDistance)
+                        } else {
+                            sprite.x = minXValue
+                        }
+                    }
+                    else->{
+                        if(sprite.x+(distanceWithCamera()-maxCameraDistance)<maxXValue){
+                            sprite.x+=(distanceWithCamera()-maxCameraDistance)
+                        } else {
+                            sprite.x = maxXValue
+                        }
+                    }
                 }
-                moveCamera(minXValue, sprite.y, speed = 1f, after = {
-                    game.controllableCharacter!!.temporaryMovingInteraction = slideLongRoomCamera()
-                })
-            } else if(x>secondCamTrigger){
-                cameraMoving.cancel()
-                game.controllableCharacter!!.temporaryMovingInteraction = {
-                        x,y->
-                }
-                moveCamera(maxXValue, sprite.y, speed = 1f, after = {
-                    game.controllableCharacter!!.temporaryMovingInteraction = slideLongRoomCamera()
-                })
-            } else {
-                cameraMoving.cancel()
-                game.controllableCharacter!!.temporaryMovingInteraction = {
-                        x,y->
-                }
-                moveCamera(midXValue,sprite.y, speed = 1f, after = {
-                    game.controllableCharacter!!.temporaryMovingInteraction = slideLongRoomCamera()
-                })
             }
         }
+    }
+
+    fun distanceWithCamera() : Float{
+        return getDistance(
+            game.controllableCharacter!!.sprite.x,
+            game.controllableCharacter!!.sprite.y,
+            sprite.x,
+            sprite.y
+        )
     }
 
     fun slideLargeRoomCamera() : (x: Float, y:Float)->Unit{
