@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,12 +21,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -387,14 +392,14 @@ open class Game(val map : Map,
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Box(modifier = Modifier
-                        .width((screenWidth/15).dp)
+                        .width((screenWidth / 15).dp)
                         .aspectRatio(1f)
                         .clickable {
                             menu["open"] = true
                             pause = true;
                         }
                         .background(Color.White, shape = CircleShape)
-                        .padding((screenWidth/150).dp)
+                        .padding((screenWidth / 150).dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.home_icon),
@@ -449,6 +454,7 @@ open class Game(val map : Map,
     }
 
     var menu = mutableStateMapOf("open" to false)
+    @OptIn(ExperimentalLayoutApi::class)
     @Composable
     fun Menu(modifier: Modifier = Modifier
         .fillMaxWidth()
@@ -461,6 +467,49 @@ open class Game(val map : Map,
             screenWidth>screenHeight->(screenHeight + (screenWidth-screenHeight)/4).dp
             else->(screenWidth + (screenHeight-screenWidth)/4).dp
         }
+        var item : MutableState<Item?> = remember {
+            mutableStateOf(null)
+        }
+
+        @Composable
+        fun LeftPage(content : @Composable ()->Unit){
+            Box(modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .fillMaxHeight(),
+            ) {
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .fillMaxWidth(0.59f)
+                        .fillMaxHeight()
+                        .align(Alignment.CenterEnd)
+                ) {
+                    val columnWidth = this.maxWidth
+                    FlowColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .align(Alignment.Center)
+                            .offset(y = columnWidth / 20)
+                    ){
+                        content()
+                    }
+                }
+            }
+        }
+
+        @Composable
+        fun Items(){
+            val reversedItem = controllableCharacter!!.items.reversed()
+            for(i in 0..24){
+                if(reversedItem.size>i){
+                    MenuItem(id = reversedItem[i].image, imageDescription = reversedItem[i].name){
+                        item.value = reversedItem[i]
+                    }
+                }
+            }
+        }
+
+
         Box(modifier=modifier.background(Color(0,0,0,128))){
             BoxWithConstraints(modifier = Modifier
                 .width(bookWidth)
@@ -479,10 +528,19 @@ open class Game(val map : Map,
                         .fillMaxWidth(0.925f)
                         .fillMaxHeight()
                 ){
-                    Column(modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .fillMaxHeight()) {
-
+                    if(item.value==null){
+                        LeftPage {
+                            Items()
+                        }
+                    } else {
+                        LeftPage {
+                            Image(
+                                painter = painterResource(id = item.value!!.image),
+                                contentDescription = item.value!!.name,
+                                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
                     }
                     Column(
                         modifier

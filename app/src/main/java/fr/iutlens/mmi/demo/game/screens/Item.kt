@@ -3,6 +3,7 @@ package fr.iutlens.mmi.demo.game.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -18,9 +19,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ItemImage(id: Any, imageDescription: Any, size: Dp){
     Box(
-        modifier = Modifier.width(size).aspectRatio(1f).offset(y = (size/10)),
-        contentAlignment = Alignment.BottomEnd,
+        modifier = Modifier.width(size).aspectRatio(1f),
+        contentAlignment = Alignment.Center,
     ){
-        Image(painter = painterResource(id = id as Int), contentDescription = imageDescription as String, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxWidth())
+        Image(painter = painterResource(id = id as Int), contentDescription = imageDescription as String, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxWidth().fillMaxHeight())
     }
 }

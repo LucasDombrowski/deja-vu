@@ -9,6 +9,7 @@ import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -17,7 +18,9 @@ import kotlin.math.min
 
 class Camera(val game: Game) {
     val sprite = BasicSprite(R.drawable.transparent,game.map.characterStartPosition().first, game.map.characterStartPosition().second)
+    var cameraMoving : Job = GlobalScope.launch {
 
+    }
     fun moveTo(x: Float, y:Float){
         moveCamera(x,y,{
             action()
@@ -25,7 +28,7 @@ class Camera(val game: Game) {
     }
 
     fun moveCamera(x: Float, y: Float, after : ()->Unit = {}, speed: Float = 100f){
-        GlobalScope.launch {
+        cameraMoving = GlobalScope.launch {
             if(x!=sprite.x || y!=sprite.y){
                 val xChangeValue = when{
                     abs(x-sprite.x)>speed->speed
@@ -76,11 +79,14 @@ class Camera(val game: Game) {
                 val secondCamTrigger = midXValue + (maxXValue - midXValue) / 2
                 game.controllableCharacter!!.temporaryMovingInteraction = { x, y ->
                     if (x < firstCamTrigger) {
-                        moveCamera(minXValue, sprite.y, speed = 5f)
+                        cameraMoving.cancel()
+                        moveCamera(minXValue, sprite.y, speed = 1f)
                     } else if(x>secondCamTrigger){
-                        moveCamera(maxXValue, sprite.y, speed = 5f)
+                        cameraMoving.cancel()
+                        moveCamera(maxXValue, sprite.y, speed = 1f)
                     } else {
-                        moveCamera(midXValue,sprite.y, speed = 5f)
+                        cameraMoving.cancel()
+                        moveCamera(midXValue,sprite.y, speed = 1f)
                     }
                 }
             }
@@ -99,11 +105,14 @@ class Camera(val game: Game) {
                 game.controllableCharacter!!.temporaryMovingInteraction = {
                     x, y ->
                     if(y<firstCamTrigger){
-                        moveCamera(sprite.x, minYValue, speed = 5f)
+                        cameraMoving.cancel()
+                        moveCamera(sprite.x, minYValue, speed = 1f)
                     } else if(y>secondCamTrigger){
-                        moveCamera(sprite.x, maxYValue, speed = 5f)
+                        cameraMoving.cancel()
+                        moveCamera(sprite.x, maxYValue, speed = 1f)
                     } else {
-                        moveCamera(sprite.x, midYValue, speed = 5f)
+                        cameraMoving.cancel()
+                        moveCamera(sprite.x, midYValue, speed = 1f)
                     }
                 }
             }

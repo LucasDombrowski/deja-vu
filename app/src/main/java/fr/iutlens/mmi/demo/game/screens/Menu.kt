@@ -64,14 +64,12 @@ fun MenuButton(text: String, width : Dp, action : ()->Unit){
 }
 
 @Composable
-fun MenuItem(id : Int, name: String){
+fun MenuItem(id : Int, imageDescription: String, onClick : ()->Unit = {}){
     Box(
-        modifier = Modifier
-            .width(40.dp)
-            .height(40.dp)
+        modifier = Modifier.fillMaxWidth(0.2f).aspectRatio(1f).clickable {
+            onClick() },
+        contentAlignment = Alignment.Center,
     ){
-        Image(painter = painterResource(id = id),
-            contentDescription = name,
-            contentScale = ContentScale.Fit)
+        Image(painter = painterResource(id = id as Int), contentDescription = imageDescription as String, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxWidth().fillMaxHeight())
     }
 }

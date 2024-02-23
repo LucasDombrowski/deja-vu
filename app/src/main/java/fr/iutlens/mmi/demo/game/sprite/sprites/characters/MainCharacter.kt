@@ -6,6 +6,7 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.Item
+import fr.iutlens.mmi.demo.game.gameplayResources.items.OneHeart
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
@@ -40,7 +41,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,4), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
 
-    var items : MutableList<Item> = mutableListOf()
+    var items : MutableList<Item> = mutableListOf(OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart())
 
     var autoFire : Job = setInterval(0,fireRate){
         GlobalScope.launch {
