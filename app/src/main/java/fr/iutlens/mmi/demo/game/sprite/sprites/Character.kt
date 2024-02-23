@@ -93,7 +93,6 @@ open class Character(
 
     fun moveTo(x: Float, y:Float){
         if(mobile){
-            if((this==game.controllableCharacter!! && !game.movingRestriction) || this!=game.controllableCharacter!!) {
                 previousDirection = currentDirection
                 movingAction.cancel()
                 movingAction = GlobalScope.launch {
@@ -169,7 +168,6 @@ open class Character(
                     }
                 }
             }
-        }
 
     }
 
