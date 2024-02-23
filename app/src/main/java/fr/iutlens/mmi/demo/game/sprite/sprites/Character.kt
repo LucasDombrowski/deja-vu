@@ -339,31 +339,46 @@ open class Character(
             val currentTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
             var aimedTile = game.map.getMapIndexFromPosition(x,y)
             if(!isAvailableTile(row = aimedTile.first, col = aimedTile.second)){
-                aimedTile = closestAvailableTile(aimedTile.first, aimedTile.second)
+                aimedTile = closestAvailableTile(aimedTile.first, aimedTile.second)!!
             }
             currentPath = getShortestPath(currentTile, aimedTile)
             enablePathFollowing()
         }
     }
 
-    fun closestAvailableTile(row: Int, col: Int, factor: Int = 1) : Pair<Int,Int>{
-        return if(isAvailableTile(row = row+factor, col = col)){
-            Pair(row+factor,col)
-        } else if(isAvailableTile(row = row-factor, col = col)){
-            Pair(row-factor,col)
-        } else if(isAvailableTile(row = row, col = col+factor)){
-            Pair(row,col+factor)
-        } else if(isAvailableTile(row = row, col = col-factor)){
-            Pair(row,col-factor)
-        } else {
-            closestAvailableTile(row,col,factor+1)
+    fun closestAvailableTile(row: Int, col: Int) : Pair<Int,Int> ?{
+
+        val queue : Queue<Pair<Int,Int>> = LinkedList()
+        val visited = mutableListOf<Pair<Int,Int>>()
+        queue.offer(Pair(row,col))
+        while (queue.isNotEmpty()){
+            val current = queue.poll()!!
+            if(isAvailableTile(visited,current.first,current.second)){
+                return current
+            } else {
+                visited.add(current)
+                if(Pair(current.first+1,current.second) !in visited){
+                    queue.offer(Pair(current.first+1,current.second))
+                }
+                if(Pair(current.first-1,current.second) !in visited){
+                    queue.offer(Pair(current.first-1,current.second))
+                }
+                if(Pair(current.first,current.second+1) !in visited){
+                    queue.offer(Pair(current.first,current.second+1))
+                }
+                if(Pair(current.first,current.second-1) !in visited){
+                    queue.offer(Pair(current.first,current.second-1))
+                }
+            }
         }
+        return null
+
 
     }
 
     fun setupPathFollowing(){
         var currentPathIndex = 0
-        followingPath = setInterval(0,33){
+        followingPath = setInterval(0,66){
             val pathToFollow = currentPath.toList()
             if(game.map.getMapIndexFromPosition(sprite.x, sprite.y) == pathToFollow[currentPathIndex]){
                 currentPathIndex++
