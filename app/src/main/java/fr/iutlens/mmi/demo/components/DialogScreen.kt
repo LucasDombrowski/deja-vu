@@ -107,6 +107,9 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
     }
 
     var textSequence = generateTextSequence()
+    textSequence.forEach {
+        Log.i("text sequence", "$it")
+    }
     var textSequenceIndex by remember {
         mutableStateOf(0)
     }
