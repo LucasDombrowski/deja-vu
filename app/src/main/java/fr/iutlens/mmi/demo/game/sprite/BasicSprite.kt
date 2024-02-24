@@ -42,8 +42,8 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
             this(spriteSheet = SpriteSheet[id]!!, x = x, y = y, ndx = ndx, action = action)
 
     // taille du sprite en pixels, divisée par deux (pour le centrage)
-    private val w2 = spriteSheet.spriteWidth / 2f
-    private val h2 = spriteSheet.spriteHeight / 2f
+    val w2 = spriteSheet.spriteWidth / 2f
+    val h2 = spriteSheet.spriteHeight / 2f
 
     var permanentColor = colorFilter
 
