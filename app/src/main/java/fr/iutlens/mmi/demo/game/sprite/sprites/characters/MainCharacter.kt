@@ -1,7 +1,7 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites.characters
 
 import android.util.Log
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
@@ -11,6 +11,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
+import fr.iutlens.mmi.demo.game.sprite.DrawingSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.Projectile
@@ -37,7 +38,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     val targetIndicator : BasicSprite = BasicSprite(R.drawable.target_indicator, sprite.x, sprite.y)
 
-    val pathIndicator : BasicSprite = BasicSprite(R.drawable.path_indicator, sprite.x, sprite.y)
+    val pathIndicator : DrawingSprite = DrawingSprite(R.drawable.path_indicator, sprite.x, sprite.y, drawColor = Color.Yellow)
 
     var previousPathIndicatorTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
 
@@ -64,6 +65,18 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var targetFollow : Job ?= null
 
+    var dragStartBehavior : (x:Float, y:Float)->Unit = {
+        x, y ->
+        pathIndicator.drawing = true
+        movePathIndicator(x,y,true)
+
+
+    }
+
+    var dragEndBehavior : ()->Unit = {
+        pathIndicator.drawing = false
+    }
+
 
     var tapMovingBehavior : (x: Float, y:Float)->Unit = {
         x,y->
@@ -75,11 +88,16 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             movePathIndicator(x,y)
     }
 
-    fun movePathIndicator(x: Float, y: Float){
+    fun movePathIndicator(x: Float, y: Float, reset: Boolean = false){
         if(mobile) {
             pathIndicator.visible()
             pathIndicator.x = x
             pathIndicator.y = y
+            if(reset){
+                pathIndicator.resetPositions()
+            } else {
+                pathIndicator.newPosition()
+            }
             game.invalidate()
             if(!moving){
                 moveToPathIndicator()

@@ -107,6 +107,7 @@ open class Game(val map : Map,
            var transform: CameraTransform = FitTransform(map.tileArea),
            var onDragStart: ((Offset) -> Unit)? = null,
            var onDragMove:  ((Offset) -> Unit)? = null,
+           var onDragEnd : (()->Unit)? = null,
            var onTap: ((Offset)-> Unit)? = null){
 
     var background = map.tileArea
@@ -193,9 +194,15 @@ open class Game(val map : Map,
                 }
             }
         }
+        onDragStart = {
+            controllableCharacter!!.dragStartBehavior(it.x, it.y)
+        }
         onDragMove = {
             (x,y)->
             controllableCharacter!!.dragMovingBehavior(x, y)
+        }
+        onDragEnd = {
+            controllableCharacter!!.dragEndBehavior()
         }
     }
     fun addCharacter(character: Character){
@@ -330,6 +337,8 @@ open class Game(val map : Map,
             .pointerInput(key1 = this) {
                 if (onDragMove != null) detectDragGestures(onDragStart = {
                     onDragStart?.invoke(transform.getPoint(it))
+                }, onDragEnd = {
+                    onDragEnd?.invoke()
                 }) { change, dragAmount ->
                     onDragMove?.invoke(transform.getPoint(change.position))
                 }
