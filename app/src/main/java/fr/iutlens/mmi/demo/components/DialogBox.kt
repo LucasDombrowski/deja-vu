@@ -51,9 +51,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.security.AccessController.getContext
 
-var writing : Job ?= null
-var imageAnimation : Job ?= null
-
 @Composable
 fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit){
 
@@ -97,7 +94,9 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
             contentDescription = "Dialog Box",
             contentScale = ContentScale.FillWidth,
             modifier = Modifier.fillMaxWidth())
-        WritingText(text = currentText, fontSize = fontSize, lineHeight = lineHeight, modifier = Modifier.align(Alignment.Center).width(textWidth)) {
+        WritingText(text = currentText, fontSize = fontSize, lineHeight = lineHeight, modifier = Modifier
+            .align(Alignment.Center)
+            .width(textWidth)) {
             stopWriting()
         }
         WritingAnimation(images.toList(), isWriting,
@@ -114,35 +113,27 @@ fun WritingText(text: String, modifier : Modifier, fontSize : TextUnit, lineHeig
     val scope = rememberCoroutineScope()
     if(text.isNotEmpty()) {
         var currentText by remember {
-            mutableStateOf(text[0].toString())
+            mutableStateOf("")
         }
 
         var previousText by remember {
             mutableStateOf(text)
         }
 
-        if(text!=previousText){
-            scope.launch {
-                while (writing != null){
-                    writing!!.cancel()
-                    writing = null
-                    delay(10)
-                }
-                previousText = text
-                currentText = previousText[0].toString()
-            }
+        if(previousText!=text){
+            currentText=""
+            previousText=text
         }
 
-        if (writing == null) {
-            writing = setInterval(0, 10) {
-                if (currentText.length >= text.length) {
-                    writing!!.cancel()
-                    writing = null
-                    stopWriting()
-                } else {
+        if(currentText!=text && currentText.length<text.length){
+            scope.launch {
+                delay(5)
+                if(currentText.length<text.length) {
                     currentText += text[currentText.length]
                 }
             }
+        } else {
+            stopWriting()
         }
 
         Text(
@@ -159,22 +150,40 @@ fun WritingText(text: String, modifier : Modifier, fontSize : TextUnit, lineHeig
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun WritingAnimation(images : List<Bitmap>, writing: Boolean, modifier: Modifier){
+    val scope = rememberCoroutineScope()
     var imageIndex by remember {
         mutableIntStateOf(0)
     }
-    if(imageAnimation == null) {
-        imageAnimation = setInterval(0, 200) {
-            if (imageIndex >= images.size - 1) {
-                imageIndex = 0
-            } else {
-                imageIndex++
+    var animate by remember {
+        mutableStateOf(writing)
+    }
+    var imageAnimation by remember {
+        mutableStateOf(
+            setInterval(0,100){
+                if (imageIndex >= images.size - 1) {
+                    imageIndex = 0
+                } else {
+                    imageIndex++
+                }
+            }
+        )
+    }
+    if(animate!=writing){
+        if(!writing){
+            imageAnimation.cancel()
+        } else {
+            imageAnimation = setInterval(0,100){
+                if (imageIndex >= images.size - 1) {
+                    imageIndex = 0
+                } else {
+                    imageIndex++
+                }
             }
         }
-    } else if(!writing){
-        imageAnimation!!.cancel()
-        imageAnimation = null
+        animate = writing
     }
     Image(bitmap = images[imageIndex].asImageBitmap(),
         contentDescription = "Writing",
