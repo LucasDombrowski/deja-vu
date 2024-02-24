@@ -137,7 +137,6 @@ open class Game(val map : Map,
      */
     var update: ((Game)-> Unit) ? = null
 
-    var movingRestriction : Boolean = false
 
     var characterList : MutableList<Character> = mutableListOf()
 
@@ -167,7 +166,9 @@ open class Game(val map : Map,
         addCharacter(controllableCharacter!!)
         ath["hearts"] = controllableCharacter!!.hearts
         addSprite(controllableCharacter!!.targetIndicator)
+        addSprite(controllableCharacter!!.pathIndicator)
         controllableCharacter!!.targetIndicator.invisible()
+        controllableCharacter!!.pathIndicator.invisible()
         setupControls()
     }
 
@@ -194,14 +195,7 @@ open class Game(val map : Map,
         }
         onDragMove = {
             (x,y)->
-            if(!pause && !movingRestriction) {
-                controllableCharacter!!.dragMovingBehavior(x, y)
-                movingRestriction = true
-                GlobalScope.launch {
-                    delay(33)
-                    movingRestriction = false
-                }
-            }
+            controllableCharacter!!.dragMovingBehavior(x, y)
         }
     }
     fun addCharacter(character: Character){

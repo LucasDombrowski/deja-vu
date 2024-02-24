@@ -35,7 +35,11 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     fireRate = 500
     ){
 
-    val targetIndicator : BasicSprite = BasicSprite(R.drawable.arrow, sprite.x, sprite.y)
+    val targetIndicator : BasicSprite = BasicSprite(R.drawable.target_indicator, sprite.x, sprite.y)
+
+    val pathIndicator : BasicSprite = BasicSprite(R.drawable.path_indicator, sprite.x, sprite.y)
+
+    var previousPathIndicatorTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
 
     var directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
 
@@ -52,6 +56,8 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         }
     }
 
+    var moving = false
+
     var temporaryMovingInteraction : (x: Float, y: Float) -> Unit = {
         x, y ->  
     }
@@ -61,13 +67,70 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var tapMovingBehavior : (x: Float, y:Float)->Unit = {
         x,y->
-        setupPath(x,y)
+        movePathIndicator(x,y)
     }
 
     var dragMovingBehavior : (x: Float, y:Float)->Unit = {
             x,y->
-            disablePathFollowing()
-            moveTo(x,y)
+            movePathIndicator(x,y)
+    }
+
+    fun movePathIndicator(x: Float, y: Float){
+        if(mobile) {
+            pathIndicator.visible()
+            pathIndicator.x = x
+            pathIndicator.y = y
+            game.invalidate()
+            if(!moving){
+                moveToPathIndicator()
+            }
+        }
+    }
+
+    fun pathIndicatorTile() : Pair<Int,Int>{
+        return game.map.getMapIndexFromPosition(pathIndicator.x, pathIndicator.y)
+    }
+    fun inIndicatorBoundingBox() : Boolean{
+        return sprite.x in pathIndicator.boundingBox.left..pathIndicator.boundingBox.right && sprite.y in pathIndicator.boundingBox.top..pathIndicator.boundingBox.bottom
+    }
+
+    fun moveToPathIndicator(){
+        moving = true
+        GlobalScope.launch {
+            if(currentTile()!=pathIndicatorTile()){
+                if(isPathFree(pathIndicator.x, pathIndicator.y)){
+                    if(pathFollow) {
+                        disablePathFollowing()
+                        moveTo(pathIndicator.x, pathIndicator.y)
+                    } else if(pathIndicatorTile()!=previousPathIndicatorTile){
+                        previousPathIndicatorTile = pathIndicatorTile()
+                        moveTo(pathIndicator.x, pathIndicator.y)
+                    }
+                    delay(66)
+                    moveToPathIndicator()
+                } else {
+                    if(pathIndicatorTile()!=previousPathIndicatorTile){
+                        disablePathFollowing()
+                        previousPathIndicatorTile=pathIndicatorTile()
+                        setupPath(pathIndicator.x, pathIndicator.y)
+                        delay(66)
+                        moveToPathIndicator()
+                    } else if(!pathFollow){
+                        pathIndicator.invisible()
+                        delay(66)
+                        moving = false
+                    } else {
+                        delay(66)
+                        moveToPathIndicator()
+                    }
+                }
+            } else {
+                moveTo(pathIndicator.x, pathIndicator.y)
+                pathIndicator.invisible()
+                delay(66)
+                moving = false
+            }
+        }
     }
 
     override fun changePos(x: Float, y: Float){
@@ -85,7 +148,10 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             game.map.currentRoom().close()
             while (!game.map.nextRoom().characterInStartPosition(game)) {
                 game.map.nextRoom().placeCharacter(game)
+                pathIndicator.x = sprite.x
+                pathIndicator.y = sprite.y
             }
+
             if(game.map.currentRoom() is LongRoom || game.map.currentRoom() is LargeRoom){
                 temporaryMovingInteraction = {
                     x, y ->  
