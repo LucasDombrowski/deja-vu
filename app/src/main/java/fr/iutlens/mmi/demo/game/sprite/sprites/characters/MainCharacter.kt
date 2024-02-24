@@ -56,19 +56,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         }
     }
 
-    var autoMove : Job = setInterval(0,66){
-        if(!inIndicatorBoundingBox()){
-            if(isPathFree(pathIndicator.x, pathIndicator.y)){
-                disablePathFollowing()
-                moveTo(pathIndicator.x, pathIndicator.y)
-            } else if(!pathFollow && previousPathIndicatorTile!=pathIndicatorTile()){
-                setupPath(pathIndicator.x, pathIndicator.y)
-                previousPathIndicatorTile = pathIndicatorTile()
-            }
-        } else {
-            pathIndicator.invisible()
-        }
-    }
+    var moving = false
 
     var temporaryMovingInteraction : (x: Float, y: Float) -> Unit = {
         x, y ->  
@@ -93,6 +81,9 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             pathIndicator.x = x
             pathIndicator.y = y
             game.invalidate()
+            if(!moving){
+                moveToPathIndicator()
+            }
         }
     }
 
@@ -101,6 +92,45 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     }
     fun inIndicatorBoundingBox() : Boolean{
         return sprite.x in pathIndicator.boundingBox.left..pathIndicator.boundingBox.right && sprite.y in pathIndicator.boundingBox.top..pathIndicator.boundingBox.bottom
+    }
+
+    fun moveToPathIndicator(){
+        moving = true
+        GlobalScope.launch {
+            if(currentTile()!=pathIndicatorTile()){
+                if(isPathFree(pathIndicator.x, pathIndicator.y)){
+                    if(pathFollow) {
+                        disablePathFollowing()
+                        moveTo(pathIndicator.x, pathIndicator.y)
+                    } else if(pathIndicatorTile()!=previousPathIndicatorTile){
+                        previousPathIndicatorTile = pathIndicatorTile()
+                        moveTo(pathIndicator.x, pathIndicator.y)
+                    }
+                    delay(66)
+                    moveToPathIndicator()
+                } else {
+                    if(pathIndicatorTile()!=previousPathIndicatorTile){
+                        disablePathFollowing()
+                        previousPathIndicatorTile=pathIndicatorTile()
+                        setupPath(pathIndicator.x, pathIndicator.y)
+                        delay(66)
+                        moveToPathIndicator()
+                    } else if(!pathFollow){
+                        pathIndicator.invisible()
+                        delay(66)
+                        moving = false
+                    } else {
+                        delay(66)
+                        moveToPathIndicator()
+                    }
+                }
+            } else {
+                moveTo(pathIndicator.x, pathIndicator.y)
+                pathIndicator.invisible()
+                delay(66)
+                moving = false
+            }
+        }
     }
 
     override fun changePos(x: Float, y: Float){

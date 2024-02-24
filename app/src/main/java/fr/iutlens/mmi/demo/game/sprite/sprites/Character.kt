@@ -321,6 +321,10 @@ open class Character(
         return true
     }
 
+    fun currentTile() : Pair<Int,Int>{
+        return game.map.getMapIndexFromPosition(sprite.x, sprite.y)
+    }
+
     fun setupPath(x: Float,y: Float){
         disablePathFollowing()
         if(!game.pause && game.map.currentRoom().inMinMaxCoordinates(x,y)) {
