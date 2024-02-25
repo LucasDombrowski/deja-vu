@@ -38,7 +38,9 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     val targetIndicator : BasicSprite = BasicSprite(R.drawable.target_indicator, sprite.x, sprite.y)
 
-    val pathIndicator : DrawingSprite = DrawingSprite(R.drawable.path_indicator, sprite.x, sprite.y, drawColor = Color.Yellow)
+    val pathIndicator : DrawingSprite = DrawingSprite(R.drawable.path_indicator, sprite.x, sprite.y, drawColor = Color(243,214,55,128))
+
+    var dragAction = false
 
     var previousPathIndicatorTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
 
@@ -74,7 +76,10 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     }
 
     var dragEndBehavior : ()->Unit = {
-        pathIndicator.drawing = false
+        if(dragAction){
+            dragAction = false
+            erasePathDrawing()
+        }
     }
 
 
@@ -88,12 +93,16 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             movePathIndicator(x,y)
     }
 
+    var dragStandBehavior : Job = GlobalScope.launch {  }
+
     fun movePathIndicator(x: Float, y: Float, reset: Boolean = false){
+        dragStandBehavior.cancel()
+        dragAction = true
         if(mobile) {
             pathIndicator.visible()
             pathIndicator.x = x
             pathIndicator.y = y
-            if(reset){
+            if(reset || pathIndicator.lastPositions.size==0){
                 pathIndicator.resetPositions()
             } else {
                 pathIndicator.newPosition()
@@ -103,13 +112,23 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 moveToPathIndicator()
             }
         }
+        dragStandBehavior = GlobalScope.launch {
+            delay(100)
+            dragEndBehavior()
+        }
+    }
+
+    fun erasePathDrawing(){
+        if(!dragAction){
+            pathIndicator.erase()
+        }
     }
 
     fun pathIndicatorTile() : Pair<Int,Int>{
         return game.map.getMapIndexFromPosition(pathIndicator.x, pathIndicator.y)
     }
-    fun inIndicatorBoundingBox() : Boolean{
-        return sprite.x in pathIndicator.boundingBox.left..pathIndicator.boundingBox.right && sprite.y in pathIndicator.boundingBox.top..pathIndicator.boundingBox.bottom
+    fun inIndicatorBoundingBox(x : Float = sprite.x, y: Float = sprite.y) : Boolean{
+        return x in pathIndicator.boundingBox.left..pathIndicator.boundingBox.right && y in pathIndicator.boundingBox.top..pathIndicator.boundingBox.bottom
     }
 
     fun moveToPathIndicator(){

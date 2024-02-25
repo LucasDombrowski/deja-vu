@@ -4,16 +4,15 @@ import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class DrawingSprite(id: Int, x: Float, y: Float, ndx: Int = 0, val drawColor: androidx.compose.ui.graphics.Color) : BasicSprite(id,x,y,ndx) {
-    val lastPositions = mutableListOf<Pair<Float,Float>>()
+    var lastPositions = mutableListOf<Pair<Float,Float>>()
 
     var drawing = false
-    init {
-        repeat(10){
-            lastPositions.add(Pair(x,y))
-        }
-    }
     fun newPosition(){
         if(drawing) {
             lastPositions.removeLast()
@@ -21,13 +20,30 @@ class DrawingSprite(id: Int, x: Float, y: Float, ndx: Int = 0, val drawColor: an
         }
     }
     fun resetPositions(){
-        lastPositions.replaceAll {
-            Pair(x,y)
+        val positionsList = mutableListOf<Pair<Float,Float>>()
+        repeat(10){
+            positionsList.add(Pair(x,y))
+        }
+        lastPositions = positionsList
+    }
+
+    fun erase(){
+        drawing = false
+        GlobalScope.launch {
+            repeat(lastPositions.size){
+                if(!drawing && lastPositions.isNotEmpty()){
+                    lastPositions.removeLast()
+                    delay(33)
+                } else {
+                    cancel()
+                }
+            }
+            drawing = true
         }
     }
     override fun paint(drawScope: DrawScope, elapsed: Long) {
-        if(drawing) {
-            for (i in 0..<lastPositions.size - 1) {
+        for (i in 0..<lastPositions.size - 1) {
+            if(i+1<lastPositions.size) {
                 drawScope.drawLine(
                     color = drawColor,
                     start = Offset(lastPositions[i].first, lastPositions[i].second),
@@ -43,5 +59,8 @@ class DrawingSprite(id: Int, x: Float, y: Float, ndx: Int = 0, val drawColor: an
         }) {
             spriteSheet.paint(this, ndx, -w2, -h2, colorFilter = colorFilter)
         }
+    }
+    init {
+        resetPositions()
     }
 }
