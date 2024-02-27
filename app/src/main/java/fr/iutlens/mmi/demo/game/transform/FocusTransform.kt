@@ -29,9 +29,9 @@ class FocusTransform(val tiledArea: TiledArea, var sprite: Sprite, var minTiles:
         val boundingBox = sprite.boundingBox
         val tilesX = size.width / tiledArea.w
         val tilesY = size.height / tiledArea.h
-        val sizeTiles = tilesX.coerceAtMost(tilesY)
+        val sizeTiles = tilesX
 
-        val scale = sizeTiles / minTiles
+        val scale = (sizeTiles / minTiles)
 
         transform.reset()
         transform.translate(size.width/2, size.height/2)

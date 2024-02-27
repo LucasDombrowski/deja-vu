@@ -3,6 +3,7 @@ package fr.iutlens.mmi.demo.game.map
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
+import fr.iutlens.mmi.demo.game.map.rooms.BigRoom
 import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
 import fr.iutlens.mmi.demo.game.map.rooms.StartingRoom
 import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom

@@ -439,7 +439,7 @@ open class Game(val map : Map,
     }
 
     fun setupCamera(){
-        transform = FocusTransform(background,camera.sprite,8)
+        transform = FocusTransform(background,camera.sprite,15)
     }
 
     init {
