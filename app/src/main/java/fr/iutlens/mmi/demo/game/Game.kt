@@ -219,13 +219,6 @@ open class Game(val map : Map,
     fun addSprite(sprite: Sprite){
         spriteList.add(0,sprite)
     }
-
-    fun sortSpriteList(){
-        spriteList.sortBy {
-            it == controllableCharacter!!.sprite
-        }
-    }
-
     fun deleteSprite(sprite : Sprite){
         if(sprite is BasicSprite) {
             sprite.invisible()
@@ -330,39 +323,36 @@ open class Game(val map : Map,
     fun View(modifier: Modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)) {
-        if(!ended) {
-            // gestion des évènements
-            Canvas(modifier = modifier
-                .pointerInput(key1 = this) {
-                    if (onTap != null) detectTapGestures {
-                        onTap?.invoke(transform.getPoint(it))
-                    }
-                }
-                .pointerInput(key1 = this) {
-                    if (onDragMove != null) detectDragGestures(onDragStart = {
-                        onDragStart?.invoke(transform.getPoint(it))
-                    }, onDragEnd = {
-                        onDragEnd?.invoke()
-                    }) { change, dragAmount ->
-                        onDragMove?.invoke(transform.getPoint(change.position))
-                    }
-                }) {
-                // Dessin proprement dit. On précise la transformation à appliquer avant
-                this.withTransform({ transform(transform.getMatrix(size)) }) {
-                    background.paint(this, elapsed)
-                    spriteList.paint(this, elapsed)
+        Canvas(modifier = modifier
+            .pointerInput(key1 = this) {
+                if (onTap != null) detectTapGestures {
+                    onTap?.invoke(transform.getPoint(it))
                 }
             }
-            // Gestion du rafraîssement automatique si update et animationDelay sont défnis
-            update?.let { myUpdate ->
-                animationDelayMs?.let { delay ->
-                    LaunchedEffect(elapsed) {
-                        //Calcul du temps avant d'afficher la prochaine image, et pause si nécessaire)
-                        val current = (timeSource.markNow() - start).inWholeMilliseconds
-                        val next = elapsed + delay
-                        if (next > current) delay(next - current)
-                        myUpdate(this@Game)
-                    }
+            .pointerInput(key1 = this) {
+                if (onDragMove != null) detectDragGestures(onDragStart = {
+                    onDragStart?.invoke(transform.getPoint(it))
+                }, onDragEnd = {
+                    onDragEnd?.invoke()
+                }) { change, dragAmount ->
+                    onDragMove?.invoke(transform.getPoint(change.position))
+                }
+            }) {
+            // Dessin proprement dit. On précise la transformation à appliquer avant
+            this.withTransform({ transform(transform.getMatrix(size)) }) {
+                background.paint(this, elapsed)
+                spriteList.paint(this, elapsed)
+            }
+        }
+        // Gestion du rafraîssement automatique si update et animationDelay sont défnis
+        update?.let { myUpdate ->
+            animationDelayMs?.let { delay ->
+                LaunchedEffect(elapsed) {
+                    //Calcul du temps avant d'afficher la prochaine image, et pause si nécessaire)
+                    val current = (timeSource.markNow() - start).inWholeMilliseconds
+                    val next = elapsed + delay
+                    if (next > current) delay(next - current)
+                    myUpdate(this@Game)
                 }
             }
         }
@@ -616,6 +606,26 @@ open class Game(val map : Map,
 
     fun gameOver(){
         gameOver.value = true
+        ended = true
+        with(characterList.iterator()){
+            forEach {
+                if(it is Enemy){
+                    it.action.cancel()
+                }
+            }
+        }
+        onDragMove = {
+
+        }
+        onDragStart = {
+
+        }
+        onDragEnd = {
+
+        }
+        onTap = {
+
+        }
     }
     @Composable
     fun GameOver(){

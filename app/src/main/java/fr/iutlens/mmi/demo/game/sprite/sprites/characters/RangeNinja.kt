@@ -74,22 +74,47 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
         action.cancel()
         stun()
         restart()
-        action = setInterval(0,fireRate){
-            GlobalScope.launch {
-                while(game.pause){
-                    delay(fireRate)
-                }
-                val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
-                val firstProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], (PI/6).toFloat())
-                val secondProjectile = rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1],(-PI/6).toFloat())
-                projectile.aimTarget(target!!, sprite.x, sprite.y)
-                projectile.fireProjectile(game,sprite.x, sprite.y, firstProjectile[0], firstProjectile[1])
-                projectile.fireProjectile(game,sprite.x,sprite.y,secondProjectile[0],secondProjectile[1])
-                if(distanceWith(target!!)>projectile.realRange(game)){
-                    reachPlayer()
+        if(!game.ended) {
+            action = setInterval(0, fireRate) {
+                GlobalScope.launch {
+                    while (game.pause) {
+                        delay(fireRate)
+                    }
+                    val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
+                    val firstProjectile = rotationFromPoint(
+                        target!!.sprite.x,
+                        target!!.sprite.y,
+                        center[0],
+                        center[1],
+                        (PI / 6).toFloat()
+                    )
+                    val secondProjectile = rotationFromPoint(
+                        target!!.sprite.x,
+                        target!!.sprite.y,
+                        center[0],
+                        center[1],
+                        (-PI / 6).toFloat()
+                    )
+                    projectile.aimTarget(target!!, sprite.x, sprite.y)
+                    projectile.fireProjectile(
+                        game,
+                        sprite.x,
+                        sprite.y,
+                        firstProjectile[0],
+                        firstProjectile[1]
+                    )
+                    projectile.fireProjectile(
+                        game,
+                        sprite.x,
+                        sprite.y,
+                        secondProjectile[0],
+                        secondProjectile[1]
+                    )
+                    if (distanceWith(target!!) > projectile.realRange(game)) {
+                        reachPlayer()
+                    }
                 }
             }
-
         }
     }
 

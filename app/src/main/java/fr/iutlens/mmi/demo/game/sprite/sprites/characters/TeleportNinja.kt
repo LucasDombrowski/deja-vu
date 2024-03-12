@@ -33,11 +33,12 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     }
     fun pattern() {
         disablePathFollowing()
-        GlobalScope.launch {
-            while(game.pause){
-                delay(33)
-            }
-            if(alive) {
+        if(!game.ended) {
+            GlobalScope.launch {
+                while (game.pause) {
+                    delay(33)
+                }
+                if (alive) {
                     if (!chasing) {
                         sprite.setTransparencyLevel(0.75f)
                         delay(33)
@@ -88,6 +89,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                         }
                     }
                 }
+            }
         }
     }
     override fun copy() : TeleportNinja{
