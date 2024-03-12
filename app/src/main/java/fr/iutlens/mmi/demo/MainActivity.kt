@@ -2,34 +2,24 @@ package fr.iutlens.mmi.demo
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import fr.iutlens.mmi.demo.boot.changeLevel
 import fr.iutlens.mmi.demo.boot.startFirstLevel
 import fr.iutlens.mmi.demo.components.Level
 import fr.iutlens.mmi.demo.game.Game
-import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
-import fr.iutlens.mmi.demo.game.levels.Ninja
-import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.utils.Music.mute
 import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.loadSound
 
 import fr.iutlens.mmi.demo.utils.loadSpritesheet
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 var currentContext : Context ?= null
 
@@ -57,11 +47,17 @@ class MainActivity : ComponentActivity() {
 
         loadSound(R.raw.message)
 
-
         setContent {
             currentContext = LocalContext.current
+            var game by remember {
+                mutableStateOf(startFirstLevel())
+            }
             MyApplicationTheme {
-                Level(game = Ninja())
+                Level(game = game, onEnd = {
+                    game = changeLevel(game)
+                }, onRestart = {
+                    game = startFirstLevel()
+                })
                 Music(id = R.raw.jungle)
             }
         }

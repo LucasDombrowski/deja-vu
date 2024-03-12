@@ -168,7 +168,6 @@ open class Character(
                     }
                 }
             }
-
     }
 
     fun stun(){
@@ -208,11 +207,17 @@ open class Character(
                 heartIndex--
             }
             getKnockback(knockback,direction)
-            if(this is MainCharacter){
+            if(this is MainCharacter && hearts[0].filled>0) {
                 refreshHeathBar()
                 blink()
-            } else if(hearts[0].filled<=0){
-                die()
+            }
+            if(hearts[0].filled<=0){
+                if(this==game.controllableCharacter!!){
+                    game.gameOver()
+                    die()
+                } else {
+                    die()
+                }
             }
         }
     }

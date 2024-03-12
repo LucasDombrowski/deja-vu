@@ -8,6 +8,12 @@ import androidx.compose.ui.graphics.Color
 import fr.iutlens.mmi.demo.game.Game
 
 @Composable
-fun Level(game: Game){
+fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit){
+    game.onEnd = {
+        onEnd()
+    }
+    game.onRestart = {
+        onRestart()
+    }
     game.GameScreen()
 }

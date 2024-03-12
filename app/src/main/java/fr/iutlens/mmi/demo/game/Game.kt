@@ -144,6 +144,8 @@ open class Game(val map : Map,
     var collectibleList : MutableList<Collectible> = mutableListOf()
 
     var onEnd : ()->Unit = {}
+
+    var onRestart : ()->Unit = {}
     fun copyCharacterList() : MutableList<Character>{
         return characterList.toMutableList()
     }
@@ -322,42 +324,45 @@ open class Game(val map : Map,
      *
      * @param modifier
      */
+
+    var ended = false
     @Composable
     fun View(modifier: Modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)) {
-
-        // gestion des évènements
-        Canvas(modifier = modifier
-            .pointerInput(key1 = this) {
-                if (onTap != null) detectTapGestures {
-                    onTap?.invoke(transform.getPoint(it))
+        if(!ended) {
+            // gestion des évènements
+            Canvas(modifier = modifier
+                .pointerInput(key1 = this) {
+                    if (onTap != null) detectTapGestures {
+                        onTap?.invoke(transform.getPoint(it))
+                    }
+                }
+                .pointerInput(key1 = this) {
+                    if (onDragMove != null) detectDragGestures(onDragStart = {
+                        onDragStart?.invoke(transform.getPoint(it))
+                    }, onDragEnd = {
+                        onDragEnd?.invoke()
+                    }) { change, dragAmount ->
+                        onDragMove?.invoke(transform.getPoint(change.position))
+                    }
+                }) {
+                // Dessin proprement dit. On précise la transformation à appliquer avant
+                this.withTransform({ transform(transform.getMatrix(size)) }) {
+                    background.paint(this, elapsed)
+                    spriteList.paint(this, elapsed)
                 }
             }
-            .pointerInput(key1 = this) {
-                if (onDragMove != null) detectDragGestures(onDragStart = {
-                    onDragStart?.invoke(transform.getPoint(it))
-                }, onDragEnd = {
-                    onDragEnd?.invoke()
-                }) { change, dragAmount ->
-                    onDragMove?.invoke(transform.getPoint(change.position))
-                }
-            }) {
-            // Dessin proprement dit. On précise la transformation à appliquer avant
-            this.withTransform({ transform(transform.getMatrix(size)) }) {
-                background.paint(this, elapsed)
-                spriteList.paint(this, elapsed)
-            }
-        }
-        // Gestion du rafraîssement automatique si update et animationDelay sont défnis
-        update?.let{myUpdate->
-            animationDelayMs?.let {delay ->
-                LaunchedEffect(elapsed){
-                    //Calcul du temps avant d'afficher la prochaine image, et pause si nécessaire)
-                    val current = (timeSource.markNow()-start).inWholeMilliseconds
-                    val next = elapsed+ delay
-                    if (next>current) delay(next-current)
-                    myUpdate(this@Game)
+            // Gestion du rafraîssement automatique si update et animationDelay sont défnis
+            update?.let { myUpdate ->
+                animationDelayMs?.let { delay ->
+                    LaunchedEffect(elapsed) {
+                        //Calcul du temps avant d'afficher la prochaine image, et pause si nécessaire)
+                        val current = (timeSource.markNow() - start).inWholeMilliseconds
+                        val next = elapsed + delay
+                        if (next > current) delay(next - current)
+                        myUpdate(this@Game)
+                    }
                 }
             }
         }
@@ -540,7 +545,9 @@ open class Game(val map : Map,
                             Image(
                                 painter = painterResource(id = item.value!!.image),
                                 contentDescription = item.value!!.name,
-                                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
                                 contentScale = ContentScale.Fit
                             )
                         }
@@ -588,10 +595,11 @@ open class Game(val map : Map,
         } else if(cinematic.value.second) {
             controllableCharacter!!.currentAnimationSequenceIndex = 0
             cinematic.value.first.Display()
+        } else if(gameOver.value == true){
+            GameOver()
         } else {
             Ath()
         }
-
     }
 
     fun initiate(){
@@ -602,6 +610,83 @@ open class Game(val map : Map,
 
     fun setupCamera(){
         transform = FocusTransform(background,camera.sprite,15f)
+    }
+    
+    var gameOver = mutableStateOf(false)
+
+    fun gameOver(){
+        gameOver.value = true
+    }
+    @Composable
+    fun GameOver(){
+        val configuration = LocalConfiguration.current
+        val density = LocalDensity.current
+        val screenWidth = configuration.screenWidthDp
+        val screenHeight = configuration.screenHeightDp
+        val titleSize = with(density){
+            (screenWidth.dp/15).toSp()
+        }
+        val subtitleSize = with(density){
+            (screenWidth.dp/30).toSp()
+        }
+        val optionSize = with(density){
+            (screenWidth.dp/40).toSp()
+        }
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(Color(0,0,0,128))
+        ) {
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "GAME OVER",
+                    fontSize = titleSize,
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = Dogica,
+                    )
+                )
+                Spacer(modifier = Modifier.height(screenHeight.dp/20))
+                Text(
+                    text = "REJOUER ?",
+                    fontSize = subtitleSize,
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = Dogica,
+                    )
+                )
+                Spacer(modifier = Modifier.height(screenHeight.dp/20))
+                Row {
+                    Text(
+                        text = "OUI",
+                        fontSize = optionSize,
+                        color = Color.White,
+                        style = TextStyle(
+                            fontFamily = Dogica,
+                        ),
+                        modifier = Modifier.clickable {
+                            pause = false
+                            onRestart()
+                        }
+                    )
+                    Spacer(modifier = Modifier.width(screenWidth.dp/30))
+                    Text(
+                        text = "NON",
+                        fontSize = optionSize,
+                        color = Color.White,
+                        style = TextStyle(
+                            fontFamily = Dogica,
+                        ),
+                    )
+
+                }
+
+            }
+        }
     }
 
     init {
