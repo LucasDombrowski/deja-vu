@@ -217,7 +217,7 @@ open class Game(val map : Map,
     }
 
     fun addSprite(sprite: Sprite){
-        spriteList.add(sprite)
+        spriteList.add(0,sprite)
     }
 
     fun sortSpriteList(){
