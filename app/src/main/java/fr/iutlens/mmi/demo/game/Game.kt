@@ -2,6 +2,8 @@ package fr.iutlens.mmi.demo.game
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.animation.core.animateValue
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -57,6 +59,7 @@ import fr.iutlens.mmi.demo.components.DialogScreen
 import fr.iutlens.mmi.demo.game.ath.BossBar
 import fr.iutlens.mmi.demo.game.ath.Coins
 import fr.iutlens.mmi.demo.game.ath.Hearts
+import fr.iutlens.mmi.demo.game.ath.LowLife
 import fr.iutlens.mmi.demo.game.gameplayResources.Chest
 import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
@@ -366,6 +369,9 @@ open class Game(val map : Map,
         val screenWidth = with(configuration){
             this.screenWidthDp
         }
+        if(controllableCharacter!!.hearts.size<=1 || controllableCharacter!!.hearts[1].filled<=0f) {
+            LowLife()
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -411,6 +417,7 @@ open class Game(val map : Map,
                 BossBar(hearts = ath["boss"]!!)
             }
         }
+
     }
 
     var item = mutableStateMapOf<String,Any>("show" to false, "image" to 0, "name" to "", "description" to "")
@@ -646,7 +653,7 @@ open class Game(val map : Map,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .background(Color(0,0,0,128))
+                .background(Color(0, 0, 0, 128))
         ) {
             Column(
                 modifier = Modifier.align(Alignment.Center),

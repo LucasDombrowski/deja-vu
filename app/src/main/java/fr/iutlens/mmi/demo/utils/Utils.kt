@@ -1,12 +1,20 @@
 package fr.iutlens.mmi.demo.utils
 
 import android.content.Context
+import android.content.Context.VIBRATOR_MANAGER_SERVICE
+import android.content.Context.VIBRATOR_SERVICE
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.core.content.ContextCompat.getDrawable
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
+import fr.iutlens.mmi.demo.getCurrentActivityContext
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -121,6 +129,33 @@ fun getAngle(xCenter : Float, yCenter: Float, x : Float, y : Float) : Float{
         }
     }
 }
+
+fun vibrate(time: Long){
+    val context = getCurrentActivityContext()
+    when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            val vibrationEffect = VibrationEffect.createOneShot(time, VibrationEffect.DEFAULT_AMPLITUDE)
+            val vibrator = vibratorManager.defaultVibrator
+            vibrator.vibrate(vibrationEffect)
+        }
+
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT < Build.VERSION_CODES.S -> {
+            // For Android 8.0 (Oreo) to Android 11 (R)
+            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            val vibrationEffect = VibrationEffect.createOneShot(time, VibrationEffect.DEFAULT_AMPLITUDE)
+            vibrator.vibrate(vibrationEffect)
+        }
+
+        else -> {
+            // For Android versions below Oreo (API level 26)
+            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            vibrator.vibrate(time)
+        }
+    }
+}
+
+
 
 
 

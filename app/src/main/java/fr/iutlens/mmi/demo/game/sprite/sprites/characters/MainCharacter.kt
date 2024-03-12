@@ -17,6 +17,7 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.Projectile
 import fr.iutlens.mmi.demo.utils.getDistance
 import fr.iutlens.mmi.demo.utils.setInterval
+import fr.iutlens.mmi.demo.utils.vibrate
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -94,6 +95,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     }
 
     var dragStandBehavior : Job = GlobalScope.launch {  }
+
 
     fun movePathIndicator(x: Float, y: Float, reset: Boolean = false){
         dragStandBehavior.cancel()
