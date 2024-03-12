@@ -132,6 +132,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     }
 
     fun moveToPathIndicator(){
+        Log.i("moving","true")
         moving = true
         GlobalScope.launch {
             if(currentTile()!=pathIndicatorTile()){

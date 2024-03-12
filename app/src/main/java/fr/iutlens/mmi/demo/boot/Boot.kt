@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.demo.boot
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.levels.Ninja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
@@ -30,7 +31,6 @@ fun randomLevel() : Game{
 fun changeLevel(game: Game) : Game{
     saveMainCharacter(game)
     val level = randomLevel()
-    level.onEnd = game.onEnd
     level.coins = game.coins
     return level
 }
