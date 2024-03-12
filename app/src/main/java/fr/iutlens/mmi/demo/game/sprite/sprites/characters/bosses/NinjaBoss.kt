@@ -48,27 +48,28 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     fun randomPattern(){
         disablePathFollowing()
         action.cancel()
-        if(alive) {
-            if (countdown != null) {
-                countdown!!.cancel()
-            }
-            var newPattern = (1..5).random()
-            while (newPattern == pattern) {
-                newPattern = (1..5).random()
-            }
-            pattern = newPattern
-            GlobalScope.launch {
-                delay(1000)
-                when (pattern) {
-                    1 -> chasePlayer()
-                    2 -> aimPlayer()
-                    3 -> teleportToPlayer()
-                    4 -> reflectShots()
-                    else -> spawnEnemies()
+        if(!game.ended) {
+            if (alive) {
+                if (countdown != null) {
+                    countdown!!.cancel()
+                }
+                var newPattern = (1..5).random()
+                while (newPattern == pattern) {
+                    newPattern = (1..5).random()
+                }
+                pattern = newPattern
+                GlobalScope.launch {
+                    delay(1000)
+                    when (pattern) {
+                        1 -> chasePlayer()
+                        2 -> aimPlayer()
+                        3 -> teleportToPlayer()
+                        4 -> reflectShots()
+                        else -> spawnEnemies()
+                    }
                 }
             }
         }
-
     }
     fun chasePlayer(){
         disablePathFollowing()
