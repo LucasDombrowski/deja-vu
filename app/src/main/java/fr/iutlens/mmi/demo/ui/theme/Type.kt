@@ -12,8 +12,8 @@ import fr.iutlens.mmi.demo.R
 
 @RequiresApi(Build.VERSION_CODES.Q)
 val Dogica = FontFamily(
-    Font(R.font.dogica,FontWeight.Normal),
-    Font(R.font.dogicabold,FontWeight.Bold)
+    Font(R.font.dogicapixel,FontWeight.Normal),
+    Font(R.font.dogicapixelbold,FontWeight.Bold)
 )
 // Set of Material typography styles to start with
 val Typography = Typography(
