@@ -142,6 +142,7 @@ class Camera(val game: Game) {
             delay(1000)
             if (game.map.currentRoom() is BasicRoom || game.map.currentRoom() is LongRoom || game.map.currentRoom() is LargeRoom) {
                 game.map.currentRoom().spawnEnemies()
+                game.map.currentRoom().startChallenge(game)
             }
             if (game.map.currentRoom() is LongRoom) {
                 game.controllableCharacter!!.temporaryMovingInteraction = slideLongRoomCamera()

@@ -43,6 +43,8 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var dragAction = false
 
+    var viewingDistance = 4
+
     var previousPathIndicatorTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
 
     var directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
@@ -56,7 +58,15 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             while (game.pause){
                 delay(fireRate)
             }
-            fireToTarget()
+            if(target!=null) {
+                if (!game.blinded || distanceWith(target!!) < viewingDistance * game.map.tileArea.w) {
+                    fireToTarget()
+                } else {
+                    getClosestEnemy()
+                }
+            } else {
+                targetIndicator.invisible()
+            }
         }
     }
 
@@ -134,7 +144,6 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     }
 
     fun moveToPathIndicator(){
-        Log.i("moving","true")
         moving = true
         GlobalScope.launch {
             if(currentTile()!=pathIndicatorTile()){
@@ -152,7 +161,12 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                     if(pathIndicatorTile()!=previousPathIndicatorTile){
                         disablePathFollowing()
                         previousPathIndicatorTile=pathIndicatorTile()
-                        setupPath(pathIndicator.x, pathIndicator.y)
+                        if(game.blinded && getDistance(sprite.x, sprite.y, pathIndicator.x, pathIndicator.y) > viewingDistance*game.map.tileArea.w){
+                            disablePathFollowing()
+                            moveTo(pathIndicator.x, pathIndicator.y)
+                        } else {
+                            setupPath(pathIndicator.x, pathIndicator.y)
+                        }
                         delay(66)
                         moveToPathIndicator()
                     } else if(!pathFollow){
@@ -287,7 +301,9 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         with(game.characterList.iterator()) {
             forEach {
                 if(it is Enemy) {
-                    distances[getDistance(sprite.x, sprite.y, it.sprite.x, it.sprite.y)] = it
+                    if(!game.blinded || distanceWith(it) < viewingDistance*game.map.tileArea.w) {
+                        distances[getDistance(sprite.x, sprite.y, it.sprite.x, it.sprite.y)] = it
+                    }
                 }
             }
         }

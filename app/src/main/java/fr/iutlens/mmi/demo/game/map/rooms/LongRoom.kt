@@ -2,12 +2,13 @@ package fr.iutlens.mmi.demo.game.map.rooms
 
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.gameplayResources.Challenge
 import fr.iutlens.mmi.demo.game.map.Map
 import fr.iutlens.mmi.demo.game.map.Room
 import fr.iutlens.mmi.demo.utils.getCenter
 import java.lang.StringBuilder
 
-class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null, exit: String ?=null, map: Map) : Room(row = 7, col = 30, map,enter,exit,false, enemies =  4..6){
+class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null, exit: String ?=null, map: Map, challenge: Challenge) : Room(row = 7, col = 30, map,enter,exit,false, enemies =  4..6, challenge = challenge){
 
     var firstHalf = ""
     var secondHalf = ""
