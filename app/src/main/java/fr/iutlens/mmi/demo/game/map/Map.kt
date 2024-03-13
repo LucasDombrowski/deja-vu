@@ -2,6 +2,10 @@ package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.gameplayResources.Challenge
+import fr.iutlens.mmi.demo.game.gameplayResources.challenges.Blind
+import fr.iutlens.mmi.demo.game.gameplayResources.challenges.SpeedDown
+import fr.iutlens.mmi.demo.game.gameplayResources.challenges.SpeedUp
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
@@ -33,7 +37,6 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     fun makeTileMap() : ArrayTileMap{
         if(mapString==null) {
             generateMap()
-            Log.i("mapString","$mapString")
         }
 
         return mapString!!.trimIndent().toMutableTileMap(
@@ -112,14 +115,12 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             currentCol = mapChanges["currentCol"] as Int
             entranceDoor = mapChanges["entranceDoor"] as String
             sequence.add(mapChanges["nextRoom"] as String)
-            Log.i("Given row / col","$currentRow, $currentCol")
             if((1..4).random() == 1 && it<roomNumber-1 && it>0 && bigRooms<treasureRooms+1){
                 bigRooms++
                 mapChanges = generateNextRoom(map,currentRow,currentCol,entranceDoor,"$n.5")
                 currentRow = mapChanges["currentRow"] as Int
                 currentCol = mapChanges["currentCol"] as Int
                 entranceDoor = mapChanges["entranceDoor"] as String
-                Log.i("Given row / col","$currentRow, $currentCol")
             }
         }
         fun isOnlyEmpty(row: List<String>) : Boolean{
@@ -241,16 +242,18 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         return null
     }
 
-    fun findDoubleRoom(n : Int) : Room ?{
+    fun findDoubleRoom(n : Int, challenges : MutableList<Challenge> = mutableListOf(
+        Challenge("",{},{})
+    )) : Room ?{
         val pos = findRoom(n)!!
         if(pos.first<mapPath!!.size-1 && mapPath!![pos.first+1][pos.second] == "$n.5"){
-            return LargeRoom(enterSide = "top", exitSide = "bottom", map = this)
+            return LargeRoom(enterSide = "top", exitSide = "bottom", map = this, challenge = challenges.random())
         } else if(pos.first>0 && mapPath!![pos.first-1][pos.second] == "$n.5"){
-            return LargeRoom(enterSide = "bottom", exitSide = "top", map = this)
+            return LargeRoom(enterSide = "bottom", exitSide = "top", map = this, challenge = challenges.random())
         } else if(pos.second < mapPath!![pos.first].size-1 && mapPath!![pos.first][pos.second+1] == "$n.5"){
-            return LongRoom(enterSide = "left", exitSide = "right", map = this)
+            return LongRoom(enterSide = "left", exitSide = "right", map = this, challenge = challenges.random())
         } else if(pos.second > 0 && mapPath!![pos.first][pos.second-1] == "$n.5"){
-            return LongRoom(enterSide = "right", exitSide = "left", map = this)
+            return LongRoom(enterSide = "right", exitSide = "left", map = this, challenge = challenges.random())
         } else {
             return null
         }
@@ -258,8 +261,9 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
 
 
     fun generateRooms(){
+        val challenges = mutableListOf<Challenge>(Blind(), SpeedUp(), SpeedDown())
         val currentMap = this
-        var room : Room ? = BasicRoom(currentMap)
+        var room : Room ? = BasicRoom(currentMap, challenge = challenges.random())
         val lastRoom = roomNumber+1
         val rowsToAdd = room!!.row
         val colsToAdd = room!!.col
@@ -269,13 +273,13 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         val randomTreasureRooms = mutableListOf<String>()
         repeat(treasureRooms){
             var number = (2..roomNumber).random().toString()
-            while(number in randomTreasureRooms || findDoubleRoom(number.toInt())!=null){
+            while(number in randomTreasureRooms || findDoubleRoom(number.toInt(), challenges)!=null){
                 number = (2..roomNumber).random().toString()
             }
             randomTreasureRooms.add(number)
         }
         var shopRoom = (2..roomNumber).random().toString()
-        while(shopRoom in randomTreasureRooms || findDoubleRoom(shopRoom.toInt())!=null){
+        while(shopRoom in randomTreasureRooms || findDoubleRoom(shopRoom.toInt(), challenges)!=null){
             shopRoom = (2..roomNumber).random().toString()
         }
 
@@ -292,10 +296,13 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                                  shopRoom->ShopRoom(currentMap)
                                  else->{
                                      if(!it.contains(".5")){
-                                         if(findDoubleRoom(it.toInt())!=null){
-                                             findDoubleRoom(it.toInt())
+                                         if(findDoubleRoom(it.toInt(), challenges)!=null){
+                                             findDoubleRoom(it.toInt(), challenges)
                                          } else {
-                                             BasicRoom(currentMap)
+                                             BasicRoom(
+                                                 map = currentMap,
+                                                 challenge = challenges.random()
+                                             )
                                          }
                                      } else {
                                          null
@@ -452,7 +459,6 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
 
         entranceDoor = getReverseDirection(nextRoom)
 
-        Log.i("Generated row / col","$currentRow, $currentCol")
 
 
         return mapOf(

@@ -2,6 +2,8 @@ package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.gameplayResources.Challenge
+import fr.iutlens.mmi.demo.game.gameplayResources.challenges.SpeedUp
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
@@ -14,7 +16,7 @@ import kotlin.math.abs
 import kotlin.reflect.KClass
 import kotlin.math.log
 
-open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false, val enemies : IntRange) {
+open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false, val enemies : IntRange, val challenge: Challenge ? = null) {
 
     open var composition : String = create().trimIndent()
     var topLeftCorner : Pair<Int,Int> ?= null
@@ -23,7 +25,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     var roomList : MutableList<MutableList<String>> ? = null
 
     open fun copy() : Room{
-        return Room(row, col, map, enter, exit, open, enemies)
+        return Room(row, col, map, enter, exit, open, enemies, challenge)
     }
 
     fun randomTile(): Char {
@@ -387,6 +389,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 }
             }
         }
+
     }
     fun spawnEnemy() : Enemy ?{
         val enemy = map.enemies.random().copy()
@@ -439,6 +442,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         if(this is BasicRoom || this is LargeRoom || this is LongRoom) {
             if (!enemiesAlive(game)) {
                 open()
+                endChallenge(game)
                 enemyList = mutableListOf()
             }
         }
@@ -453,6 +457,15 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
             else->composition.replace("X","R")
         }
         map.reload()
+    }
+
+    fun startChallenge(game: Game){
+        challenge?.effect?.invoke(game)
+        game.challenge.value = challenge
+    }
+
+    fun endChallenge(game: Game){
+        challenge?.reverseEffect?.invoke(game)
     }
 
 

@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.demo.game
 
 import android.annotation.SuppressLint
+import android.graphics.Region
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -34,12 +35,24 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -55,6 +68,7 @@ import fr.iutlens.mmi.demo.game.ath.BossBar
 import fr.iutlens.mmi.demo.game.ath.Coins
 import fr.iutlens.mmi.demo.game.ath.Hearts
 import fr.iutlens.mmi.demo.game.ath.LowLife
+import fr.iutlens.mmi.demo.game.gameplayResources.Challenge
 import fr.iutlens.mmi.demo.game.gameplayResources.Chest
 import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
@@ -81,7 +95,9 @@ import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
 import fr.iutlens.mmi.demo.ui.theme.MainFont
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
 
 /**
@@ -261,8 +277,6 @@ open class Game(val map : Map,
                     (map.currentRoom() as LongRoom).getSecondHalfCenter().second
                 )
             }
-
-            Log.i("enterSide/exitSide","${(map.currentRoom() as LongRoom).enterSide}/${(map.currentRoom() as LongRoom).exitSide}")
         }
         if(map.currentRoom() !is LongRoom && map.currentRoom() !is LargeRoom){
             camera.moveTo(
@@ -273,10 +287,6 @@ open class Game(val map : Map,
     }
 
     fun nextRoom(){
-        map.rooms!!.forEach {
-            Log.i("corners","${it.topLeftCorner},${it.bottomRightCorner}")
-        }
-        Log.i("map string","${map.mapString}")
         if(map.currentRoom+1<map.rooms!!.size){
             switchRoom(map.currentRoom+1)
         }
@@ -315,6 +325,8 @@ open class Game(val map : Map,
      */
 
     var ended = false
+
+    var blinded = false
     @Composable
     fun View(modifier: Modifier = Modifier
         .fillMaxSize()
@@ -333,13 +345,64 @@ open class Game(val map : Map,
                 }) { change, dragAmount ->
                     onDragMove?.invoke(transform.getPoint(change.position))
                 }
-            }) {
-            // Dessin proprement dit. On précise la transformation à appliquer avant
-            this.withTransform({ transform(transform.getMatrix(size)) }) {
-                background.paint(this, elapsed)
-                spriteList.paint(this, elapsed)
             }
+            .graphicsLayer {
+                compositingStrategy = CompositingStrategy.Offscreen
+            }) {
+            drawRect(
+                Color.Black
+            )
+            this.withTransform({ transform(transform.getMatrix(size)) }) {
+                if(blinded){
+                    val path = Path()
+                    path.addOval(
+                        Rect(
+                            offset = Offset(
+                                controllableCharacter!!.sprite.x - (controllableCharacter!!.viewingDistance.toFloat()*map.tileArea.w)/2,
+                                controllableCharacter!!.sprite.y - (controllableCharacter!!.viewingDistance.toFloat()*map.tileArea.w)/2
+                            ),
+                            size = Size(controllableCharacter!!.viewingDistance.toFloat()*map.tileArea.w,controllableCharacter!!.viewingDistance.toFloat()*map.tileArea.w)
+                        )
+                    )
+                    path.addOval(
+                        Rect(
+                            offset = Offset(
+                                controllableCharacter!!.pathIndicator.x - map.tileArea.w/2,
+                                controllableCharacter!!.pathIndicator.y - map.tileArea.w/2
+                            ),
+                            size = Size(map.tileArea.w.toFloat(), map.tileArea.w.toFloat())
+                        )
+                    )
+                    if(!controllableCharacter!!.targetIndicator.isInvisible() && controllableCharacter!!.target!=null) {
+                        path.addOval(
+                            Rect(
+                                offset = Offset(
+                                    controllableCharacter!!.target!!.sprite.x - map.tileArea.w/2,
+                                    controllableCharacter!!.target!!.sprite.y - map.tileArea.w/2
+                                ),
+                                size = Size(map.tileArea.w.toFloat(), map.tileArea.w.toFloat())
+                            )
+                        )
+                    }
+                    clipPath(path, ClipOp.Intersect){
+                        background.paint(this, elapsed)
+                        spriteList.paint(this, elapsed)
+                    }
+                } else {
+                    background.paint(this, elapsed)
+                    spriteList.paint(this, elapsed)
+                }
+            }
+            // Dessin proprement dit. On précise la transformation à appliquer avant
+
+
+
+
+
+
+
         }
+
         // Gestion du rafraîssement automatique si update et animationDelay sont défnis
         update?.let { myUpdate ->
             animationDelayMs?.let { delay ->
@@ -384,7 +447,6 @@ open class Game(val map : Map,
                         Spacer(modifier = Modifier.height(10.dp))
                         Coins(n = coins)
                     }
-
                 }
 
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -591,7 +653,30 @@ open class Game(val map : Map,
         } else if(gameOver.value == true){
             GameOver()
         } else {
+            Challenge()
             Ath()
+        }
+    }
+
+    var challenge : MutableState<Challenge ?> = mutableStateOf(null)
+
+    @SuppressLint("CoroutineCreationDuringComposition")
+    @Composable
+    fun Challenge(){
+        val scope = rememberCoroutineScope()
+        if(challenge.value!=null) {
+            scope.launch {
+                delay(5000)
+                challenge.value = null
+            }
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    text = challenge.value!!.name,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
     }
 
