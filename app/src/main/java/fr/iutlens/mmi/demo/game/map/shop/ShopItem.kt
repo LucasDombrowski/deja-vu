@@ -7,7 +7,7 @@ import fr.iutlens.mmi.demo.game.sprite.ImageSprite
 import fr.iutlens.mmi.demo.game.sprite.TextSprite
 
 class ShopItem(val item : Item, var price: Int) {
-    val textSprite = TextSprite(price.toString(),50f, Color.White,false,0f,0f)
+    val textSprite = TextSprite(price.toString(),75f, Color.White,false,0f,0f)
     val imageSprite = ImageSprite(item.image, 100, 0f,0f)
 
     fun display(game: Game, x:Float, y:Float){

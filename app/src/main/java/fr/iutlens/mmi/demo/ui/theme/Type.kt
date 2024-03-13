@@ -11,9 +11,8 @@ import androidx.compose.ui.unit.sp
 import fr.iutlens.mmi.demo.R
 
 @RequiresApi(Build.VERSION_CODES.Q)
-val Dogica = FontFamily(
-    Font(R.font.dogica,FontWeight.Normal),
-    Font(R.font.dogicabold,FontWeight.Bold)
+val MainFont = FontFamily(
+    Font(R.font.vcr,FontWeight.Normal),
 )
 // Set of Material typography styles to start with
 val Typography = Typography(

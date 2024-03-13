@@ -33,10 +33,10 @@ class TextSprite(val text: String, val textSize: Float, val textColor: Color, va
         paint.color = textColor.toArgb()
         paint.typeface = when(bold){
             false->with(context){
-                this.resources.getFont(R.font.dogica)
+                this.resources.getFont(R.font.vcr)
             }
             else->with(context){
-                this.resources.getFont(R.font.dogicabold)
+                this.resources.getFont(R.font.vcr)
             }
         }
         val baseline: Float = -paint.ascent()

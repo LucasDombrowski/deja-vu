@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ItemImage(id: Any, imageDescription: Any, size: Dp){
     Box(
-        modifier = Modifier.width(size).aspectRatio(1f),
+        modifier = Modifier.width(size).aspectRatio(1f).offset(y = size/8),
         contentAlignment = Alignment.Center,
     ){
         Image(painter = painterResource(id = id as Int), contentDescription = imageDescription as String, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxWidth().fillMaxHeight())

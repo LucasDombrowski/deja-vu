@@ -2,8 +2,6 @@ package fr.iutlens.mmi.demo.game
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.animation.core.animateValue
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,7 +24,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,13 +42,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.iutlens.mmi.demo.R
@@ -85,10 +80,8 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
-import fr.iutlens.mmi.demo.ui.theme.Dogica
-import kotlinx.coroutines.GlobalScope
+import fr.iutlens.mmi.demo.ui.theme.MainFont
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
 
 /**
@@ -431,8 +424,11 @@ open class Game(val map : Map,
         val screenWidth = with(configuration){
             this.screenWidthDp
         }
+        val screenHeight = with(configuration){
+            screenHeightDp
+        }
         val fontSize = with(density){
-            (screenWidth/50).sp
+            (screenWidth/40).sp
         }
         controllableCharacter!!.currentAnimationSequenceIndex = 0
         DialogScreen(text = item["description"] as String, onEnd = {
@@ -443,18 +439,18 @@ open class Game(val map : Map,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ItemImage(id = item["image"] as Int, item["name"] as String, (screenWidth*0.15).dp)
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height((screenHeight/60).dp))
                 Text(
                     text = item["name"] as String,
                     color = Color.White,
                     fontSize = fontSize,
                     style = TextStyle(
-                        fontFamily = Dogica,
+                        fontFamily = MainFont,
                         fontWeight = FontWeight.Bold
                     )
                 )
             }
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height((screenHeight/30).dp))
         }
     }
 
@@ -664,7 +660,7 @@ open class Game(val map : Map,
                     fontSize = titleSize,
                     color = Color.White,
                     style = TextStyle(
-                        fontFamily = Dogica,
+                        fontFamily = MainFont,
                     )
                 )
                 Spacer(modifier = Modifier.height(screenHeight.dp/20))
@@ -673,7 +669,7 @@ open class Game(val map : Map,
                     fontSize = subtitleSize,
                     color = Color.White,
                     style = TextStyle(
-                        fontFamily = Dogica,
+                        fontFamily = MainFont,
                     )
                 )
                 Spacer(modifier = Modifier.height(screenHeight.dp/20))
@@ -683,7 +679,7 @@ open class Game(val map : Map,
                         fontSize = optionSize,
                         color = Color.White,
                         style = TextStyle(
-                            fontFamily = Dogica,
+                            fontFamily = MainFont,
                         ),
                         modifier = Modifier.clickable {
                             pause = false
@@ -696,7 +692,7 @@ open class Game(val map : Map,
                         fontSize = optionSize,
                         color = Color.White,
                         style = TextStyle(
-                            fontFamily = Dogica,
+                            fontFamily = MainFont,
                         ),
                     )
 
