@@ -257,7 +257,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     fun blink(){
         GlobalScope.launch {
-            if(remainingInvulnerability){
+            if(remainingInvulnerability && !game.pause){
                 delay(100)
                 sprite.invisible()
                 delay(100)

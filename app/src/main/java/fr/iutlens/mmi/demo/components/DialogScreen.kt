@@ -43,7 +43,7 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
         pxTextWidth.toFloat().toDp()
     }
 
-    val pxFontSize = pxTextWidth/40
+    val pxFontSize = pxTextWidth/30
 
     val fontSize = with(density){
         pxFontSize.toFloat().toSp()
