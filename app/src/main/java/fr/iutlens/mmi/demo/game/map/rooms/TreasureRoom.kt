@@ -13,85 +13,15 @@ class TreasureRoom(enter : String ?=null, exit : String?=null, map: Map) : Room(
     map = map,
     enemies = 0..0
 ){
-    override fun create() : String {
-        val theMap = StringBuilder()
-        for(i in 0..<row){
-            when(i){
-                0->{
-                    for(j in 0..<col){
-                        when(j){
-                            0->theMap.append("0")
-                            col-1->theMap.append("1")
-                            (col-1)/2->{
-                                if(enter=="top"){
-                                    theMap.append("8")
-                                } else if(exit=="top"){
-                                    theMap.append("C")
-                                } else {
-                                    theMap.append("2")
-                                }
-                            }
-                            else->theMap.append("2")
-                        }
-                    }
-                }
-                row-1->{
-                    for(j in 0..<col){
-                        when(j){
-                            0->theMap.append("4")
-                            (col-1)/2->{
-                                if(enter=="bottom"){
-                                    theMap.append("9")
-                                } else if(exit=="bottom"){
-                                    theMap.append("D")
-                                } else {
-                                    theMap.append("7")
-                                }
-                            }
-                            col-1->theMap.append("5")
-                            else->theMap.append("7")
-                        }
-                    }
-                }
-                else->{
-                    for(j in 0..<col){
-                        when(j){
-                            0->when(i){
-                                (row-1)/2->{
-                                    if(enter=="left"){
-                                        theMap.append("A")
-                                    } else if(exit=="left"){
-                                        theMap.append("E")
-                                    } else {
-                                        theMap.append("6")
-                                    }
-                                }
-                                else->theMap.append("6")
-                            }
-                            col-1->when(i){
-                                (row-1)/2->{
-                                    if(enter=="right"){
-                                        theMap.append("7")
-                                    } else if(exit=="right"){
-                                        theMap.append("F")
-                                    } else {
-                                        theMap.append("3")
-                                    }
-                                }
-                                else->theMap.append("3")
-                            }
-                            else->theMap.append(randomTile(false))
-                        }
-                    }
-                }
-            }
-            theMap.appendLine()
-        }
-
-        return theMap.toString()
-    }
+    override var composition = create(false).trimIndent()
 
     override fun copy() : TreasureRoom{
         return TreasureRoom(enter,exit,map)
     }
+
+    override fun refresh(){
+        composition = create(false).trimIndent()
+        toList()
+    }
+
 }

@@ -38,9 +38,12 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         if(mapString==null) {
             generateMap()
         }
-        Log.i("mapString","$mapString")
+        Log.i("map string","$mapString")
         mapPath!!.forEach {
-            Log.i("map path","$it")
+            Log.i("map path", "$it")
+        }
+        rooms!!.forEach{
+            Log.i("corners","${it.topLeftCorner},${it.bottomRightCorner}")
         }
         return mapString!!.trimIndent().toMutableTileMap(
             "0123" +
@@ -195,7 +198,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                 with(it.iterator()){
                     forEach {
                         if(it==""){
-                            row.add(fillEmptySpace(7, 15))
+                            row.add(fillEmptySpace(9, 17))
                         } else {
                             if(!it.contains(".5")){
                                 val room = rooms!![it.toInt()-1]
@@ -218,22 +221,20 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                                     row.add(room.secondHalf)
                                 }
                             }
-
                         }
                     }
                 }
-
                 mapList.add(row)
             }
         }
         val map = StringBuilder()
         with(mapList.iterator()){
             forEach {
-                for(i in 0..6){
-                    with(it.iterator()){
-                        forEach {
-                            map.append(it.split("\n")[i])
-                        }
+                val maxLength = it[0].trimIndent().split("\n").size
+                for(i in 0..<maxLength){
+                    it.forEach{
+                        val split = it.trimIndent().split("\n")
+                        map.append(split[i])
                     }
                     map.appendLine()
                 }
@@ -293,8 +294,8 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         val currentMap = this
         var room : Room ? = BasicRoom(currentMap, challenge = challenges.random())
         val lastRoom = roomNumber+1
-        val rowsToAdd = room!!.row
-        val colsToAdd = room!!.col
+        val rowsToAdd = room!!.row+2
+        val colsToAdd = room!!.col+2
         var currentRow = 0
         var currentCol = 0
         val roomList : MutableMap<String,Room> = mutableMapOf()

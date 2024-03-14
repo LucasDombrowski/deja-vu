@@ -9,12 +9,12 @@ import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.utils.getCenter
-import java.lang.StringBuilder
 import java.util.LinkedList
 import java.util.Queue
 import kotlin.math.abs
 import kotlin.reflect.KClass
 import kotlin.math.log
+import kotlin.text.StringBuilder
 
 open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= null, var exit : String ?= null, var open : Boolean = false, val enemies : IntRange, val challenge: Challenge ? = null) {
 
@@ -41,26 +41,38 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 }
             }
             else->{
-                when((1..3).random()){
-                    1->return 'G'
+                when((1..10).random()){
+                    1->return 'I'
                     2->return 'H'
-                    else->return 'I'
+                    else->return 'G'
                 }
             }
         }
     }
-    open fun create() : String {
+    open fun create(obstacles: Boolean = true) : String {
+
         val theMap = StringBuilder()
         for(i in 0..<row){
             when(i){
                 0->{
+                    emptyLine(theMap)
                     for(j in 0..<col){
                         when(j){
-                            0->theMap.append("0")
-                            col-1->theMap.append("1")
+                            0->{
+                                theMap.append("K")
+                                theMap.append("0")
+                            }
+                            col-1->{
+                                theMap.append("1")
+                                theMap.append("K")
+                            }
                             (col-1)/2->{
                                 if(enter=="top" || exit=="top"){
-                                    theMap.append("8")
+                                    if(exit == "top" && open){
+                                        theMap.append("C")
+                                    } else {
+                                        theMap.append("8")
+                                    }
                                 } else {
                                     theMap.append("2")
                                 }
@@ -72,15 +84,25 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 row-1->{
                     for(j in 0..<col){
                         when(j){
-                            0->theMap.append("4")
+                            0->{
+                                theMap.append("K")
+                                theMap.append("4")
+                            }
                             (col-1)/2->{
                                 if(enter=="bottom" || exit=="bottom"){
-                                    theMap.append("9")
+                                    if(exit=="bottom" && open){
+                                        theMap.append("D")
+                                    } else {
+                                        theMap.append("9")
+                                    }
                                 } else {
                                     theMap.append("7")
                                 }
                             }
-                            col-1->theMap.append("5")
+                            col-1->{
+                                theMap.append("5")
+                                theMap.append("K")
+                            }
                             else->theMap.append("7")
                         }
                     }
@@ -88,33 +110,48 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 else->{
                     for(j in 0..<col){
                         when(j){
-                            0->when(i){
-                                (row-1)/2->{
-                                    if(enter=="left" || exit == "left"){
-                                        theMap.append("A")
-                                    } else {
-                                        theMap.append("6")
+                            0->{
+                                theMap.append("K")
+                                when(i){
+                                    (row-1)/2->{
+                                        if(enter=="left" || exit == "left"){
+                                            if(exit=="left" && open){
+                                                theMap.append("E")
+                                            } else {
+                                                theMap.append("A")
+                                            }
+                                        } else {
+                                            theMap.append("6")
+                                        }
                                     }
+                                    else->theMap.append("6")
                                 }
-                                else->theMap.append("6")
                             }
-                            col-1->when(i){
-                                (row-1)/2->{
-                                    if(enter=="right" || exit=="right"){
-                                        theMap.append("B")
-                                    } else {
-                                        theMap.append("3")
+                            col-1->{
+                                when(i){
+                                    (row-1)/2->{
+                                        if(enter=="right" || exit=="right"){
+                                            if(exit=="right" && open){
+                                                theMap.append("F")
+                                            } else {
+                                                theMap.append("B")
+                                            }
+                                        } else {
+                                            theMap.append("3")
+                                        }
                                     }
+                                    else->theMap.append("3")
                                 }
-                                else->theMap.append("3")
+                                theMap.append("K")
                             }
-                            else->theMap.append(randomTile())
+                            else->theMap.append(randomTile(obstacles))
                         }
                     }
                 }
             }
             theMap.appendLine()
         }
+        emptyLine(theMap)
 
         val mapList = theMap.lines().map {
             it.split("")
@@ -139,13 +176,20 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
 
 
-        if(enter!=null || exit!=null) {
+        if((enter!=null || exit!=null) && obstacles) {
             val result = isPathAvailable(mapChars)
             if (!result) {
                 return create()
             }
         }
         return theMap.toString()
+    }
+
+    open fun emptyLine(theMap: StringBuilder){
+        for(j in 0..col+1){
+            theMap.append("K")
+        }
+        theMap.appendLine()
     }
 
 
@@ -292,12 +336,12 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     fun getPosition(row: Int, column:Int) : Pair<Int,Int>{
         val firstValue = when{
             row-topLeftCorner!!.first<0->0
-            row-topLeftCorner!!.first>this.row-1->this.row-1
+            row-topLeftCorner!!.first>roomList!!.size-1->roomList!!.size-1
             else->row-topLeftCorner!!.first
         }
         val secondValue = when{
             column-topLeftCorner!!.second<0->0
-            column-topLeftCorner!!.second>this.col-1->this.col-1
+            column-topLeftCorner!!.second>roomList!![0].size-1->roomList!![0].size-1
             else->column-topLeftCorner!!.second
         }
         return Pair(

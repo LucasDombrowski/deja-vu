@@ -13,7 +13,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
     var firstHalf = ""
     var secondHalf = ""
 
-    override fun create() : String{
+    override fun create(obstacles: Boolean) : String{
         firstHalf = createFirstHalf().trimIndent()
         secondHalf = createSecondHalf().trimIndent()
         if(enter!=null || exit!=null) {
@@ -32,63 +32,78 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
 
     fun createFirstHalf() : String {
         val theMap = StringBuilder()
+        emptyLine(theMap)
         for(i in 0..<row){
             when(i){
                 0->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
-                            0->if(enterSide=="left"){
-                                theMap.append("0")
-                            } else {
-                                theMap.append("2")
+                            0->{
+                                if(enterSide=="left"){
+                                    theMap.append("K")
+                                    theMap.append("0")
+                                } else {
+                                    theMap.append("2")
+                                }
                             }
-                            ((col/2)-1)/2->{
+                            (col/2)/2->{
                                 if(enter=="top"){
                                     theMap.append("8")
                                 } else {
                                     theMap.append("2")
                                 }
                             }
-                            (col/2)-1->if(enterSide=="right"){
-                                theMap.append("1")
-                            } else {
-                                theMap.append("2")
+                            col/2->{
+                                if(enterSide=="right"){
+                                    theMap.append("1")
+                                    theMap.append("K")
+                                } else {
+                                    theMap.append("2")
+                                }
+
                             }
                             else->theMap.append("2")
                         }
                     }
                 }
                 row-1->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
-                            0->if(enterSide=="left"){
-                                theMap.append("4")
-                            } else {
-                                theMap.append("7")
+                            0->{
+                                if(enterSide=="left"){
+                                    theMap.append("K")
+                                    theMap.append("4")
+                                } else {
+                                    theMap.append("7")
+                                }
                             }
-                            ((col/2)-1)/2->{
+                            (col/2)/2->{
                                 if(enter=="bottom"){
                                     theMap.append("9")
                                 } else {
                                     theMap.append("7")
                                 }
                             }
-                            (col/2)-1->if(enterSide=="right"){
-                                theMap.append("5")
-                            } else {
-                                theMap.append("7")
+                            col/2->{
+                                if(enterSide=="right"){
+                                    theMap.append("5")
+                                    theMap.append("K")
+                                } else {
+                                    theMap.append("7")
+                                }
                             }
                             else->theMap.append("7")
                         }
                     }
                 }
                 else->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
                             0->{
                                 if(enterSide!="left"){
                                     theMap.append(randomTile())
                                 } else {
+                                    theMap.append("K")
                                     when(i){
                                         (row-1)/2->if(enter=="left"){
                                             theMap.append("A")
@@ -99,7 +114,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                     }
                                 }
                             }
-                            (col/2)-1->{
+                            col/2->{
                                 if(enterSide!="right"){
                                     theMap.append(randomTile())
                                 } else {
@@ -111,6 +126,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                         }
                                         else->theMap.append("3")
                                     }
+                                    theMap.append("K")
                                 }
                             }
                             else->theMap.append(randomTile())
@@ -120,54 +136,73 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
             }
             theMap.appendLine()
         }
+        emptyLine(theMap)
         return theMap.toString()
+    }
+
+    override fun emptyLine(theMap: StringBuilder){
+        for(j in 0..(col/2)+1){
+            theMap.append("K")
+        }
+        theMap.appendLine()
     }
 
     fun createSecondHalf() : String {
         val theMap = StringBuilder()
+        emptyLine(theMap)
         for(i in 0..<row){
             when(i){
                 0->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
-                            0->if(exitSide=="left"){
-                                theMap.append("0")
-                            } else {
-                                theMap.append("2")
+                            0->{
+                                if(exitSide=="left"){
+                                    theMap.append("K")
+                                    theMap.append("0")
+                                } else {
+                                    theMap.append("2")
+                                }
                             }
-                            ((col/2)-1)/2->{
+                            (col/2)/2->{
                                 if(exit=="top"){
                                     theMap.append("8")
                                 } else {
                                     theMap.append("2")
                                 }
                             }
-                            (col/2)-1->if(exitSide=="right"){
-                                theMap.append("1")
-                            } else {
-                                theMap.append("2")
+                            col/2->{
+                                if(exitSide=="right"){
+                                    theMap.append("1")
+                                    theMap.append("K")
+                                } else {
+                                    theMap.append("2")
+                                }
                             }
                             else->theMap.append("2")
                         }
                     }
                 }
                 row-1->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
-                            0->if(exitSide=="left"){
-                                theMap.append("4")
-                            } else {
-                                theMap.append("7")
+                            0->{
+                                if(exitSide=="left"){
+                                    theMap.append("K")
+                                    theMap.append("4")
+                                } else {
+                                    theMap.append("7")
+                                }
                             }
-                            ((col/2)-1)/2->{
+                            (col/2)/2->{
                                 if(exit=="bottom"){
                                     theMap.append("9")
                                 } else {
                                     theMap.append("7")
                                 }
                             }
-                            (col/2)-1->if(exitSide=="right"){
+                            col/2->if(exitSide=="right"){
                                 theMap.append("5")
+                                theMap.append("K")
                             } else {
                                 theMap.append("7")
                             }
@@ -176,12 +211,13 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                     }
                 }
                 else->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
                             0->{
                                 if(exitSide!="left"){
                                     theMap.append(randomTile())
                                 } else {
+                                    theMap.append("K")
                                     when(i){
                                         (row-1)/2->if(exit=="left"){
                                             theMap.append("A")
@@ -192,7 +228,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                     }
                                 }
                             }
-                            (col/2)-1->{
+                            col/2->{
                                 if(exitSide!="right"){
                                     theMap.append(randomTile())
                                 } else {
@@ -204,6 +240,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                         }
                                         else->theMap.append("3")
                                     }
+                                    theMap.append("K")
                                 }
                             }
                             else->theMap.append(randomTile())
@@ -213,6 +250,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
             }
             theMap.appendLine()
         }
+        emptyLine(theMap)
         return theMap.toString()
     }
 
@@ -271,7 +309,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
 
     override fun toList(): MutableList<MutableList<String>> {
         val list = mutableListOf<MutableList<String>>()
-        for(i in 0..<row){
+        for(i in 0..row+1){
             when(enterSide){
                 "left"->list.add((firstHalfList()[i]+secondHalfList()[i]).toMutableList())
                 else->list.add((secondHalfList()[i]+firstHalfList()[i]).toMutableList())

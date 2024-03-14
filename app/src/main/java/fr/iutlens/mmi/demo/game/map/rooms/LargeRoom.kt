@@ -13,7 +13,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
     var firstHalf = ""
     var secondHalf = ""
 
-    override fun create() : String{
+    override fun create(obstacles : Boolean) : String{
         firstHalf = createFirstHalf().trimIndent()
         secondHalf = createSecondHalf().trimIndent()
         if(enter!=null || exit!=null) {
@@ -32,20 +32,32 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
 
     fun createFirstHalf() : String {
         val theMap = StringBuilder()
-        for(i in 0..<row/2){
+        if(enterSide=="top"){
+            emptyLine(theMap)
+        }
+        for(i in 0..row/2){
             when(i){
                 0->if(enterSide!="top") {
                     for (j in 0..<col) {
                         when(j){
-                            0->theMap.append("6")
-                            col-1->theMap.append("3")
+                            0->{
+                                theMap.append("K")
+                                theMap.append("6")
+                            }
+                            col-1->{
+                                theMap.append("3")
+                                theMap.append("K")
+                            }
                             else->theMap.append(randomTile())
                         }
                     }
                 } else {
                     for (j in 0..<col) {
                         when (j) {
-                            0 -> theMap.append("0")
+                            0 -> {
+                                theMap.append("K")
+                                theMap.append("0")
+                            }
                             (col - 1) / 2 -> {
                                 if (enter == "top") {
                                     theMap.append("8")
@@ -53,23 +65,35 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     theMap.append("2")
                                 }
                             }
-                            col - 1 -> theMap.append("1")
+                            col - 1 -> {
+                                theMap.append("1")
+                                theMap.append("K")
+                            }
                             else -> theMap.append("2")
                         }
                     }
                 }
-                (row/2)-1->if(enterSide!="bottom") {
+                (row/2)->if(enterSide!="bottom") {
                     for (j in 0..<col) {
                         when(j){
-                            0->theMap.append("6")
-                            col-1->theMap.append("3")
+                            0->{
+                                theMap.append("K")
+                                theMap.append("6")
+                            }
+                            col-1->{
+                                theMap.append("3")
+                                theMap.append("K")
+                            }
                             else->theMap.append(randomTile())
                         }
                     }
                 } else {
                     for (j in 0..<col) {
                         when (j) {
-                            0 -> theMap.append("4")
+                            0 -> {
+                                theMap.append("K")
+                                theMap.append("4")
+                            }
                             (col - 1) / 2 -> {
                                 if (enter == "bottom") {
                                     theMap.append("9")
@@ -77,7 +101,10 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     theMap.append("7")
                                 }
                             }
-                            col - 1 -> theMap.append("5")
+                            col - 1 -> {
+                                theMap.append("5")
+                                theMap.append("K")
+                            }
                             else -> theMap.append("7")
                         }
                     }
@@ -86,8 +113,9 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                     for(j in 0..<col){
                         when(j){
                             0->{
+                                theMap.append("K")
                                 when(i){
-                                    ((row/2)-1)/2->if(enter=="left"){
+                                    ((row/2))/2->if(enter=="left"){
                                         theMap.append("A")
                                     } else {
                                         theMap.append("6")
@@ -97,13 +125,14 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                             }
                             col-1->{
                                 when(i){
-                                    ((row/2)-1)/2->if(enter=="right"){
+                                    ((row/2))/2->if(enter=="right"){
                                         theMap.append("B")
                                     } else {
                                         theMap.append("3")
                                     }
                                     else->theMap.append("3")
                                 }
+                                theMap.append("K")
                             }
                             else->theMap.append(randomTile())
                         }
@@ -112,25 +141,40 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
             }
             theMap.appendLine()
         }
+        if(enterSide=="bottom"){
+            emptyLine(theMap)
+        }
         return theMap.toString()
     }
 
     fun createSecondHalf() : String {
         val theMap = StringBuilder()
-        for(i in 0..<row/2){
+        if(exitSide=="top"){
+            emptyLine(theMap)
+        }
+        for(i in 0..row/2){
             when(i){
                 0->if(exitSide!="top") {
                     for (j in 0..<col) {
                         when(j){
-                            0->theMap.append("6")
-                            col-1->theMap.append("3")
+                            0->{
+                                theMap.append("K")
+                                theMap.append("6")
+                            }
+                            col-1->{
+                                theMap.append("3")
+                                theMap.append("K")
+                            }
                             else->theMap.append(randomTile())
                         }
                     }
                 } else {
                     for (j in 0..<col) {
                         when (j) {
-                            0 -> theMap.append("0")
+                            0 -> {
+                                theMap.append("K")
+                                theMap.append("0")
+                            }
                             (col - 1) / 2 -> {
                                 if (exit == "top") {
                                     theMap.append("8")
@@ -138,23 +182,35 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     theMap.append("2")
                                 }
                             }
-                            col - 1 -> theMap.append("1")
+                            col - 1 -> {
+                                theMap.append("1")
+                                theMap.append("K")
+                            }
                             else -> theMap.append("2")
                         }
                     }
                 }
-                (row/2)-1->if(exitSide!="bottom") {
+                (row/2)->if(exitSide!="bottom") {
                     for (j in 0..<col) {
                         when(j){
-                            0->theMap.append("6")
-                            col-1->theMap.append("3")
+                            0->{
+                                theMap.append("K")
+                                theMap.append("6")
+                            }
+                            col-1->{
+                                theMap.append("3")
+                                theMap.append("K")
+                            }
                             else->theMap.append(randomTile())
                         }
                     }
                 } else {
                     for (j in 0..<col) {
                         when (j) {
-                            0 -> theMap.append("4")
+                            0 -> {
+                                theMap.append("K")
+                                theMap.append("4")
+                            }
                             (col - 1) / 2 -> {
                                 if (exit == "bottom") {
                                     theMap.append("9")
@@ -162,7 +218,10 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     theMap.append("7")
                                 }
                             }
-                            col - 1 -> theMap.append("5")
+                            col - 1 -> {
+                                theMap.append("5")
+                                theMap.append("K")
+                            }
                             else -> theMap.append("7")
                         }
                     }
@@ -171,8 +230,9 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                     for(j in 0..<col){
                         when(j){
                             0->{
+                                theMap.append("K")
                                 when(i){
-                                    ((row/2)-1)/2->if(exit=="left"){
+                                    ((row/2))/2->if(exit=="left"){
                                         theMap.append("A")
                                     } else {
                                         theMap.append("6")
@@ -182,13 +242,14 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                             }
                             col-1->{
                                 when(i){
-                                    ((row/2)-1)/2->if(exit=="right"){
+                                    ((row/2))/2->if(exit=="right"){
                                         theMap.append("B")
                                     } else {
                                         theMap.append("3")
                                     }
                                     else->theMap.append("3")
                                 }
+                                theMap.append("K")
                             }
                             else->theMap.append(randomTile())
                         }
@@ -196,6 +257,9 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                 }
             }
             theMap.appendLine()
+        }
+        if(exitSide=="bottom"){
+            emptyLine(theMap)
         }
         return theMap.toString()
     }
@@ -267,12 +331,15 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
             "top" -> {
                 '8'
             }
+
             "left" -> {
                 'A'
             }
+
             "right" -> {
                 'B'
             }
+
             else -> {
                 '9'
             }
