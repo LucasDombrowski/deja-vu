@@ -15,104 +15,79 @@ class TreasureRoom(enter : String ?=null, exit : String?=null, map: Map) : Room(
 ){
     override fun create() : String {
         val theMap = StringBuilder()
-        for (i in 1..row) {
-            when (i) {
-                1 -> if (exit=="top" || enter=="top") {
-                    if(exit=="top" && open){
-                        theMap.append("0122222U3333345")
-                    } else {
-                        theMap.append("0122222O3333345")
-                    }
-                } else {
-                    theMap.append("012222233333345")
-                }
-
-                4 -> for (j in 1..col) {
-                    when (j) {
-                        1 -> if (exit=="left" || enter=="left") {
-                            if(exit=="left" && open){
-                                theMap.append('W')
-                            } else {
-                                theMap.append('Q')
+        for(i in 0..<row){
+            when(i){
+                0->{
+                    for(j in 0..<col){
+                        when(j){
+                            0->theMap.append("0")
+                            col-1->theMap.append("1")
+                            (col-1)/2->{
+                                if(enter=="top"){
+                                    theMap.append("8")
+                                } else if(exit=="top"){
+                                    theMap.append("C")
+                                } else {
+                                    theMap.append("2")
+                                }
                             }
-                        } else {
-                            theMap.append('I')
+                            else->theMap.append("2")
                         }
-
-                        col -> if (exit=="right" || enter=="right") {
-                            if(exit=="right" && open){
-                                theMap.append('X')
-                            } else {
-                                theMap.append('R')
+                    }
+                }
+                row-1->{
+                    for(j in 0..<col){
+                        when(j){
+                            0->theMap.append("4")
+                            (col-1)/2->{
+                                if(enter=="bottom"){
+                                    theMap.append("9")
+                                } else if(exit=="bottom"){
+                                    theMap.append("D")
+                                } else {
+                                    theMap.append("7")
+                                }
                             }
-
-                        } else {
-                            theMap.append('L')
+                            col-1->theMap.append("5")
+                            else->theMap.append("7")
                         }
-
-                        else -> theMap.append("!")
                     }
                 }
-
-                row -> if(exit=="bottom" || enter=="bottom"){
-                    if(exit=="bottom" && open){
-                        theMap.append("6788888V99999AB")
-                    } else {
-                        theMap.append("6788888P99999AB")
-                    }
-
-                } else {
-                    theMap.append("6788888899999AB")
-                }
-                else -> for (j in 1..col) {
-                    when (j) {
-                        1 -> if (i == 2) {
-                            theMap.append('C')
-                        } else if (i == 3) {
-                            theMap.append('I')
-                        } else if (i == 5) {
-                            theMap.append('E')
-                        } else if (i == 6) {
-                            theMap.append('K')
+                else->{
+                    for(j in 0..<col){
+                        when(j){
+                            0->when(i){
+                                (row-1)/2->{
+                                    if(enter=="left"){
+                                        theMap.append("A")
+                                    } else if(exit=="left"){
+                                        theMap.append("E")
+                                    } else {
+                                        theMap.append("6")
+                                    }
+                                }
+                                else->theMap.append("6")
+                            }
+                            col-1->when(i){
+                                (row-1)/2->{
+                                    if(enter=="right"){
+                                        theMap.append("7")
+                                    } else if(exit=="right"){
+                                        theMap.append("F")
+                                    } else {
+                                        theMap.append("3")
+                                    }
+                                }
+                                else->theMap.append("3")
+                            }
+                            else->theMap.append(randomTile(false))
                         }
-
-                        col -> if (i == 2) {
-                            theMap.append('F')
-                        } else if (i == 3) {
-                            theMap.append('L')
-                        } else if (i == 5) {
-                            theMap.append('D')
-                        } else if (i == 6) {
-                            theMap.append('J')
-                        }
-
-                        else -> theMap.append('!')
                     }
                 }
             }
             theMap.appendLine()
         }
 
-        val mapList = theMap.lines().map {
-            it.split("")
-        }
-
-        val mapChars = mutableListOf<List<Char>>()
-        with(mapList.iterator()){
-            forEach {
-                val newRow = mutableListOf<Char>();
-                with(it.iterator()){
-                    forEach {
-                        if(it!=""){
-                            newRow.add(it.single())
-                        }
-                    }
-                }
-                if(!newRow.isEmpty()){
-                    mapChars.add(newRow)
-                }
-            }
-        }
         return theMap.toString()
     }
 
