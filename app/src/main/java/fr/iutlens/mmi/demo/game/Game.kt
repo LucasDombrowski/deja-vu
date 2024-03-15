@@ -664,17 +664,29 @@ open class Game(val map : Map,
     @Composable
     fun Challenge(){
         val scope = rememberCoroutineScope()
-        if(challenge.value!=null) {
-            scope.launch {
-                delay(5000)
-                challenge.value = null
-            }
+        val configuration = LocalConfiguration.current
+        val density = LocalDensity.current
+        val screenWidth = with(configuration){
+            screenWidthDp
+        }
+        val fontSize = with(density){
+            (screenWidth.dp/50).toSp()
+        }
+        val fontSizeDp = with(density){
+            fontSize.toDp()
+        }
+        if(challenge.value!=null && challenge.value!!.name != "") {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().padding(20.dp)
             ) {
                 Text(
                     text = challenge.value!!.name,
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.BottomEnd).background(Color(0,0,0,128)).padding(fontSizeDp/2),
+                    color = Color.White,
+                    fontSize = fontSize,
+                    style = TextStyle(
+                        fontFamily = MainFont
+                    )
                 )
             }
         }

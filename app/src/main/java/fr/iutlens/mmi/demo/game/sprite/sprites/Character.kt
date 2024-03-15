@@ -50,7 +50,7 @@ open class Character(
     var currentAnimationSequenceIndex : Int = 0
     val characterAnimation : Job = setInterval(0, animationDelay){
         GlobalScope.launch {
-            if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1 || game.pause || currentAnimationSequence==basicAnimationSequence){
+            if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1 || game.pause || currentAnimationSequence===basicAnimationSequence){
                 currentAnimationSequenceIndex = 0
                 sprite.ndx = currentAnimationSequence[0]
             } else {

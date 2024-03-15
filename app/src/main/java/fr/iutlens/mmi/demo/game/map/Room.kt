@@ -508,6 +508,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
     fun endChallenge(game: Game){
         challenge?.reverseEffect?.invoke(game)
+        game.challenge.value = null
     }
 
 
