@@ -418,7 +418,7 @@ open class Game(val map : Map,
     }
 
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
-    var coins = mutableStateOf(10)
+    var coins = mutableStateOf(0)
     @Composable
     fun Ath(){
         val configuration = LocalConfiguration.current

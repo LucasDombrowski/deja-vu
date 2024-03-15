@@ -115,20 +115,54 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                             0->{
                                 theMap.append("K")
                                 when(i){
-                                    ((row/2))/2->if(enter=="left"){
-                                        theMap.append("A")
-                                    } else {
-                                        theMap.append("6")
+                                    ((row/2))/2->{
+                                        if(enterSide!="bottom"){
+                                            if(enter=="left"){
+                                                theMap.append("A")
+                                            } else {
+                                                theMap.append("6")
+                                            }
+                                        } else {
+                                            theMap.append("6")
+                                        }
+                                    }
+                                    ((row/2)/2)+1->{
+                                        if(enterSide=="bottom"){
+                                            if(enter=="left"){
+                                                theMap.append("A")
+                                            } else {
+                                                theMap.append("6")
+                                            }
+                                        } else {
+                                            theMap.append("6")
+                                        }
                                     }
                                     else->theMap.append("6")
                                 }
                             }
                             col-1->{
                                 when(i){
-                                    ((row/2))/2->if(enter=="right"){
-                                        theMap.append("B")
-                                    } else {
-                                        theMap.append("3")
+                                    ((row/2))/2->{
+                                        if(enterSide!="bottom"){
+                                            if(enter=="right"){
+                                                theMap.append("B")
+                                            } else {
+                                                theMap.append("6")
+                                            }
+                                        } else {
+                                            theMap.append("6")
+                                        }
+                                    }
+                                    ((row/2)/2)+1->{
+                                        if(enterSide=="bottom"){
+                                            if(enter=="right"){
+                                                theMap.append("B")
+                                            } else {
+                                                theMap.append("6")
+                                            }
+                                        } else {
+                                            theMap.append("6")
+                                        }
                                     }
                                     else->theMap.append("3")
                                 }
@@ -232,20 +266,54 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                             0->{
                                 theMap.append("K")
                                 when(i){
-                                    ((row/2))/2->if(exit=="left"){
-                                        theMap.append("A")
-                                    } else {
-                                        theMap.append("6")
+                                    ((row/2))/2->{
+                                        if(exitSide!="bottom"){
+                                            if(exit=="left"){
+                                                theMap.append("A")
+                                            } else {
+                                                theMap.append("6")
+                                            }
+                                        } else {
+                                            theMap.append("6")
+                                        }
+                                    }
+                                    ((row/2)/2)+1->{
+                                        if(exitSide=="bottom"){
+                                            if(exit=="left"){
+                                                theMap.append("A")
+                                            } else {
+                                                theMap.append("6")
+                                            }
+                                        } else {
+                                            theMap.append("6")
+                                        }
                                     }
                                     else->theMap.append("6")
                                 }
                             }
                             col-1->{
                                 when(i){
-                                    ((row/2))/2->if(exit=="right"){
-                                        theMap.append("B")
-                                    } else {
-                                        theMap.append("3")
+                                    ((row/2))/2->{
+                                        if(exitSide!="bottom"){
+                                            if(exit=="right"){
+                                                theMap.append("B")
+                                            } else {
+                                                theMap.append("6")
+                                            }
+                                        } else {
+                                            theMap.append("6")
+                                        }
+                                    }
+                                    ((row/2)/2)+1->{
+                                        if(exitSide=="bottom"){
+                                            if(exit=="right"){
+                                                theMap.append("B")
+                                            } else {
+                                                theMap.append("6")
+                                            }
+                                        } else {
+                                            theMap.append("6")
+                                        }
                                     }
                                     else->theMap.append("3")
                                 }

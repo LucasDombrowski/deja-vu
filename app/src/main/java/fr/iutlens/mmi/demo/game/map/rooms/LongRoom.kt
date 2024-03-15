@@ -47,8 +47,23 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                 }
                             }
                             (col/2)/2->{
-                                if(enter=="top"){
-                                    theMap.append("8")
+                                if(enterSide!="right"){
+                                    if(enter=="top"){
+                                        theMap.append("8")
+                                    } else {
+                                        theMap.append("2")
+                                    }
+                                } else {
+                                    theMap.append("2")
+                                }
+                            }
+                            ((col/2)/2)+1->{
+                                if(enterSide=="right"){
+                                    if(enter=="top"){
+                                        theMap.append("8")
+                                    } else {
+                                        theMap.append("2")
+                                    }
                                 } else {
                                     theMap.append("2")
                                 }
@@ -78,8 +93,23 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                 }
                             }
                             (col/2)/2->{
-                                if(enter=="bottom"){
-                                    theMap.append("9")
+                                if(enterSide!="right"){
+                                    if(enter=="bottom"){
+                                        theMap.append("9")
+                                    } else {
+                                        theMap.append("7")
+                                    }
+                                } else {
+                                    theMap.append("7")
+                                }
+                            }
+                            ((col/2)/2)+1->{
+                                if(enterSide=="right"){
+                                    if(enter=="bottom"){
+                                        theMap.append("9")
+                                    } else {
+                                        theMap.append("7")
+                                    }
                                 } else {
                                     theMap.append("7")
                                 }
@@ -164,8 +194,23 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                 }
                             }
                             (col/2)/2->{
-                                if(exit=="top"){
-                                    theMap.append("8")
+                                if(exitSide!="right"){
+                                    if(exit=="top"){
+                                        theMap.append("8")
+                                    } else {
+                                        theMap.append("2")
+                                    }
+                                } else {
+                                    theMap.append("2")
+                                }
+                            }
+                            ((col/2)/2)+1->{
+                                if(exitSide=="right"){
+                                    if(exit=="top"){
+                                        theMap.append("8")
+                                    } else {
+                                        theMap.append("2")
+                                    }
                                 } else {
                                     theMap.append("2")
                                 }
@@ -194,8 +239,23 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                 }
                             }
                             (col/2)/2->{
-                                if(exit=="bottom"){
-                                    theMap.append("9")
+                                if(exitSide!="right"){
+                                    if(exit=="bottom"){
+                                        theMap.append("9")
+                                    } else {
+                                        theMap.append("7")
+                                    }
+                                } else {
+                                    theMap.append("7")
+                                }
+                            }
+                            ((col/2)/2)+1->{
+                                if(exitSide=="right"){
+                                    if(exit=="bottom"){
+                                        theMap.append("9")
+                                    } else {
+                                        theMap.append("7")
+                                    }
                                 } else {
                                     theMap.append("7")
                                 }

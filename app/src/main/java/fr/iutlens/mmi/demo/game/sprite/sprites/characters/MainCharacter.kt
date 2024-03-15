@@ -51,7 +51,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,4), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
 
-    var items : MutableList<Item> = mutableListOf(OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart(),OneHeart())
+    var items : MutableList<Item> = mutableListOf()
 
     var autoFire : Job = setInterval(0,fireRate){
         GlobalScope.launch {
@@ -92,7 +92,6 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             erasePathDrawing()
         }
     }
-
 
     var tapMovingBehavior : (x: Float, y:Float)->Unit = {
         x,y->
