@@ -24,7 +24,7 @@ import kotlin.collections.Map
 
 open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<Enemy> = listOf(), val treasureRooms : Int, var boss : Boss ? = null) {
 
-    val authorizedTiles : List<String> = listOf("!","U","V","W","X")
+    val authorizedTiles : List<String> = listOf("C","D","E","F","G","H","I")
     var roomNumber = roomInterval.random()
     var tileMap = makeTileMap()
     var tileArea = makeTileArea()
@@ -38,15 +38,20 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         if(mapString==null) {
             generateMap()
         }
-
+        Log.i("map string","$mapString")
+        mapPath!!.forEach {
+            Log.i("map path", "$it")
+        }
+        rooms!!.forEach{
+            Log.i("corners","${it.topLeftCorner},${it.bottomRightCorner}")
+        }
         return mapString!!.trimIndent().toMutableTileMap(
-            "012345"+
-                    "6789AB"+
-                    "CDEFGH" +
-                    "IJKLMN" +
-                    "OPQRST" +
-                    "UVWXYZ" +
-                    "!-*/=_"
+            "0123" +
+            "4567" +
+            "89AB" +
+            "CDEF" +
+            "GHIJ" +
+            "KLMN"
         )
     }
 
@@ -154,6 +159,28 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                 col++
             }
         }
+
+        fun emptyRow() : MutableList<String>{
+            val res = mutableListOf<String>()
+            repeat(reducedMap[0].size){
+                res.add("")
+            }
+            return res
+        }
+
+        val emptyRow = emptyRow()
+
+        var i = 0
+
+        fun findHalf(row : MutableList<String>) : String ?{
+            row.forEach {
+                if(it.contains(".5")){
+                    return it.split(".5")[0]
+                }
+            }
+            return null
+        }
+
         return reducedMap
     }
 
@@ -171,7 +198,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                 with(it.iterator()){
                     forEach {
                         if(it==""){
-                            row.add(fillEmptySpace(7, 15))
+                            row.add(fillEmptySpace(9, 17))
                         } else {
                             if(!it.contains(".5")){
                                 val room = rooms!![it.toInt()-1]
@@ -194,22 +221,20 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                                     row.add(room.secondHalf)
                                 }
                             }
-
                         }
                     }
                 }
-
                 mapList.add(row)
             }
         }
         val map = StringBuilder()
         with(mapList.iterator()){
             forEach {
-                for(i in 0..6){
-                    with(it.iterator()){
-                        forEach {
-                            map.append(it.split("\n")[i])
-                        }
+                val maxLength = it[0].trimIndent().split("\n").size
+                for(i in 0..<maxLength){
+                    it.forEach{
+                        val split = it.trimIndent().split("\n")
+                        map.append(split[i])
                     }
                     map.appendLine()
                 }
@@ -261,12 +286,16 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
 
 
     fun generateRooms(){
-        val challenges = mutableListOf<Challenge>(Blind(), SpeedUp(), SpeedDown())
+        val challenges = mutableListOf<Challenge>(Challenge(
+            name = "",
+            effect = {},
+            reverseEffect = {}
+        ))
         val currentMap = this
         var room : Room ? = BasicRoom(currentMap, challenge = challenges.random())
         val lastRoom = roomNumber+1
-        val rowsToAdd = room!!.row
-        val colsToAdd = room!!.col
+        val rowsToAdd = room!!.row+2
+        val colsToAdd = room!!.col+2
         var currentRow = 0
         var currentCol = 0
         val roomList : MutableMap<String,Room> = mutableMapOf()
@@ -367,7 +396,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         val emptyArea = StringBuilder()
         repeat(row){
             repeat(col){
-                emptyArea.append("!")
+                emptyArea.append("K")
             }
             emptyArea.appendLine()
         }
@@ -459,8 +488,6 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
 
         entranceDoor = getReverseDirection(nextRoom)
 
-
-
         return mapOf(
             "currentRow" to currentRow,
             "currentCol" to currentCol,
@@ -488,7 +515,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     fun inOpenDoor(x : Float, y: Float) : Boolean{
         val globalPosition = getMapIndexFromPosition(x,y)
         val room = getRoomFromMapIndex(globalPosition.first, globalPosition.second)
-        return room!!.getElement(x,y) in listOf<String>("U","V","W","X")
+        return room!!.getElement(x,y) in listOf<String>("C","D","E","F")
     }
     fun reload(){
         generateMap()

@@ -13,7 +13,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
     var firstHalf = ""
     var secondHalf = ""
 
-    override fun create() : String{
+    override fun create(obstacles: Boolean) : String{
         firstHalf = createFirstHalf().trimIndent()
         secondHalf = createSecondHalf().trimIndent()
         if(enter!=null || exit!=null) {
@@ -32,109 +32,131 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
 
     fun createFirstHalf() : String {
         val theMap = StringBuilder()
+        emptyLine(theMap)
         for(i in 0..<row){
             when(i){
                 0->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
-                            0->if(enterSide=="left"){
-                                theMap.append("0")
-                            } else {
-                                theMap.append("2")
-                            }
-                            1->if(enterSide=="left"){
-                                theMap.append("1")
-                            } else {
-                                theMap.append("2")
-                            }
-                            ((col/2)-1)/2->{
-                                if(enter=="top"){
-                                    theMap.append("O")
+                            0->{
+                                if(enterSide=="left"){
+                                    theMap.append("K")
+                                    theMap.append("0")
                                 } else {
                                     theMap.append("2")
                                 }
                             }
-                            (col/2)-2->if(enterSide=="right"){
-                                theMap.append("4")
-                            } else {
-                                theMap.append("2")
+                            (col/2)/2->{
+                                if(enterSide!="right"){
+                                    if(enter=="top"){
+                                        theMap.append("8")
+                                    } else {
+                                        theMap.append("2")
+                                    }
+                                } else {
+                                    theMap.append("2")
+                                }
                             }
-                            (col/2)-1->if(enterSide=="right"){
-                                theMap.append("5")
-                            } else {
-                                theMap.append("2")
+                            ((col/2)/2)+1->{
+                                if(enterSide=="right"){
+                                    if(enter=="top"){
+                                        theMap.append("8")
+                                    } else {
+                                        theMap.append("2")
+                                    }
+                                } else {
+                                    theMap.append("2")
+                                }
+                            }
+                            col/2->{
+                                if(enterSide=="right"){
+                                    theMap.append("1")
+                                    theMap.append("K")
+                                } else {
+                                    theMap.append("2")
+                                }
+
                             }
                             else->theMap.append("2")
                         }
                     }
                 }
                 row-1->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
-                            0->if(enterSide=="left"){
-                                theMap.append("6")
-                            } else {
-                                theMap.append("8")
-                            }
-                            1->if(enterSide=="left"){
-                                theMap.append("7")
-                            } else {
-                                theMap.append("8")
-                            }
-                            ((col/2)-1)/2->{
-                                if(enter=="bottom"){
-                                    theMap.append("P")
+                            0->{
+                                if(enterSide=="left"){
+                                    theMap.append("K")
+                                    theMap.append("4")
                                 } else {
-                                    theMap.append("8")
+                                    theMap.append("7")
                                 }
                             }
-                            (col/2)-2->if(enterSide=="right"){
-                                theMap.append("A")
-                            } else {
-                                theMap.append("8")
+                            (col/2)/2->{
+                                if(enterSide!="right"){
+                                    if(enter=="bottom"){
+                                        theMap.append("9")
+                                    } else {
+                                        theMap.append("7")
+                                    }
+                                } else {
+                                    theMap.append("7")
+                                }
                             }
-                            (col/2)-1->if(enterSide=="right"){
-                                theMap.append("B")
-                            } else {
-                                theMap.append("8")
+                            ((col/2)/2)+1->{
+                                if(enterSide=="right"){
+                                    if(enter=="bottom"){
+                                        theMap.append("9")
+                                    } else {
+                                        theMap.append("7")
+                                    }
+                                } else {
+                                    theMap.append("7")
+                                }
                             }
-                            else->theMap.append("8")
+                            col/2->{
+                                if(enterSide=="right"){
+                                    theMap.append("5")
+                                    theMap.append("K")
+                                } else {
+                                    theMap.append("7")
+                                }
+                            }
+                            else->theMap.append("7")
                         }
                     }
                 }
                 else->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
                             0->{
                                 if(enterSide!="left"){
                                     theMap.append(randomTile())
                                 } else {
+                                    theMap.append("K")
                                     when(i){
-                                        1->theMap.append("C")
-                                        row-2->theMap.append("K")
                                         (row-1)/2->if(enter=="left"){
-                                            theMap.append("Q")
+                                            theMap.append("A")
                                         } else {
-                                            theMap.append("I")
+                                            theMap.append("6")
                                         }
-                                        else->theMap.append("I")
+                                        else->theMap.append("6")
                                     }
                                 }
                             }
-                            (col/2)-1->{
+                            col/2->{
                                 if(enterSide!="right"){
                                     theMap.append(randomTile())
                                 } else {
                                     when(i){
-                                        1->theMap.append("F")
-                                        row-2->theMap.append("J")
                                         (row-1)/2->if(enter=="right"){
-                                            theMap.append("R")
+                                            theMap.append("B")
                                         } else {
-                                            theMap.append("L")
+                                            theMap.append("3")
                                         }
-                                        else->theMap.append("L")
+                                        else->theMap.append("3")
                                     }
+                                    theMap.append("K")
                                 }
                             }
                             else->theMap.append(randomTile())
@@ -144,114 +166,141 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
             }
             theMap.appendLine()
         }
+        emptyLine(theMap)
         return theMap.toString()
+    }
+
+    override fun emptyLine(theMap: StringBuilder){
+        for(j in 0..(col/2)+1){
+            theMap.append("K")
+        }
+        theMap.appendLine()
     }
 
     fun createSecondHalf() : String {
         val theMap = StringBuilder()
+        emptyLine(theMap)
         for(i in 0..<row){
             when(i){
                 0->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
-                            0->if(exitSide=="left"){
-                                theMap.append("0")
-                            } else {
-                                theMap.append("2")
-                            }
-                            1->if(exitSide=="left"){
-                                theMap.append("1")
-                            } else {
-                                theMap.append("2")
-                            }
-                            ((col/2)-1)/2->{
-                                if(exit=="top"){
-                                    theMap.append("O")
+                            0->{
+                                if(exitSide=="left"){
+                                    theMap.append("K")
+                                    theMap.append("0")
                                 } else {
                                     theMap.append("2")
                                 }
                             }
-                            (col/2)-2->if(exitSide=="right"){
-                                theMap.append("4")
-                            } else {
-                                theMap.append("2")
+                            (col/2)/2->{
+                                if(exitSide!="right"){
+                                    if(exit=="top"){
+                                        theMap.append("8")
+                                    } else {
+                                        theMap.append("2")
+                                    }
+                                } else {
+                                    theMap.append("2")
+                                }
                             }
-                            (col/2)-1->if(exitSide=="right"){
-                                theMap.append("5")
-                            } else {
-                                theMap.append("2")
+                            ((col/2)/2)+1->{
+                                if(exitSide=="right"){
+                                    if(exit=="top"){
+                                        theMap.append("8")
+                                    } else {
+                                        theMap.append("2")
+                                    }
+                                } else {
+                                    theMap.append("2")
+                                }
+                            }
+                            col/2->{
+                                if(exitSide=="right"){
+                                    theMap.append("1")
+                                    theMap.append("K")
+                                } else {
+                                    theMap.append("2")
+                                }
                             }
                             else->theMap.append("2")
                         }
                     }
                 }
                 row-1->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
-                            0->if(exitSide=="left"){
-                                theMap.append("6")
-                            } else {
-                                theMap.append("8")
-                            }
-                            1->if(exitSide=="left"){
-                                theMap.append("7")
-                            } else {
-                                theMap.append("8")
-                            }
-                            ((col/2)-1)/2->{
-                                if(exit=="bottom"){
-                                    theMap.append("P")
+                            0->{
+                                if(exitSide=="left"){
+                                    theMap.append("K")
+                                    theMap.append("4")
                                 } else {
-                                    theMap.append("8")
+                                    theMap.append("7")
                                 }
                             }
-                            (col/2)-2->if(exitSide=="right"){
-                                theMap.append("A")
-                            } else {
-                                theMap.append("8")
+                            (col/2)/2->{
+                                if(exitSide!="right"){
+                                    if(exit=="bottom"){
+                                        theMap.append("9")
+                                    } else {
+                                        theMap.append("7")
+                                    }
+                                } else {
+                                    theMap.append("7")
+                                }
                             }
-                            (col/2)-1->if(exitSide=="right"){
-                                theMap.append("B")
-                            } else {
-                                theMap.append("8")
+                            ((col/2)/2)+1->{
+                                if(exitSide=="right"){
+                                    if(exit=="bottom"){
+                                        theMap.append("9")
+                                    } else {
+                                        theMap.append("7")
+                                    }
+                                } else {
+                                    theMap.append("7")
+                                }
                             }
-                            else->theMap.append("8")
+                            col/2->if(exitSide=="right"){
+                                theMap.append("5")
+                                theMap.append("K")
+                            } else {
+                                theMap.append("7")
+                            }
+                            else->theMap.append("7")
                         }
                     }
                 }
                 else->{
-                    for(j in 0..<col/2){
+                    for(j in 0..col/2){
                         when(j){
                             0->{
                                 if(exitSide!="left"){
                                     theMap.append(randomTile())
                                 } else {
+                                    theMap.append("K")
                                     when(i){
-                                        1->theMap.append("C")
-                                        row-2->theMap.append("K")
                                         (row-1)/2->if(exit=="left"){
-                                            theMap.append("Q")
+                                            theMap.append("A")
                                         } else {
-                                            theMap.append("I")
+                                            theMap.append("6")
                                         }
-                                        else->theMap.append("I")
+                                        else->theMap.append("6")
                                     }
                                 }
                             }
-                            (col/2)-1->{
+                            col/2->{
                                 if(exitSide!="right"){
                                     theMap.append(randomTile())
                                 } else {
                                     when(i){
-                                        1->theMap.append("F")
-                                        row-2->theMap.append("J")
                                         (row-1)/2->if(exit=="right"){
-                                            theMap.append("R")
+                                            theMap.append("B")
                                         } else {
-                                            theMap.append("L")
+                                            theMap.append("3")
                                         }
-                                        else->theMap.append("L")
+                                        else->theMap.append("3")
                                     }
+                                    theMap.append("K")
                                 }
                             }
                             else->theMap.append(randomTile())
@@ -261,6 +310,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
             }
             theMap.appendLine()
         }
+        emptyLine(theMap)
         return theMap.toString()
     }
 
@@ -319,7 +369,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
 
     override fun toList(): MutableList<MutableList<String>> {
         val list = mutableListOf<MutableList<String>>()
-        for(i in 0..<row){
+        for(i in 0..row+1){
             when(enterSide){
                 "left"->list.add((firstHalfList()[i]+secondHalfList()[i]).toMutableList())
                 else->list.add((secondHalfList()[i]+firstHalfList()[i]).toMutableList())
@@ -332,16 +382,16 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
     override fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
         val doorStart = when (enter) {
             "top" -> {
-                'O'
+                '8'
             }
             "left" -> {
-                'Q'
+                'A'
             }
             "right" -> {
-                'R'
+                'B'
             }
             else -> {
-                'P'
+                '9'
             }
         }
         when(enterSide){
@@ -381,23 +431,23 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
         val doorEnd =  when(open){
             true -> when (exit) {
                 "top" -> {
-                    'U'
+                    'C'
                 }
                 "left" -> {
-                    'W'
+                    'E'
                 }
                 "right" -> {
-                    'X'
+                    'F'
                 }
                 else -> {
-                    'V'
+                    'D'
                 }
             }
             else->when (exit){
-                "top"->'O'
-                "left"->'Q'
-                "right"->'R'
-                else->'P'
+                "top"->'8'
+                "left"->'A'
+                "right"->'B'
+                else->'9'
             }
         }
         when(enterSide){
@@ -436,10 +486,10 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
     override fun open(){
         open = true
         secondHalf = when(exit){
-            "top"-> secondHalf.replace("O","U")
-            "left"-> secondHalf.replace("Q","W")
-            "bottom"-> secondHalf.replace("P","V")
-            else-> secondHalf.replace("R","X")
+            "top"-> secondHalf.replace("8","C")
+            "left"-> secondHalf.replace("A","E")
+            "bottom"-> secondHalf.replace("9","D")
+            else-> secondHalf.replace("B","F")
         }
         map.reload()
     }
@@ -447,10 +497,10 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
     override fun close(){
         open = false
         secondHalf = when(exit){
-            "top"-> secondHalf.replace("U","O")
-            "left"-> secondHalf.replace("W","Q")
-            "bottom"-> secondHalf.replace("V","P")
-            else-> secondHalf.replace("X","R")
+            "top"-> secondHalf.replace("C","8")
+            "left"-> secondHalf.replace("E","A")
+            "bottom"-> secondHalf.replace("D","9")
+            else-> secondHalf.replace("F","B")
         }
         map.reload()
     }
