@@ -38,6 +38,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         if(mapString==null) {
             generateMap()
         }
+        Log.i("mapPath","$mapPath")
         return mapString!!.trimIndent().toMutableTileMap(
             "0123OPQRù*,;" +
             "4567STUV:!°+" +
