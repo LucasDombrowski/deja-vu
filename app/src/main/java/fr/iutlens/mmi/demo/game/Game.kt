@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -384,6 +385,16 @@ open class Game(val map : Map,
                             )
                         )
                     }
+                    background.paint(this, elapsed)
+                    spriteList.paint(this, elapsed)
+                    drawRect(
+                        topLeft = Offset.Zero,
+                        color = Color(0,0,0,224),
+                        size = Size(
+                            (map.tileArea.sizeX*map.tileArea.w).toFloat(),
+                            (map.tileArea.sizeY*map.tileArea.h).toFloat()
+                        )
+                    )
                     clipPath(path, ClipOp.Intersect){
                         background.paint(this, elapsed)
                         spriteList.paint(this, elapsed)
