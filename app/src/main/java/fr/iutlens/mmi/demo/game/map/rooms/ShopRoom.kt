@@ -3,6 +3,7 @@ package fr.iutlens.mmi.demo.game.map.rooms
 import android.util.Log
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.gameplayResources.items.LoyaltyCard
 import fr.iutlens.mmi.demo.game.gameplayResources.items.OneHeart
 import fr.iutlens.mmi.demo.game.map.Map
 import fr.iutlens.mmi.demo.game.map.Room
@@ -23,10 +24,16 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
 ) {
     override var composition = create(false).trimIndent()
     val shop = Shop()
-    val shopItems = shop.getItems()
+    val shopItems = shop.getItems().toMutableList()
     var cinematic : Cinematic ? = null
 
     fun setup(game: Game){
+        if(hasLoyaltyCard(game)){
+            for(shopItem in shopItems){
+                shopItem.price/=2
+                shopItem.refreshPrice()
+            }
+        }
         var xVal = getRoomCenter().first
         val yVal = getRoomCenter().second
         val xStep = shopItems[0].imageSprite.bitmap.width*3/2
@@ -42,6 +49,7 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
                 forEach {
                     if(it.inImageBox(x,y)){
                         it.buy(game)
+                        shopItems.remove(it)
                     }
                 }
             }
@@ -78,6 +86,15 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
     override fun refresh(){
         composition = create(false).trimIndent()
         toList()
+    }
+
+    fun hasLoyaltyCard(game: Game) : Boolean{
+        for(item in game.controllableCharacter!!.items){
+            if(item is LoyaltyCard){
+                return true
+            }
+        }
+        return false
     }
 
     override fun create(obstacles: Boolean) : String {
