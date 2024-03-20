@@ -6,7 +6,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.items.OneHeart
 
-class HeartContainer(game: Game): Collectible(game, R.drawable.heart_container,0, collectEffect = {
+class HeartContainer(game: Game): Collectible(game, spriteIndex = 1, collectEffect = {
     OneHeart().get(game)
     game.item["onPick"] = {
         game.onEnd

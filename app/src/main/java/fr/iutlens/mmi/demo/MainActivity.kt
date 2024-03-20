@@ -42,8 +42,7 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.treasure_chest,2,1)
         loadSpritesheet(R.drawable.chrono,6,4)
         loadSpritesheet(R.drawable.smoke_animation,3,2)
-        loadSpritesheet(R.drawable.heart_container,1,1)
-        loadSpritesheet(R.drawable.coin_drop,1,1)
+        loadSpritesheet(R.drawable.collectibles,4,2)
 
         loadSound(R.raw.message)
 

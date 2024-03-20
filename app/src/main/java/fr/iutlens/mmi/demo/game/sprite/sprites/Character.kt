@@ -4,7 +4,12 @@ import android.util.Log
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.Coin
+import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.GoldHeartDrop
+import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HalfGoldHeartDrop
+import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HalfHeartDrop
 import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HeartContainer
+import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HeartDrop
+import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.SuperCoin
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
 import fr.iutlens.mmi.demo.utils.getDistance
@@ -285,7 +290,40 @@ open class Character(
             smokeAnimation()
             action.cancel()
             game.map.currentRoom().isOpenable(game)
-            Coin(game).drop(sprite.x, sprite.y)
+            if((1..2/game.dropProbability).random() == 1){
+                when((1..10/game.heartDropProbability).random()){
+                    1->{
+                        when((1..5/game.superCoinDropProbability).random()){
+                            1->{
+                                when((1..3).random()){
+                                    1->{
+                                        GoldHeartDrop(game).setup(sprite.x, sprite.y)
+                                    }
+                                    else->HalfGoldHeartDrop(game).setup(sprite.x,sprite.y)
+                                }
+                            }
+                            else->{
+                                when((1..3).random()){
+                                    1->{
+                                        HeartDrop(game).setup(sprite.x, sprite.y)
+                                    }
+                                    else->HalfHeartDrop(game).setup(sprite.x,sprite.y)
+                                }
+                            }
+                        }
+                    }
+                    else ->{
+                        when((1..5/game.goldHeartDropProbability).random()){
+                            1->{
+                                SuperCoin(game).setup(sprite.x,sprite.y)
+                            }
+                            else->{
+                                Coin(game).setup(sprite.x,sprite.y)
+                            }
+                        }
+                    }
+                }
+            }
         }
         if(this is Enemy && this is Boss){
             action.cancel()
