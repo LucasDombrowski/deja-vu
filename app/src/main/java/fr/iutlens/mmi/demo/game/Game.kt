@@ -75,7 +75,9 @@ import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.Item
 import fr.iutlens.mmi.demo.game.gameplayResources.items.LessFireRateLessDamages
+import fr.iutlens.mmi.demo.game.gameplayResources.items.LoyaltyCard
 import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
+import fr.iutlens.mmi.demo.game.gameplayResources.items.Wallet
 import fr.iutlens.mmi.demo.game.map.Camera
 import fr.iutlens.mmi.demo.game.map.Map
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
@@ -128,7 +130,9 @@ open class Game(val map : Map,
     val timeSource = TimeSource.Monotonic
     val items = mutableListOf<Item>(
         LessFireRateLessDamages(),
-        MoreDamagesMoreRate()
+        MoreDamagesMoreRate(),
+        Wallet(),
+        LoyaltyCard()
     )
 
     /**
@@ -429,7 +433,7 @@ open class Game(val map : Map,
     }
 
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
-    var coins = mutableStateOf(0)
+    var coins = mutableStateOf(99)
 
     var dropProbability = 1
     var heartDropProbability = 1
