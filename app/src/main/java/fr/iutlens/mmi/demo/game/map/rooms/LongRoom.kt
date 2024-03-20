@@ -49,7 +49,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                             (col/2)/2->{
                                 if(enterSide!="right"){
                                     if(enter=="top"){
-                                        theMap.append("8")
+                                        theMap.append(door(true))
                                     } else {
                                         theMap.append("2")
                                     }
@@ -60,7 +60,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                             ((col/2)/2)+1->{
                                 if(enterSide=="right"){
                                     if(enter=="top"){
-                                        theMap.append("8")
+                                        theMap.append(door(true))
                                     } else {
                                         theMap.append("2")
                                     }
@@ -95,7 +95,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                             (col/2)/2->{
                                 if(enterSide!="right"){
                                     if(enter=="bottom"){
-                                        theMap.append("9")
+                                        theMap.append(door(true))
                                     } else {
                                         theMap.append("7")
                                     }
@@ -106,7 +106,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                             ((col/2)/2)+1->{
                                 if(enterSide=="right"){
                                     if(enter=="bottom"){
-                                        theMap.append("9")
+                                        theMap.append(door(true))
                                     } else {
                                         theMap.append("7")
                                     }
@@ -136,7 +136,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                     theMap.append("K")
                                     when(i){
                                         (row-1)/2->if(enter=="left"){
-                                            theMap.append("A")
+                                            theMap.append(door(true))
                                         } else {
                                             theMap.append("6")
                                         }
@@ -150,7 +150,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                 } else {
                                     when(i){
                                         (row-1)/2->if(enter=="right"){
-                                            theMap.append("B")
+                                            theMap.append(door(true))
                                         } else {
                                             theMap.append("3")
                                         }
@@ -196,7 +196,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                             (col/2)/2->{
                                 if(exitSide!="right"){
                                     if(exit=="top"){
-                                        theMap.append("8")
+                                        theMap.append(door(false))
                                     } else {
                                         theMap.append("2")
                                     }
@@ -207,7 +207,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                             ((col/2)/2)+1->{
                                 if(exitSide=="right"){
                                     if(exit=="top"){
-                                        theMap.append("8")
+                                        theMap.append(door(false))
                                     } else {
                                         theMap.append("2")
                                     }
@@ -241,7 +241,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                             (col/2)/2->{
                                 if(exitSide!="right"){
                                     if(exit=="bottom"){
-                                        theMap.append("9")
+                                        theMap.append(door(false))
                                     } else {
                                         theMap.append("7")
                                     }
@@ -252,7 +252,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                             ((col/2)/2)+1->{
                                 if(exitSide=="right"){
                                     if(exit=="bottom"){
-                                        theMap.append("9")
+                                        theMap.append(door(false))
                                     } else {
                                         theMap.append("7")
                                     }
@@ -280,7 +280,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                     theMap.append("K")
                                     when(i){
                                         (row-1)/2->if(exit=="left"){
-                                            theMap.append("A")
+                                            theMap.append(door(false))
                                         } else {
                                             theMap.append("6")
                                         }
@@ -294,7 +294,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
                                 } else {
                                     when(i){
                                         (row-1)/2->if(exit=="right"){
-                                            theMap.append("B")
+                                            theMap.append(door(false))
                                         } else {
                                             theMap.append("3")
                                         }
@@ -380,20 +380,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
     }
 
     override fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
-        val doorStart = when (enter) {
-            "top" -> {
-                '8'
-            }
-            "left" -> {
-                'A'
-            }
-            "right" -> {
-                'B'
-            }
-            else -> {
-                '9'
-            }
-        }
+        val doorStart = door(true)
         when(enterSide){
             "left"->{
                 for(i in map.indices){
@@ -428,28 +415,7 @@ class LongRoom(val enterSide: String, val exitSide: String, enter: String ?=null
     }
 
     override fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
-        val doorEnd =  when(open){
-            true -> when (exit) {
-                "top" -> {
-                    'C'
-                }
-                "left" -> {
-                    'E'
-                }
-                "right" -> {
-                    'F'
-                }
-                else -> {
-                    'D'
-                }
-            }
-            else->when (exit){
-                "top"->'8'
-                "left"->'A'
-                "right"->'B'
-                else->'9'
-            }
-        }
+        val doorEnd =  door(false)
         when(enterSide){
             "right"->{
                 for(i in map.indices){
