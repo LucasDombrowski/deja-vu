@@ -60,7 +60,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                             }
                             (col - 1) / 2 -> {
                                 if (enter == "top") {
-                                    theMap.append("8")
+                                    theMap.append(door(true))
                                 } else {
                                     theMap.append("2")
                                 }
@@ -96,7 +96,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                             }
                             (col - 1) / 2 -> {
                                 if (enter == "bottom") {
-                                    theMap.append("9")
+                                    theMap.append(door(true))
                                 } else {
                                     theMap.append("7")
                                 }
@@ -118,7 +118,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     ((row/2))/2->{
                                         if(enterSide!="bottom"){
                                             if(enter=="left"){
-                                                theMap.append("A")
+                                                theMap.append(door(true))
                                             } else {
                                                 theMap.append("6")
                                             }
@@ -129,7 +129,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     ((row/2)/2)+1->{
                                         if(enterSide=="bottom"){
                                             if(enter=="left"){
-                                                theMap.append("A")
+                                                theMap.append(door(true))
                                             } else {
                                                 theMap.append("6")
                                             }
@@ -145,7 +145,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     ((row/2))/2->{
                                         if(enterSide!="bottom"){
                                             if(enter=="right"){
-                                                theMap.append("B")
+                                                theMap.append(door(true))
                                             } else {
                                                 theMap.append("6")
                                             }
@@ -156,7 +156,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     ((row/2)/2)+1->{
                                         if(enterSide=="bottom"){
                                             if(enter=="right"){
-                                                theMap.append("B")
+                                                theMap.append(door(true))
                                             } else {
                                                 theMap.append("6")
                                             }
@@ -211,7 +211,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                             }
                             (col - 1) / 2 -> {
                                 if (exit == "top") {
-                                    theMap.append("8")
+                                    theMap.append(door(false))
                                 } else {
                                     theMap.append("2")
                                 }
@@ -247,7 +247,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                             }
                             (col - 1) / 2 -> {
                                 if (exit == "bottom") {
-                                    theMap.append("9")
+                                    theMap.append(door(false))
                                 } else {
                                     theMap.append("7")
                                 }
@@ -269,7 +269,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     ((row/2))/2->{
                                         if(exitSide!="bottom"){
                                             if(exit=="left"){
-                                                theMap.append("A")
+                                                theMap.append(door(false))
                                             } else {
                                                 theMap.append("6")
                                             }
@@ -280,7 +280,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     ((row/2)/2)+1->{
                                         if(exitSide=="bottom"){
                                             if(exit=="left"){
-                                                theMap.append("A")
+                                                theMap.append(door(false))
                                             } else {
                                                 theMap.append("6")
                                             }
@@ -296,7 +296,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     ((row/2))/2->{
                                         if(exitSide!="bottom"){
                                             if(exit=="right"){
-                                                theMap.append("B")
+                                                theMap.append(door(false))
                                             } else {
                                                 theMap.append("6")
                                             }
@@ -307,7 +307,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
                                     ((row/2)/2)+1->{
                                         if(exitSide=="bottom"){
                                             if(exit=="right"){
-                                                theMap.append("B")
+                                                theMap.append(door(false))
                                             } else {
                                                 theMap.append("6")
                                             }
@@ -395,23 +395,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
     }
 
     override fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
-        val doorStart = when (enter) {
-            "top" -> {
-                '8'
-            }
-
-            "left" -> {
-                'A'
-            }
-
-            "right" -> {
-                'B'
-            }
-
-            else -> {
-                '9'
-            }
-        }
+        val doorStart = door(true)
         when(enterSide){
             "top"->{
                 for(i in 0..<map.size/2){
@@ -446,28 +430,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
     }
 
     override fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
-        val doorEnd =  when(open){
-            true -> when (exit) {
-                "top" -> {
-                    'C'
-                }
-                "left" -> {
-                    'E'
-                }
-                "right" -> {
-                    'F'
-                }
-                else -> {
-                    'D'
-                }
-            }
-            else->when (exit){
-                "top"->'8'
-                "left"->'A'
-                "right"->'B'
-                else->'9'
-            }
-        }
+        val doorEnd =  door(false)
         when(enterSide){
             "bottom"->{
                 for(i in 0..<map.size/2){

@@ -7,6 +7,8 @@ import fr.iutlens.mmi.demo.game.gameplayResources.challenges.SpeedUp
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
+import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
+import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.utils.getCenter
 import java.util.LinkedList
@@ -26,6 +28,80 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
     open fun copy() : Room{
         return Room(row, col, map, enter, exit, open, enemies, challenge)
+    }
+
+    fun door(enterDoor: Boolean = true) : Char{
+        when(enterDoor){
+            true->{
+                return if(enter=="top"){
+                    when (this) {
+                        is TreasureRoom -> 'ù'
+                        is ShopRoom -> 'O'
+                        else -> '8'
+                    }
+                } else if(enter=="bottom"){
+                    when(this){
+                        is TreasureRoom->'*'
+                        is ShopRoom->'P'
+                        else->'9'
+                    }
+                } else if(enter=="left"){
+                    when(this){
+                        is TreasureRoom->','
+                        is ShopRoom->'Q'
+                        else->'A'
+                    }
+                } else {
+                    when(this){
+                        is TreasureRoom->';'
+                        is ShopRoom->'R'
+                        else->'B'
+                    }
+                }
+            }
+            else->{
+                when(open){
+                    true->{
+                        return if(exit=="top"){
+                            'C'
+                        } else if(exit=="bottom"){
+                            'D'
+                        } else if (exit=="left"){
+                            'E'
+                        } else {
+                            'F'
+                        }
+                    }
+                    else->{
+                        return if(exit=="top"){
+                            when (this) {
+                                is TreasureRoom -> 'ù'
+                                is ShopRoom -> 'O'
+                                else -> '8'
+                            }
+                        } else if(exit=="bottom"){
+                            when(this){
+                                is TreasureRoom->'*'
+                                is ShopRoom->'P'
+                                else->'9'
+                            }
+                        } else if (exit=="left"){
+                            when(this){
+                                is TreasureRoom->','
+                                is ShopRoom->'Q'
+                                else->'A'
+                            }
+                        } else {
+                            when(this){
+                                is TreasureRoom->';'
+                                is ShopRoom->'R'
+                                else->'B'
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun randomTile(obstacles : Boolean = true): Char {
@@ -67,12 +143,10 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                                 theMap.append("K")
                             }
                             (col-1)/2->{
-                                if(enter=="top" || exit=="top"){
-                                    if(exit == "top" && open){
-                                        theMap.append("C")
-                                    } else {
-                                        theMap.append("8")
-                                    }
+                                if(enter=="top"){
+                                    theMap.append(door(true))
+                                } else if(exit=="top"){
+                                    theMap.append(door(false))
                                 } else {
                                     theMap.append("2")
                                 }
@@ -89,12 +163,10 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                                 theMap.append("4")
                             }
                             (col-1)/2->{
-                                if(enter=="bottom" || exit=="bottom"){
-                                    if(exit=="bottom" && open){
-                                        theMap.append("D")
-                                    } else {
-                                        theMap.append("9")
-                                    }
+                                if(enter=="bottom"){
+                                    theMap.append(door(true))
+                                } else if(exit=="bottom"){
+                                    theMap.append(door(false))
                                 } else {
                                     theMap.append("7")
                                 }
@@ -114,12 +186,10 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                                 theMap.append("K")
                                 when(i){
                                     (row-1)/2->{
-                                        if(enter=="left" || exit == "left"){
-                                            if(exit=="left" && open){
-                                                theMap.append("E")
-                                            } else {
-                                                theMap.append("A")
-                                            }
+                                        if(enter=="left"){
+                                            theMap.append(door(true))
+                                        } else if(exit=="left"){
+                                            theMap.append(door(false))
                                         } else {
                                             theMap.append("6")
                                         }
@@ -130,12 +200,10 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                             col-1->{
                                 when(i){
                                     (row-1)/2->{
-                                        if(enter=="right" || exit=="right"){
-                                            if(exit=="right" && open){
-                                                theMap.append("F")
-                                            } else {
-                                                theMap.append("B")
-                                            }
+                                        if(enter=="right"){
+                                            theMap.append(door(true))
+                                        }  else if(exit=="right"){
+                                            theMap.append(door(false))
                                         } else {
                                             theMap.append("3")
                                         }
@@ -237,20 +305,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
     open fun findStartPosition(map: List<List<Char>>): Pair<Int, Int>? {
 
-        val doorStart = when (enter) {
-            "top" -> {
-                '8'
-            }
-            "left" -> {
-                'A'
-            }
-            "right" -> {
-                'B'
-            }
-            else -> {
-                '9'
-            }
-        }
+        val doorStart = door(true)
 
         for (i in map.indices) {
             for (j in map[i].indices) {
@@ -268,28 +323,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     open fun findEndPosition(map: List<List<Char>>): Pair<Int, Int>? {
-        val doorEnd =  when(open){
-            true -> when (exit) {
-                "top" -> {
-                    'C'
-                }
-                "left" -> {
-                    'E'
-                }
-                "right" -> {
-                    'F'
-                }
-                else -> {
-                    'D'
-                }
-            }
-            else->when (exit){
-                "top"->'8'
-                "left"->'A'
-                "right"->'B'
-                else->'9'
-            }
-        }
+        val doorEnd = door(false)
         for (i in map.indices) {
             for (j in map[i].indices) {
                 if (map[i][j] == doorEnd) {
@@ -509,5 +543,13 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     fun endChallenge(game: Game){
         challenge?.reverseEffect?.invoke(game)
         game.challenge.value = null
+    }
+
+    fun indexInRoomList() : Int ?{
+        return if(map.rooms!=null){
+            map.rooms!!.indexOf(this)
+        } else {
+            null
+        }
     }
 }

@@ -24,7 +24,7 @@ import kotlin.collections.Map
 
 open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<Enemy> = listOf(), val treasureRooms : Int, var boss : Boss ? = null) {
 
-    val authorizedTiles : List<String> = listOf("C","D","E","F","G","H","I")
+    val authorizedTiles : List<String> = listOf("C","D","E","F","G","H","I","W","X","Y","Z","&","é","(","-","è","~","¨","£","?",".")
     var roomNumber = roomInterval.random()
     var tileMap = makeTileMap()
     var tileArea = makeTileArea()
@@ -46,12 +46,12 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             Log.i("corners","${it.topLeftCorner},${it.bottomRightCorner}")
         }
         return mapString!!.trimIndent().toMutableTileMap(
-            "0123" +
-            "4567" +
-            "89AB" +
-            "CDEF" +
-            "GHIJ" +
-            "KLMN"
+            "0123OPQRù*,;" +
+            "4567STUV:!°+" +
+            "89ABWXYZ¨£%µ" +
+            "CDEF&é(-?./§" +
+            "GHIJè_çà~#{[" +
+            "KLMN)=^$|@]}"
         )
     }
 
@@ -518,7 +518,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     fun inOpenDoor(x : Float, y: Float) : Boolean{
         val globalPosition = getMapIndexFromPosition(x,y)
         val room = getRoomFromMapIndex(globalPosition.first, globalPosition.second)
-        return room!!.getElement(x,y) in listOf<String>("C","D","E","F")
+        return room!!.getElement(x,y) in listOf<String>("C","D","E","F","S","T","U","V",":","!","°","+")
     }
     fun reload(){
         generateMap()

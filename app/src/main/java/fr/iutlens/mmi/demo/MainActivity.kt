@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        loadSpritesheet(R.drawable.ninja_level,4,6)
+        loadSpritesheet(R.drawable.ninja_level,12,6)
         loadSpritesheet(R.drawable.isaac, 9, 4)
         loadSpritesheet(R.drawable.big_isaac, 3, 4)
         loadSpritesheet(R.drawable.projectiles,6,1)
