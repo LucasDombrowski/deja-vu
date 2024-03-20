@@ -72,7 +72,11 @@ class Camera(val game: Game) {
         val maxCameraDistance = 4*game.map.tileArea.w
         return {
             x, y ->
-            if(distanceXWithCamera()>maxCameraDistance){
+            if(game.controllableCharacter!!.sprite.x < minXValue){
+                moveCamera(minXValue,sprite.y, speed = 25f)
+            } else if(game.controllableCharacter!!.sprite.x > maxXValue){
+                moveCamera(maxXValue,sprite.y, speed = 25f)
+            } else if(distanceXWithCamera()>maxCameraDistance){
                 when{
                     x<sprite.x->{
                         if(sprite.x-(distanceXWithCamera()-maxCameraDistance)>minXValue){
@@ -113,7 +117,11 @@ class Camera(val game: Game) {
         val maxCameraDistance = 2*game.map.tileArea.h
         return {
             x, y ->
-            if(distanceYWithCamera()>maxCameraDistance){
+            if(game.controllableCharacter!!.sprite.y < minYValue){
+                moveCamera(sprite.x,minYValue, speed = 25f)
+            } else if(game.controllableCharacter!!.sprite.y > maxYValue){
+                moveCamera(sprite.x,maxYValue, speed = 25f)
+            } else if(distanceYWithCamera()>maxCameraDistance){
                 when{
                     y<sprite.y->{
                         if(sprite.y-(distanceYWithCamera()-maxCameraDistance)>minYValue){

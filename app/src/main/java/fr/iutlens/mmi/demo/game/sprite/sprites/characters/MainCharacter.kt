@@ -198,20 +198,34 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             }
         } else if(game.map.inOpenDoor(x,y) && game.map.currentRoom().open){
             disablePathFollowing()
-            game.map.currentRoom().close()
-            while (!game.map.nextRoom().characterInStartPosition(game)) {
-                game.map.nextRoom().placeCharacter(game)
-                pathIndicator.x = sprite.x
-                pathIndicator.y = sprite.y
-            }
-
-            if(game.map.currentRoom() is LongRoom || game.map.currentRoom() is LargeRoom){
-                temporaryMovingInteraction = {
-                    x, y ->  
-                }
-            }
             stun()
-            game.nextRoom()
+            GlobalScope.launch {
+                sprite.setTransparencyLevel(0.75f)
+                game.invalidate()
+                delay(100)
+                sprite.setTransparencyLevel(0.5f)
+                game.invalidate()
+                delay(100)
+                sprite.setTransparencyLevel(0.25f)
+                game.invalidate()
+                delay(100)
+                sprite.setTransparencyLevel(0f)
+                game.invalidate()
+                delay(100)
+                game.map.currentRoom().close()
+                while (!game.map.nextRoom().characterInStartPosition(game)) {
+                    game.map.nextRoom().placeCharacter(game)
+                    pathIndicator.x = sprite.x
+                    pathIndicator.y = sprite.y
+                    sprite.setTransparencyLevel(1f)
+                }
+                if(game.map.currentRoom() is LongRoom || game.map.currentRoom() is LargeRoom){
+                    temporaryMovingInteraction = {
+                            x, y ->
+                    }
+                }
+                game.nextRoom()
+            }
         } else {
             temporaryMovingInteraction(x,y)
             sprite.x = x
