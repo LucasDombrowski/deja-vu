@@ -475,7 +475,7 @@ open class Game(val map : Map,
 
     }
 
-    var item = mutableStateMapOf<String,Any>("show" to false, "image" to 0, "name" to "", "description" to "")
+    var item = mutableStateMapOf<String,Any>("show" to false, "image" to 0, "name" to "", "description" to "", "onPick" to {})
     @Composable
     fun Item(modifier: Modifier = Modifier
         .fillMaxWidth()
@@ -496,6 +496,8 @@ open class Game(val map : Map,
         DialogScreen(text = item["description"] as String, onEnd = {
             item["show"] = false
             pause = false
+            (item["onPick"] as ()->Unit).invoke()
+            item["onPick"] = {}
         }) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally

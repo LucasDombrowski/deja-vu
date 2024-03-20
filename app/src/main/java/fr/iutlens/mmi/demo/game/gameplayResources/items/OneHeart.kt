@@ -19,6 +19,5 @@ class OneHeart : Item(
         }
         game.controllableCharacter!!.refreshHeathBar()
     }
-
 ) {
 }

@@ -214,6 +214,16 @@ open class Character(
             if(hearts[0].filled<=0){
                 if(this==game.controllableCharacter!!){
                     game.gameOver()
+                    game.controllableCharacter!!.temporaryMovingInteraction = {
+                        x,y->
+                    }
+                    game.controllableCharacter!!.target = null
+                    game.controllableCharacter!!.dragEndBehavior = {}
+                    game.controllableCharacter!!.dragStartBehavior = {x,y->}
+                    game.controllableCharacter!!.dragMovingBehavior = {x,y->}
+                    game.controllableCharacter!!.autoFire.cancel()
+                    game.controllableCharacter!!.targetIndicator.invisible()
+                    game.controllableCharacter!!.pathIndicator.invisible()
                     die()
                 } else {
                     die()
