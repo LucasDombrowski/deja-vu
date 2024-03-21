@@ -3,6 +3,7 @@ package fr.iutlens.mmi.demo.game.sprite.sprites
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
+import fr.iutlens.mmi.demo.game.screens.cinematic.CinematicPart
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -10,6 +11,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 open class Boss(
+    val endCinematicParts : List<CinematicPart>,
     sprite: BasicSprite,
     game: Game,
     speed:Float,

@@ -1,11 +1,13 @@
 package fr.iutlens.mmi.demo.game.gameplayResources.collectibles
 
+import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
 
 class HalfHeartDrop(game : Game) : Collectible(
     game = game,
     spriteIndex = 3,
+    sound = R.raw.heart,
     collectEffect = {
         var toHeal = 0.5f
         for(heart in game.controllableCharacter!!.hearts){

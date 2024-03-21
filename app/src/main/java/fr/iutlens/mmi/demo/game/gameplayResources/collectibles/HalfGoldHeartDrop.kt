@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo.game.gameplayResources.collectibles
 
+import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
@@ -7,6 +8,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 class HalfGoldHeartDrop(game : Game) : Collectible(
     game = game,
     spriteIndex = 5,
+    sound = R.raw.heart,
     collectEffect = {
         var toAdd = 0.5f
         for(heart in game.controllableCharacter!!.hearts){

@@ -98,6 +98,7 @@ import fr.iutlens.mmi.demo.game.transform.CameraTransform
 import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
 import fr.iutlens.mmi.demo.ui.theme.MainFont
+import fr.iutlens.mmi.demo.utils.Music
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -120,6 +121,7 @@ open class Game(val map : Map,
            var spriteList : MutableSpriteList = MutableSpriteList(list = mutableListOf()),
            var controllableCharacter : MainCharacter ?=null,
            var transform: CameraTransform = FitTransform(map.tileArea),
+           val backgroundMusic : Int,
            var onDragStart: ((Offset) -> Unit)? = null,
            var onDragMove:  ((Offset) -> Unit)? = null,
            var onDragEnd : (()->Unit)? = null,
@@ -170,9 +172,10 @@ open class Game(val map : Map,
     fun resetCollectibles(){
         with(collectibleList.iterator()){
             forEach {
-                it.destroy()
+                it.sprite.invisible()
             }
         }
+        collectibleList = mutableListOf()
     }
     /**
      * Invalidate demande une nouvelle image, en général parce que les données du jeu ont changé
@@ -315,7 +318,8 @@ open class Game(val map : Map,
 
     open fun copy() : Game{
         return Game(
-            map = map
+            map = map,
+            backgroundMusic = backgroundMusic
         )
     }
 
@@ -433,7 +437,7 @@ open class Game(val map : Map,
     }
 
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
-    var coins = mutableStateOf(99)
+    var coins = mutableStateOf(0)
 
     var dropProbability = 1
     var heartDropProbability = 1
@@ -477,13 +481,14 @@ open class Game(val map : Map,
                             menu["open"] = true
                             pause = true;
                         }
-                        .background(Color.White, shape = CircleShape)
-                        .padding((screenWidth / 150).dp)
+                        .background(Color(0, 0, 0, 128), shape = CircleShape)
+                        .padding((screenWidth / 125).dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.home_icon),
                             contentDescription = "Menu",
-                            contentScale = ContentScale.Fit
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                 }
@@ -544,6 +549,9 @@ open class Game(val map : Map,
     fun Menu(modifier: Modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()){
+        LaunchedEffect(key1 = menu["open"]){
+            Music.reduceMusicVolume()
+        }
         controllableCharacter!!.currentAnimationSequenceIndex = 0
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp
@@ -638,10 +646,7 @@ open class Game(val map : Map,
                         MenuButton(text = "REPRENDRE", width = maxPageWidth*6/10) {
                             pause = false
                             menu["open"] = false
-                        }
-                        Spacer(modifier = Modifier.height((screenHeight*0.001).dp))
-                        MenuButton(text = "PARAMETRES", width = maxPageWidth*6/10) {
-                            
+                            Music.normalMusicVolume()
                         }
                         Spacer(modifier = Modifier.height((screenHeight*0.001).dp))
                         MenuButton(text = "QUITTER", width = maxPageWidth*6/10) {
@@ -661,6 +666,8 @@ open class Game(val map : Map,
             false
         )
     )
+
+    var musicTrack = mutableStateOf(backgroundMusic)
     @SuppressLint("CoroutineCreationDuringComposition")
     @Composable
     fun GameScreen(){
@@ -678,6 +685,7 @@ open class Game(val map : Map,
             Challenge()
             Ath()
         }
+        Music(musicTrack.value)
     }
 
     var challenge : MutableState<Challenge ?> = mutableStateOf(null)
@@ -699,11 +707,16 @@ open class Game(val map : Map,
         }
         if(challenge.value!=null && challenge.value!!.name != "") {
             Box(
-                modifier = Modifier.fillMaxSize().padding(20.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp)
             ) {
                 Text(
                     text = challenge.value!!.name,
-                    modifier = Modifier.align(Alignment.BottomEnd).background(Color(0,0,0,128)).padding(fontSizeDp/2),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .background(Color(0, 0, 0, 128))
+                        .padding(fontSizeDp / 2),
                     color = Color.White,
                     fontSize = fontSize,
                     style = TextStyle(

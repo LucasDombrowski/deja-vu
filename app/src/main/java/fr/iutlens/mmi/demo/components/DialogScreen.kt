@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,11 +24,18 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import fr.iutlens.mmi.demo.R
+import fr.iutlens.mmi.demo.utils.Music
+
 @Composable
 fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Unit){
 
     var fullText by remember {
         mutableStateOf(text)
+    }
+
+    LaunchedEffect(key1 = text){
+        Music.reduceMusicVolume()
     }
 
     val configuration = LocalConfiguration.current
@@ -135,10 +143,12 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
         .fillMaxHeight()
         .pointerInput(key1 = "DialogScreen") {
             detectTapGestures {
+                Music.stopSound(R.raw.text_sound_effect)
                 if (textSequenceIndex < textSequence.size - 1) {
                     textSequenceIndex++
                     currentText = textSequence[textSequenceIndex]
                 } else {
+                    Music.normalMusicVolume()
                     onEnd()
                 }
             }

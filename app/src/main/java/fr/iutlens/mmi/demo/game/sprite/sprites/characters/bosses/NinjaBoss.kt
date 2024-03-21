@@ -1,13 +1,17 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites.characters.bosses
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
+import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
+import fr.iutlens.mmi.demo.game.screens.cinematic.CinematicPart
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
 import fr.iutlens.mmi.demo.game.sprite.sprites.Projectile
+import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.degreesToRadiant
 import fr.iutlens.mmi.demo.utils.getCenter
 import fr.iutlens.mmi.demo.utils.getDistance
@@ -19,6 +23,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
+    endCinematicParts = listOf(
+        CinematicPart(
+            "Élisa, la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
+            R.drawable.cinematic_character,
+            true
+        ),
+        CinematicPart(
+            "la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
+            R.drawable.cinematic_character,
+            false
+        ),
+    ),
     sprite = BasicSprite(R.drawable.big_isaac,x,y,1),
     game = game,
     basicAnimationSequence = listOf(1),
@@ -31,6 +47,27 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     target = game.controllableCharacter!!,
 ) {
 
+    val startCinematic = Cinematic(listOf(
+        CinematicPart(
+            "Élisa, la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
+            R.drawable.cinematic_character,
+            true
+        ),
+        CinematicPart(
+            "la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
+            R.drawable.cinematic_character,
+            false
+        ),
+        CinematicPart(
+            "Élisa, la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
+            R.drawable.cinematic_character,
+            true
+        )
+    ),game){
+        randomPattern()
+        game.musicTrack.value = R.raw.boss
+    }
+
     var countdown : Job? = null
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 4f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f)
     var pattern = 0
@@ -42,7 +79,9 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         game.ath["boss"] = hearts
         game.addCharacter(this)
         changePos(x,y)
-        randomPattern()
+        game.cinematic.value = Pair(
+            startCinematic,true
+        )
     }
 
     fun randomPattern(){
