@@ -14,6 +14,7 @@ import fr.iutlens.mmi.demo.boot.changeLevel
 import fr.iutlens.mmi.demo.boot.startFirstLevel
 import fr.iutlens.mmi.demo.components.Level
 import fr.iutlens.mmi.demo.game.Game
+import fr.iutlens.mmi.demo.game.screens.MainMenu
 import fr.iutlens.mmi.demo.utils.Music.mute
 import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.Music
@@ -52,15 +53,36 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             currentContext = LocalContext.current
+
             var game by remember {
                 mutableStateOf(startFirstLevel())
             }
+
+            var started by remember {
+                mutableStateOf(false)
+            }
+
             MyApplicationTheme {
-                Level(game = game, onEnd = {
-                    game = changeLevel(game)
-                }, onRestart = {
-                    game = startFirstLevel()
-                })
+                if(started){
+                    Level(game = game, onEnd = {
+                        game = changeLevel(game)
+                    }, onRestart = {
+                        game = startFirstLevel()
+                    },
+                        onLeave = {
+                            started = false
+                            game = startFirstLevel()
+                        })
+                } else {
+                    MainMenu(
+                        onStart = {
+                            started = true
+                        },
+                        onLeave = {
+                            finishAndRemoveTask()
+                        }
+                    )
+                }
             }
         }
 
