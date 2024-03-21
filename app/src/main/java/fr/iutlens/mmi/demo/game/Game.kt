@@ -3,6 +3,11 @@ package fr.iutlens.mmi.demo.game
 import android.annotation.SuppressLint
 import android.graphics.Region
 import android.util.Log
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateOffsetAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -163,6 +168,8 @@ open class Game(val map : Map,
     var collectibleList : MutableList<Collectible> = mutableListOf()
 
     var onEnd : ()->Unit = {}
+
+    var onLeave : ()->Unit = {}
 
     var onRestart : ()->Unit = {}
     fun copyCharacterList() : MutableList<Character>{
@@ -549,9 +556,6 @@ open class Game(val map : Map,
     fun Menu(modifier: Modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()){
-        LaunchedEffect(key1 = menu["open"]){
-            Music.reduceMusicVolume()
-        }
         controllableCharacter!!.currentAnimationSequenceIndex = 0
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp
@@ -602,9 +606,31 @@ open class Game(val map : Map,
             }
         }
 
+        var active by remember {
+            mutableStateOf(false)
+        }
+
+        val transitionDuration = 350
+
+        val menuOffsetY by animateDpAsState(targetValue = if (active) 0.dp else screenHeight.dp, animationSpec = tween(
+            durationMillis = transitionDuration,
+            easing = LinearEasing
+        ),
+            label = "Book Slide"
+        )
+
+        LaunchedEffect(key1 = menu["open"]){
+            Music.reduceMusicVolume()
+            active = true
+        }
+
+        val scope = rememberCoroutineScope()
+
+
 
         Box(modifier=modifier.background(Color(0,0,0,128))){
             BoxWithConstraints(modifier = Modifier
+                .offset(y = menuOffsetY)
                 .width(bookWidth)
                 .fillMaxHeight()
                 .align(Alignment.Center)){
@@ -644,13 +670,17 @@ open class Game(val map : Map,
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
                         MenuButton(text = "REPRENDRE", width = maxPageWidth*6/10) {
-                            pause = false
-                            menu["open"] = false
-                            Music.normalMusicVolume()
+                            active = false
+                            scope.launch {
+                                delay(transitionDuration.toLong())
+                                pause = false
+                                menu["open"] = false
+                                Music.normalMusicVolume()
+                            }
                         }
                         Spacer(modifier = Modifier.height((screenHeight*0.001).dp))
                         MenuButton(text = "QUITTER", width = maxPageWidth*6/10) {
-                            
+                            onLeave()
                         }
 
                     }
