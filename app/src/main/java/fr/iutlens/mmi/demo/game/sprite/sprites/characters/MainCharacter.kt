@@ -15,6 +15,7 @@ import fr.iutlens.mmi.demo.game.sprite.DrawingSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.Projectile
+import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.getDistance
 import fr.iutlens.mmi.demo.utils.setInterval
 import fr.iutlens.mmi.demo.utils.vibrate
@@ -54,10 +55,9 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     var items : MutableList<Item> = mutableListOf()
 
     var autoFire : Job = setInterval(0,fireRate){
-        GlobalScope.launch {
-            while (game.pause){
-                delay(fireRate)
-            }
+        if(game.pause){
+            stopFiring()
+        } else {
             if(target!=null) {
                 if (!game.blinded || distanceWith(target!!) < viewingDistance * game.map.tileArea.w) {
                     fireToTarget()
@@ -66,6 +66,15 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 }
             } else {
                 targetIndicator.invisible()
+            }
+        }
+    }
+
+    fun stopFiring(){
+        autoFire.cancel()
+        autoFire = setInterval(0,fireRate){
+            if(!game.pause){
+                fitToFireRate()
             }
         }
     }
@@ -235,6 +244,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 forEach {
                     if(inBoundingBox(it.sprite.x, it.sprite.y)){
                         it.collectEffect()
+                        Music.playSound(it.sound)
                         it.destroy()
                     }
                 }
@@ -244,14 +254,20 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     }
     fun fitToFireRate(){
         autoFire.cancel()
-        autoFire = setInterval(0,fireRate) {
-            GlobalScope.launch {
-                while (game.pause){
-                    delay(fireRate)
+        autoFire = setInterval(0,fireRate){
+            if(game.pause){
+                stopFiring()
+            } else {
+                if(target!=null) {
+                    if (!game.blinded || distanceWith(target!!) < viewingDistance * game.map.tileArea.w) {
+                        fireToTarget()
+                    } else {
+                        getClosestEnemy()
+                    }
+                } else {
+                    targetIndicator.invisible()
                 }
-                fireToTarget()
             }
-
         }
     }
 

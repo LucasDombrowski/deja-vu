@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,7 +34,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.demo.R
+import fr.iutlens.mmi.demo.getCurrentActivityContext
 import fr.iutlens.mmi.demo.ui.theme.MainFont
+import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,6 +44,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit){
 
+    
     var currentText by remember {
         mutableStateOf(text)
     }
@@ -89,6 +94,7 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
             Modifier
                 .align(Alignment.BottomEnd)
                 .height(textHeight))
+
     }
 }
 
@@ -96,31 +102,25 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun WritingText(text: String, modifier : Modifier, fontSize : TextUnit, lineHeight: TextUnit, stopWriting : ()->Unit){
-    val scope = rememberCoroutineScope()
     if(text.isNotEmpty()) {
         var currentText by remember {
             mutableStateOf("")
         }
-
-        var previousText by remember {
-            mutableStateOf(text)
-        }
-
-        if(previousText!=text){
+        LaunchedEffect(key1 = text){
             currentText=""
-            previousText=text
+            Music.playSound(R.raw.text_sound_effect, loop = -1)
         }
 
-        if(currentText!=text && currentText.length<text.length){
-            scope.launch {
-                delay(5)
-                if(currentText.length<text.length) {
-                    currentText += text[currentText.length]
-                }
+        LaunchedEffect(key1 = currentText){
+            Thread.sleep(5)
+            if(currentText!=text && currentText.length<text.length){
+                currentText += text[currentText.length]
+            } else {
+                stopWriting()
+                Music.stopSound(R.raw.text_sound_effect)
             }
-        } else {
-            stopWriting()
         }
+
 
         Text(
             text = currentText,
@@ -139,7 +139,6 @@ fun WritingText(text: String, modifier : Modifier, fontSize : TextUnit, lineHeig
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun WritingAnimation(images : List<Bitmap>, writing: Boolean, modifier: Modifier){
-    val scope = rememberCoroutineScope()
     var imageIndex by remember {
         mutableIntStateOf(0)
     }
@@ -171,6 +170,7 @@ fun WritingAnimation(images : List<Bitmap>, writing: Boolean, modifier: Modifier
         }
         animate = writing
     }
+
     Image(bitmap = images[imageIndex].asImageBitmap(),
         contentDescription = "Writing",
         contentScale = ContentScale.FillHeight,

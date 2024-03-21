@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites
 
 import android.util.Log
+import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.Coin
@@ -10,8 +11,10 @@ import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HalfHeartDrop
 import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HeartContainer
 import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.HeartDrop
 import fr.iutlens.mmi.demo.game.gameplayResources.collectibles.SuperCoin
+import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
+import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.getDistance
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
@@ -327,7 +330,17 @@ open class Character(
         }
         if(this is Enemy && this is Boss){
             action.cancel()
-            HeartContainer(game).setup(sprite.x, sprite.y)
+            Music.mute = true
+            game.cinematic.value = Pair(
+                Cinematic(endCinematicParts,game){
+                    HeartContainer(game).setup(sprite.x, sprite.y)
+                    Music.mute = false
+                    Music.musicLoop = false
+                    game.musicTrack.value = R.raw.victory
+                },
+                true
+            )
+
         }
         if(this==game.controllableCharacter!!.target){
             game.controllableCharacter!!.getClosestEnemy()

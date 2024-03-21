@@ -17,6 +17,7 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.utils.Music.mute
 import fr.iutlens.mmi.demo.ui.theme.MyApplicationTheme
 import fr.iutlens.mmi.demo.utils.Music
+import fr.iutlens.mmi.demo.utils.Music.playSound
 import fr.iutlens.mmi.demo.utils.loadSound
 
 import fr.iutlens.mmi.demo.utils.loadSpritesheet
@@ -44,7 +45,10 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.smoke_animation,3,2)
         loadSpritesheet(R.drawable.collectibles,4,2)
 
-        loadSound(R.raw.message)
+        loadSound(R.raw.text_sound_effect)
+        loadSound(R.raw.coin)
+        loadSound(R.raw.heart)
+        loadSound(R.raw.victory)
 
         setContent {
             currentContext = LocalContext.current
@@ -57,15 +61,17 @@ class MainActivity : ComponentActivity() {
                 }, onRestart = {
                     game = startFirstLevel()
                 })
-                Music(id = R.raw.jungle)
             }
         }
+
+
     }
 
     override fun onPause() {
         super.onPause()
         mute = true
     }
+
 
 }
 
