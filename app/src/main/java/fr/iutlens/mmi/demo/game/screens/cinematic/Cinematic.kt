@@ -40,7 +40,7 @@ class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game, val 
                     partIndex++
                     part = parts[partIndex]
                 }
-            }) {
+            }, name = part.name) {
                 BoxWithConstraints(modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .fillMaxHeight(0.5f)){

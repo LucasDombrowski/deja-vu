@@ -10,6 +10,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -42,7 +43,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit){
+fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit, name : String ? = null){
 
     
     var currentText by remember {
@@ -76,15 +77,33 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
             )
         )
     }
+
+    val dialogBox = when(name){
+        null->R.drawable.dialog_box
+        else->R.drawable.dialog_box_name
+    }
+
     BoxWithConstraints(modifier = Modifier
         .width(boxWidth)
         .padding(5.dp)
         ){
         val textHeight = boxWidth/5
-        Image(painter = painterResource(id = R.drawable.dialog_box),
+        Image(painter = painterResource(id = dialogBox),
             contentDescription = "Dialog Box",
             contentScale = ContentScale.FillWidth,
             modifier = Modifier.fillMaxWidth())
+        if(name!=null){
+            Text(
+                text = name,
+                fontSize = fontSize*1.25,
+                modifier = Modifier.align(Alignment.TopCenter)
+                    .offset(x = -boxWidth*295/1000, y = textHeight/9),
+                style = TextStyle(
+                    fontFamily = MainFont
+                ),
+                textAlign = TextAlign.Center
+            )
+        }
         WritingText(text = currentText, fontSize = fontSize, lineHeight = lineHeight, modifier = Modifier
             .align(Alignment.Center)
             .width(textWidth)) {

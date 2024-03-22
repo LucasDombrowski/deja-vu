@@ -28,7 +28,7 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.utils.Music
 
 @Composable
-fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Unit){
+fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, content : @Composable() ()->Unit){
 
     var fullText by remember {
         mutableStateOf(text)
@@ -135,7 +135,7 @@ fun DialogScreen(text : String, onEnd : ()->Unit, content : @Composable() ()->Un
     @RequiresApi(Build.VERSION_CODES.Q)
     @Composable
     fun DialogScreenBox(text : String){
-        DialogBox(text = text, boxWidth = boxWidth, textWidth = textWidth,  fontSize = fontSize, lineHeight = lineHeight)
+        DialogBox(text = text, boxWidth = boxWidth, textWidth = textWidth,  fontSize = fontSize, lineHeight = lineHeight, name = name)
     }
 
     Box(modifier = Modifier
