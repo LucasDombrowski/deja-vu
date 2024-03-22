@@ -151,6 +151,7 @@ class Camera(val game: Game) {
             if ((game.map.currentRoom() is BasicRoom || game.map.currentRoom() is LongRoom || game.map.currentRoom() is LargeRoom) && game.map.currentRoom() !is BossRoom) {
                 game.map.currentRoom().spawnEnemies()
                 game.map.currentRoom().startChallenge(game)
+                game.addSprite(game.controllableCharacter!!.targetIndicator)
             }
             if (game.map.currentRoom() is LongRoom) {
                 game.controllableCharacter!!.temporaryMovingInteraction = slideLongRoomCamera()
@@ -160,11 +161,11 @@ class Camera(val game: Game) {
             }
             if (game.map.currentRoom() is BossRoom) {
                 game.spawnBoss()
+                game.addSprite(game.controllableCharacter!!.targetIndicator)
             }
             if (game.map.currentRoom() is ShopRoom) {
                 (game.map.currentRoom() as ShopRoom).launchCinematic(game)
             }
-            game.controllableCharacter!!.getClosestEnemy()
         }
     }
 }

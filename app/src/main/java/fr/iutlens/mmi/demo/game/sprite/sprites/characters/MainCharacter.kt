@@ -23,6 +23,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.round
 
 class MainCharacter(x: Float, y:Float, game: Game) : Character(
     sprite =  BasicSprite(R.drawable.chrono,x,y,2),
@@ -58,15 +60,124 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         if(game.pause){
             stopFiring()
         } else {
+            getClosestEnemy()
             if(target!=null) {
                 if (!game.blinded || distanceWith(target!!) < viewingDistance * game.map.tileArea.w) {
                     fireToTarget()
-                } else {
-                    getClosestEnemy()
                 }
-            } else {
-                targetIndicator.invisible()
             }
+        }
+    }
+
+    val targetIndicatorCheckInterval = 33
+
+    var targetIndicatorMoving = setInterval(0, targetIndicatorCheckInterval.toLong()){
+        if(!game.pause) {
+            if (target != null) {
+                targetIndicator.visible()
+                moveTargetIndicator()
+            } else if (!game.characterList.any { it is Enemy }) {
+                targetIndicator.x = sprite.x
+                targetIndicator.y = sprite.y
+            }
+        }
+    }
+
+    fun targetDifference() : Float{
+        return getDistance(
+            target!!.sprite.x,
+            target!!.sprite.y,
+            target!!.sprite.x,
+            target!!.sprite.boundingBox.bottom
+        )/2f
+    }
+
+    fun targetOffsetY() : Float{
+        return target!!.sprite.y + targetDifference()
+    }
+
+    fun aimOffset() : Pair<Float,Float>{
+        return Pair(
+            targetIndicator.x,
+            targetIndicator.y - targetDifference()
+        )
+    }
+
+    fun moveTargetIndicator(){
+        if(targetTooFar()){
+            val steps = getTargetMoveSteps()
+            val xStep = steps.first
+            val yStep = steps.second
+            targetIndicator.x+=xStep
+            targetIndicator.y+=yStep
+        } else{
+            val aimedX = target!!.sprite.x
+            val aimedY = targetOffsetY()
+            val moveSpeed = 0.3f*((game.map.tileArea.w + game.map.tileArea.h)/2)
+            if(targetIndicator.x!=aimedX || targetIndicator.y!=aimedY){
+                val xChangeValue = when{
+                    abs(aimedX-targetIndicator.x)>moveSpeed->moveSpeed
+                    else->(abs(aimedX-targetIndicator.x)%moveSpeed)
+                }
+                val yChangeValue = when{
+                    abs(aimedY-targetIndicator.y)>moveSpeed->moveSpeed
+                    else->(abs(aimedY-targetIndicator.y)%moveSpeed)
+                }
+                when{
+                    aimedX<targetIndicator.x->targetIndicator.x-=xChangeValue
+                    aimedX>targetIndicator.x->targetIndicator.x+=xChangeValue
+                    else->targetIndicator.x
+                }
+                when{
+                    aimedY<targetIndicator.y->targetIndicator.y-=yChangeValue
+                    aimedY>targetIndicator.y->targetIndicator.y+=yChangeValue
+                    else->targetIndicator.y
+                }
+            }
+        }
+        game.invalidate()
+    }
+
+    fun targetTooFar() : Boolean{
+        val moveSpeed = 0.3f*((game.map.tileArea.w + game.map.tileArea.h)/2)
+        val aimedX = target!!.sprite.x
+        val aimedY = targetOffsetY()
+        return getDistance(targetIndicator.x, targetIndicator.y, targetIndicator.x, aimedY) > moveSpeed && getDistance(targetIndicator.x, targetIndicator.y, aimedX, targetIndicator.y) > moveSpeed
+    }
+
+    fun getTargetMoveSteps() : Pair<Float,Float>{
+        val aimedX = target!!.sprite.x
+        val aimedY = targetOffsetY()
+        val steps = targetMoveStep()
+        val xStep = when{
+            aimedX<targetIndicator.x->-steps[0]
+            else->steps[0]
+        }
+        val yStep = when{
+            aimedY<targetIndicator.y->-steps[1]
+            else->steps[1]
+        }
+        return Pair(xStep,yStep)
+    }
+
+    fun targetMoveStep() : List<Float>{
+        val moveSpeed = 0.3f*((game.map.tileArea.w + game.map.tileArea.h)/2)
+        val aimedX = target!!.sprite.x
+        val aimedY = targetOffsetY()
+        val vectorX = abs( round(aimedX) - round(targetIndicator.x))
+        val vectorY = abs(round(aimedY) - round(targetIndicator.y))
+        return if (vectorX == 0f && vectorY == 0f) {
+            listOf(0f, 0f)
+        } else if (vectorX == 0f) {
+            listOf(0f, moveSpeed)
+        } else if(vectorY==0f){
+            listOf(moveSpeed,0f)
+        } else if(vectorX==vectorY){
+            listOf(moveSpeed,moveSpeed)
+        } else if(vectorX>vectorY){
+            listOf(moveSpeed,moveSpeed/(vectorX/vectorY))
+        } else {
+            listOf(moveSpeed/(vectorY/vectorX),moveSpeed)
         }
     }
 
@@ -85,7 +196,6 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         x, y ->  
     }
 
-    var targetFollow : Job ?= null
 
     var dragStartBehavior : (x:Float, y:Float)->Unit = {
         x, y ->
@@ -258,14 +368,11 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             if(game.pause){
                 stopFiring()
             } else {
+                getClosestEnemy()
                 if(target!=null) {
                     if (!game.blinded || distanceWith(target!!) < viewingDistance * game.map.tileArea.w) {
                         fireToTarget()
-                    } else {
-                        getClosestEnemy()
                     }
-                } else {
-                    targetIndicator.invisible()
                 }
             }
         }
@@ -273,15 +380,18 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     fun fireToTarget(){
         if (target is Enemy && target!!.alive && !target!!.sprite.isInvisible()) {
-            targetIndicator.visible()
-            projectile.aimTarget(target!!, sprite.x, sprite.y)
+            projectile.fireProjectile(
+                game,
+                sprite.x,
+                sprite.y,
+                aimOffset().first,
+                aimOffset().second
+            )
             with(directProjectileBehaviors.iterator()) {
                 forEach {
                     it()
                 }
             }
-        } else {
-            targetIndicator.invisible()
         }
         game.invalidate()
     }
@@ -310,21 +420,6 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         }
     }
 
-    fun setupTargetFollow(){
-        targetFollow = setInterval(0, 33){
-            GlobalScope.launch {
-                while (game.pause){
-                    delay(33)
-                }
-                if(target is Enemy){
-                    targetIndicator.x = target!!.sprite.x
-                    targetIndicator.y = target!!.sprite.boundingBox.top
-                }
-            }
-
-        }
-    }
-
     fun getClosestEnemy(){
         val distances : MutableMap<Float,Enemy> = mutableMapOf<Float,Enemy>()
         with(game.characterList.iterator()) {
@@ -340,7 +435,6 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             target = null
         } else {
             target = distances.toSortedMap().values.toList().first()
-            setupTargetFollow()
         }
     }
 
