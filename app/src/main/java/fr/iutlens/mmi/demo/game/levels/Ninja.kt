@@ -25,7 +25,9 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.RangeNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.TeleportNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.bosses.NinjaBoss
+import fr.iutlens.mmi.demo.getCurrentActivityContext
 import fr.iutlens.mmi.demo.utils.Music
+import fr.iutlens.mmi.demo.utils.loadSpritesheet
 import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -78,6 +80,7 @@ class Ninja : Game(
              Music.mute = false
             }, true
         )
+        spawnBoss()
 
     }
 

@@ -112,6 +112,17 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
         makeCurrentColorPermanent()
     }
 
+    fun reverseColor(){
+        colorMatrix =
+            ColorMatrix(floatArrayOf(
+                -1f, 0f, 0f, 0f, 255f,
+                0f, -1f, 0f, 0f, 255f,
+                0f, 0f, -1f, 0f, 255f,
+                0f, 0f, 0f, 1f, 0f
+            ))
+        colorFilter = ColorFilter.colorMatrix(colorMatrix)
+    }
+
     fun makeCurrentColorPermanent(){
         permanentColor = colorFilter
     }

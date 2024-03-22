@@ -1,8 +1,10 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites.characters.bosses
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.res.painterResource
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
@@ -21,6 +23,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.PI
+import kotlin.math.min
+import kotlin.random.Random
 
 class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     endCinematicParts = listOf(
@@ -31,15 +36,15 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
             name = "???"
         ),
     ),
-    sprite = BasicSprite(R.drawable.big_isaac,x,y,1),
+    sprite = BasicSprite(R.drawable.first_boss,x,y,0),
     game = game,
-    basicAnimationSequence = listOf(1),
-    speed = 0.05f,
-    hearts = setBasicHearts(40),
-    leftAnimationSequence = listOf(3,4,5),
-    topAnimationSequence = listOf(9,10,11),
-    bottomAnimationSequence = listOf(0,1,2),
-    rightAnimationSequence = listOf(6,7,8),
+    basicAnimationSequence = listOf(0,1),
+    speed = 0.06f,
+    hearts = setBasicHearts(60),
+    leftAnimationSequence = listOf(0,1),
+    topAnimationSequence = listOf(0,1),
+    bottomAnimationSequence = listOf(0,1),
+    rightAnimationSequence = listOf(0,1),
     target = game.controllableCharacter!!,
 ) {
 
@@ -55,16 +60,24 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         game.musicTrack.value = R.raw.boss
     }
 
-    var countdown : Job? = null
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 4f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f)
-    var pattern = 0
     override fun copy() : NinjaBoss{
         return NinjaBoss(sprite.x,sprite.y, game)
     }
 
+    var pattern : Int  ? = null
+
+    val patternTime = 5000L
+
+    var patternCountdown = GlobalScope.launch {  }
+
+    val contactDamages = 1f
+
+    val contactKnockback = 0.2f
+
     override fun spawn(x: Float, y:Float){
         game.ath["boss"] = hearts
-        game.addCharacter(this)
+        game.addCharacter(this,true)
         changePos(x,y)
         game.cinematic.value = Pair(
             startCinematic,true
@@ -72,43 +85,58 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     }
 
     fun randomPattern(){
+        action.cancel()
+        disablePathFollowing()
+        patternCountdown.cancel()
+        reflect = false
+        sprite.normalColor()
+        game.invalidate()
+        val patterns = listOf<()->Unit>(
+            {
+                attackPlayer()
+                setPatternCountdown()
+            },
+            {
+                blind()
+            },
+            {
+                setPatternCountdown()
+                reflectShots()
+            },
+            {
+                dashToCenter()
+            }
+        )
+        var patternIndex = (patterns.indices).random()
+        while (patternIndex == pattern){
+            patternIndex = (patterns.indices).random()
+        }
+        pattern = patternIndex
+        patterns[patternIndex].invoke()
+    }
+    fun reflectShots(){
+        reflect = true;
+        sprite.reverseColor()
+        game.invalidate()
+        attackPlayer()
+    }
+
+    fun attackPlayer(){
         disablePathFollowing()
         action.cancel()
         if(!game.ended) {
-            if (alive) {
-                if (countdown != null) {
-                    countdown!!.cancel()
-                }
-                var newPattern = (1..5).random()
-                while (newPattern == pattern) {
-                    newPattern = (1..5).random()
-                }
-                pattern = newPattern
-                GlobalScope.launch {
-                    delay(1000)
-                    when (pattern) {
-                        1 -> chasePlayer()
-                        2 -> aimPlayer()
-                        3 -> teleportToPlayer()
-                        4 -> reflectShots()
-                        else -> spawnEnemies()
+            action = setInterval(0, 100) {
+                if (!inBoundingBox(target!!.sprite.x, target!!.sprite.y)) {
+                    moveTo(target!!.sprite.x, target!!.sprite.y)
+                    if (!isPathFree(target!!.sprite.x, target!!.sprite.y)) {
+                        followPlayer()
                     }
+                } else {
+                    target!!.healthDown(contactDamages, contactKnockback, currentDirection)
+                    randomPattern()
                 }
             }
         }
-    }
-    fun chasePlayer(){
-        disablePathFollowing()
-        action = setInterval(0,33){
-            moveTo(target!!.sprite.x, target!!.sprite.y)
-            if(target!!.inBoundingBox(sprite.x, sprite.y)){
-                target!!.healthDown(1f, 0.2f, currentDirection)
-                randomPattern()
-            } else if(!isPathFree(target!!.sprite.x, target!!.sprite.y)){
-                followPlayer()
-            }
-        }
-        patternCountdown()
     }
 
     fun followPlayer(){
@@ -117,120 +145,202 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         pathFollow = true
         action = setInterval(0,100){
             if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
-                randomPattern()
+                attackPlayer()
             }
         }
     }
 
-    fun aimPlayer(){
-        disablePathFollowing()
-        if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)>projectile.realRange(game)){
-            action = setInterval(0,33){
-                moveTo(target!!.sprite.x, target!!.sprite.y)
-                if(getDistance(sprite.x, sprite.y, target!!.sprite.x, target!!.sprite.y)<projectile.realRange(game)){
-                    action.cancel()
-                    aimPlayer()
-                } else if(!isPathFree(target!!.sprite.x, target!!.sprite.y)){
-                    action.cancel()
-                    setupPath(target!!.sprite.x, target!!.sprite.y)
-                    pathFollow = true
-                    action = setInterval(0,100){
-                        if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
-                            randomPattern()
-                        }
-                    }
-                }
-            }
-        } else {
-            action = GlobalScope.launch {
-                repeat(3){
-                    while(game.pause){
-                        delay(33)
-                    }
-                    val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
-                    val rotationPoints = listOf(
-                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], degreesToRadiant(40f)),
-                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], degreesToRadiant(80f)),
-                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], degreesToRadiant(-40f)),
-                        rotationFromPoint(target!!.sprite.x, target!!.sprite.y, center[0], center[1], degreesToRadiant(-80f))
-                    )
-                    projectile.aimTarget(target!!, sprite.x, sprite.y)
-                    for(rotationPoint in rotationPoints){
-                        projectile.fireProjectile(game, sprite.x, sprite.y, rotationPoint[0], rotationPoint[1])
-                    }
-                    delay(1500)
-                }
-                randomPattern()
-            }
-        }
-    }
-
-    fun teleportToPlayer(){
-        GlobalScope.launch {
-            sprite.setTransparencyLevel(0.75f)
-            delay(33)
-            sprite.setTransparencyLevel(0.5f)
-            delay(33)
-            sprite.setTransparencyLevel(0.25f)
-            delay(33)
-            sprite.invisible()
-            val xPos = when (Math.random()) {
-                in 0f..0.5f -> target!!.sprite.x - 50f
-                else -> target!!.sprite.x + 50f
-            }
-            val yPos = when (Math.random()) {
-                in 0f..0.5f -> target!!.sprite.y + 50f
-                else -> target!!.sprite.y - 50f
-            }
-            delay(1000)
-            while (game.pause){
-                delay(33)
-            }
-            changePos(xPos, yPos)
-            sprite.visible()
-            sprite.setTransparencyLevel(0.25f)
-            delay(15)
-            sprite.setTransparencyLevel(0.5f)
-            delay(15)
-            sprite.setTransparencyLevel(0.75f)
-            delay(15)
-            sprite.setTransparencyLevel(1f)
-            chasePlayer()
-        }
-
-    }
-    fun patternCountdown(){
-        countdown = GlobalScope.launch {
-            delay(5000)
+    fun setPatternCountdown(){
+        patternCountdown = GlobalScope.launch {
+            delay(patternTime)
             randomPattern()
         }
     }
 
-    fun reflectShots(){
-        reflect = true;
-        sprite.colorFilter = ColorFilter.colorMatrix(
-            ColorMatrix(floatArrayOf(
-                -1f, 0f, 0f, 0f, 255f,
-                0f, -1f, 0f, 0f, 255f,
-                0f, 0f, -1f, 0f, 255f,
-                0f, 0f, 0f, 1f, 0f
-            ))
+    fun blind(){
+        game.blinded = true
+        targetable = false
+        game.controllableCharacter!!.totalBlind()
+        invisible {
+            targetable = true
+            game.controllableCharacter!!.recoverView()
+            dashPosition()
+        }
+    }
+
+    fun dashPosition(){
+        val minMaxCoordinates = game.map.currentRoom().getMinMaxCoordinates()
+        val targetCoordinates = Pair(
+            target!!.sprite.x,
+            target!!.sprite.y
         )
-        randomPattern()
+        val horizontal = Random.nextBoolean()
+        when(horizontal){
+            true->{
+                val left = Random.nextBoolean()
+                val startCoordinates = when(left){
+                    true->Pair(
+                        minMaxCoordinates.first.first,
+                        targetCoordinates.second
+                    )
+                    else -> Pair(
+                        minMaxCoordinates.second.first,
+                        targetCoordinates.second
+                    )
+                }
+                val endCoordinates = when(left){
+                    true->Pair(
+                        minMaxCoordinates.second.first,
+                        targetCoordinates.second
+                    )
+                    else -> Pair(
+                        minMaxCoordinates.first.first,
+                        targetCoordinates.second
+                    )
+                }
+                dash(startCoordinates,endCoordinates){
+                    game.blinded = false
+                    land()
+                }
+            }
+            else->{
+                val top = Random.nextBoolean()
+                val startCoordinates = when(top){
+                    true->Pair(
+                        targetCoordinates.first,
+                        minMaxCoordinates.first.second
+                    )
+                    else->Pair(
+                        targetCoordinates.first,
+                        minMaxCoordinates.second.second
+                    )
+                }
+                val endCoordinates = when(top){
+                    true->Pair(
+                        targetCoordinates.first,
+                        minMaxCoordinates.second.second
+                    )
+                    else->Pair(
+                        targetCoordinates.first,
+                        minMaxCoordinates.first.second
+                    )
+                }
+                dash(startCoordinates,endCoordinates){
+                    game.blinded = false
+                    land()
+                }
+            }
+        }
+    }
+
+    fun dash(startCoordinates : Pair<Float,Float>, endCoordinates : Pair<Float,Float>, dashSpeed : Float = 0.3f, action : ()->Unit){
+        intangible = true
+        changePos(startCoordinates.first,startCoordinates.second)
+        val dashDelay = 500L
+        val dashCheckDelay = 33L
+        val oldSpeed = speed
+        speed = dashSpeed
         GlobalScope.launch {
-            delay(5000)
-            reflect = false
-            sprite.normalColor()
+            delay(dashDelay)
+            while (sprite.x != endCoordinates.first || sprite.y != endCoordinates.second){
+                moveTo(endCoordinates.first,endCoordinates.second)
+                if(inBoundingBox(target!!.sprite.x, target!!.sprite.y)){
+                    target!!.healthDown(contactDamages, contactKnockback, currentDirection)
+                }
+                delay(dashCheckDelay)
+            }
+            speed = oldSpeed
+            action()
         }
     }
 
-    fun spawnEnemies(){
-        if(!game.map.currentRoom().enemiesAlive(game)) {
-            game.map.currentRoom().enemyList = mutableListOf()
-            game.map.currentRoom().spawnEnemies()
+    fun land(){
+        val globalIndex = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
+        val closestAvailableTile = closestAvailableTile(globalIndex.first, globalIndex.second)
+        val closestAvailableTileCoordinates = game.map.getPositionFromMapIndex(closestAvailableTile!!.first, closestAvailableTile!!.second)
+        val landCheckDelay = 33L
+        GlobalScope.launch {
+            while (game.map.inForbiddenArea(sprite.x,sprite.y)){
+                moveTo(closestAvailableTileCoordinates.first, closestAvailableTileCoordinates.second)
+                delay(landCheckDelay)
+            }
+            targetable = true
+            intangible = false
+            flying = false
+            randomPattern()
         }
-        randomPattern()
     }
 
+    fun invisible(action : ()->Unit){
+        val invisibleStep = 0.25f
+        var invisibleValue = 1f
+        val stepDelay = 33L
+        val startDelay = 750L
+        val endDelay = 1000L
+        GlobalScope.launch {
+            delay(startDelay)
+            while (invisibleValue>=0f){
+                sprite.setTransparencyLevel(invisibleValue)
+                game.invalidate()
+                invisibleValue-=invisibleStep
+                delay(stepDelay)
+            }
+            sprite.invisible()
+            delay(endDelay)
+            sprite.setTransparencyLevel(1f)
+            sprite.visible()
+            action()
+        }
+    }
+
+    fun dashToCenter(){
+        val delay = 500L
+        val roomCenter = game.map.currentRoom().getRoomCenter()
+        GlobalScope.launch {
+            delay(delay)
+            dash(
+                Pair(
+                    sprite.x,
+                    sprite.y
+                ),
+                Pair(
+                    roomCenter.first,
+                    roomCenter.second
+                ),
+                dashSpeed = speed
+            ){
+                projectiles()
+            }
+        }
+    }
+
+    fun projectiles(){
+        val projectilesDelay = 1000L
+        GlobalScope.launch {
+            repeat(3){
+                projectileWave()
+                delay(projectilesDelay)
+            }
+            randomPattern()
+        }
+    }
+
+    fun projectileWave(){
+        val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
+        var radiant = 0f
+        val radiantStep = (2* PI)/6
+        val limit = 2* PI
+        while (radiant<=limit){
+            val projectileDirection = rotationFromPoint(
+                target!!.sprite.x,
+                target!!.sprite.y,
+                center[0],
+                center[1],
+                (PI / 2).toFloat()
+            )
+            projectile.fireProjectile(game,sprite.x,sprite.y,projectileDirection[0],projectileDirection[1])
+            radiant = (radiant+radiantStep).toFloat()
+        }
+    }
 
 }

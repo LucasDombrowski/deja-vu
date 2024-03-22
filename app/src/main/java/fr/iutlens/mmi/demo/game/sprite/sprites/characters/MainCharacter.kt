@@ -46,6 +46,8 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var dragAction = false
 
+    var previousViewingDistance = 4
+
     var viewingDistance = 4
 
     var previousPathIndicatorTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
@@ -81,6 +83,15 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 targetIndicator.y = sprite.y
             }
         }
+    }
+
+    fun totalBlind(){
+        previousViewingDistance = viewingDistance
+        viewingDistance = 0
+    }
+
+    fun recoverView(){
+        viewingDistance = previousViewingDistance
     }
 
     fun targetDifference() : Float{
@@ -424,7 +435,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         val distances : MutableMap<Float,Enemy> = mutableMapOf<Float,Enemy>()
         with(game.characterList.iterator()) {
             forEach {
-                if(it is Enemy) {
+                if(it is Enemy && it.targetable) {
                     if(!game.blinded || distanceWith(it) < viewingDistance*game.map.tileArea.w) {
                         distances[getDistance(sprite.x, sprite.y, it.sprite.x, it.sprite.y)] = it
                     }

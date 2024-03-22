@@ -34,9 +34,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        loadSpritesheet(R.drawable.ninja_level,12,6)
-        loadSpritesheet(R.drawable.isaac, 9, 4)
-        loadSpritesheet(R.drawable.big_isaac, 3, 4)
+        loadSpritesheet(R.drawable.ninja_level,16,6)
         loadSpritesheet(R.drawable.projectiles,6,1)
         loadSpritesheet(R.drawable.transparent, 1,1)
         loadSpritesheet(R.drawable.target_indicator, 1,1)
@@ -45,6 +43,8 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.chrono,6,4)
         loadSpritesheet(R.drawable.smoke_animation,3,2)
         loadSpritesheet(R.drawable.collectibles,4,2)
+        loadSpritesheet(R.drawable.isaac, 9, 4)
+        loadSpritesheet(R.drawable.first_boss, 2, 1)
 
         loadSound(R.raw.text_sound_effect)
         loadSound(R.raw.coin)
