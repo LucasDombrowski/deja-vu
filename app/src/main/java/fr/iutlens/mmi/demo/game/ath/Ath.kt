@@ -126,6 +126,7 @@ fun Coins(n: MutableState<Int>){
             .aspectRatio(1f)){
             Image(painter = painterResource(id = R.drawable.coin), contentDescription = "Pièce", contentScale = ContentScale.Fit)
         }
+        Spacer(modifier = Modifier.width((screenWidth/120).dp))
         Text(text = n.value.toString(), color = Color.White, fontSize = fontSize, style = TextStyle(
             fontFamily = MainFont,
             fontWeight = FontWeight.Normal
