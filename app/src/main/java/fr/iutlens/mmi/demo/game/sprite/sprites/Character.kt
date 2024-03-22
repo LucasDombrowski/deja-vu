@@ -330,6 +330,7 @@ open class Character(
         }
         if(this is Enemy && this is Boss){
             action.cancel()
+            game.killAllEnemies()
             Music.mute = true
             game.cinematic.value = Pair(
                 Cinematic(endCinematicParts,game){
@@ -341,9 +342,6 @@ open class Character(
                 true
             )
 
-        }
-        if(this==game.controllableCharacter!!.target){
-            game.controllableCharacter!!.getClosestEnemy()
         }
         game.invalidate()
     }

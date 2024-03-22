@@ -195,9 +195,7 @@ open class Game(val map : Map,
         controllableCharacter = MainCharacter(x = map.characterStartPosition().first, y = map.characterStartPosition().second, game = this)
         addCharacter(controllableCharacter!!)
         ath["hearts"] = controllableCharacter!!.hearts
-        addSprite(controllableCharacter!!.targetIndicator)
         addSprite(controllableCharacter!!.pathIndicator)
-        controllableCharacter!!.targetIndicator.invisible()
         controllableCharacter!!.pathIndicator.invisible()
         setupControls()
     }
@@ -206,21 +204,7 @@ open class Game(val map : Map,
         onTap = {
             (x,y)->
             if(!pause) {
-                var targetChange = false
-                for (character in characterList) {
-                    if (character.inBoundingBox(x, y) && character is Enemy) {
-                        targetChange = true
-                        if (character != controllableCharacter!!.target) {
-                            controllableCharacter!!.target = character
-                            controllableCharacter!!.setupTargetFollow()
-                        } else {
-                            controllableCharacter!!.target = null
-                        }
-                    }
-                }
-                if (!targetChange) {
-                    controllableCharacter!!.tapMovingBehavior(x, y)
-                }
+                controllableCharacter!!.tapMovingBehavior(x, y)
             }
         }
         onDragStart = {
@@ -330,6 +314,14 @@ open class Game(val map : Map,
         )
     }
 
+    fun killAllEnemies(){
+        while (characterList.any { it is Enemy }){
+            characterList.filter {
+                it is Enemy
+            }.first().die()
+        }
+    }
+
     var pause = false;
     /**
      * View
@@ -343,6 +335,8 @@ open class Game(val map : Map,
     var ended = false
 
     var blinded = false
+
+    var blindColor = Color.Black
     @Composable
     fun View(modifier: Modifier = Modifier
         .fillMaxSize()
@@ -389,22 +383,11 @@ open class Game(val map : Map,
                             size = Size(map.tileArea.w.toFloat(), map.tileArea.w.toFloat())
                         )
                     )
-                    if(!controllableCharacter!!.targetIndicator.isInvisible() && controllableCharacter!!.target!=null) {
-                        path.addOval(
-                            Rect(
-                                offset = Offset(
-                                    controllableCharacter!!.target!!.sprite.x - map.tileArea.w/2,
-                                    controllableCharacter!!.target!!.sprite.y - map.tileArea.w/2
-                                ),
-                                size = Size(map.tileArea.w.toFloat(), map.tileArea.w.toFloat())
-                            )
-                        )
-                    }
                     background.paint(this, elapsed)
                     spriteList.paint(this, elapsed)
                     drawRect(
                         topLeft = Offset.Zero,
-                        color = Color(0,0,0,224),
+                        color = blindColor,
                         size = Size(
                             (map.tileArea.sizeX*map.tileArea.w).toFloat(),
                             (map.tileArea.sizeY*map.tileArea.h).toFloat()
@@ -420,13 +403,6 @@ open class Game(val map : Map,
                 }
             }
             // Dessin proprement dit. On précise la transformation à appliquer avant
-
-
-
-
-
-
-
         }
 
         // Gestion du rafraîssement automatique si update et animationDelay sont défnis

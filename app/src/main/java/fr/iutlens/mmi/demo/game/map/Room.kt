@@ -519,7 +519,9 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
             if (!enemiesAlive(game)) {
                 open()
                 endChallenge(game)
+                game.killAllEnemies()
                 enemyList = mutableListOf()
+                game.deleteSprite(game.controllableCharacter!!.targetIndicator)
             }
         }
     }

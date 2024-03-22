@@ -12,16 +12,16 @@ class NinjaShuriken() : Item(
     description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque pulvinar tempor neque at eleifend. Nam odio nunc, placerat volutpat tempor non, iaculis nec lectus. Curabitur in nulla fermentum, aliquam velit eu, mattis ipsum. Suspendisse eget lectus ex. Nulla sed nisl consequat, sodales nulla eget, blandit nulla. Nunc eget rutrum est, nec euismod leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque pulvinar tempor neque at eleifend. Nam odio nunc, placerat volutpat tempor non, iaculis nec lectus. Curabitur in nulla fermentum, aliquam velit eu, mattis ipsum. Suspendisse eget lectus ex. Nulla sed nisl consequat, sodales nulla eget, blandit nulla. Nunc eget rutrum est, nec euismod leo.",
     effects = {
         game ->  game.controllableCharacter!!.directProjectileBehaviors.add {
-        val center = getCenter(game.controllableCharacter!!.target!!.sprite.x, game.controllableCharacter!!.target!!.sprite.y, game.controllableCharacter!!.sprite.x, game.controllableCharacter!!.sprite.y)
-        val firstProjectile = rotationFromPoint(game.controllableCharacter!!.target!!.sprite.x,
-            game.controllableCharacter!!.target!!.sprite.y,
+        val center = getCenter(game.controllableCharacter!!.aimOffset().first, game.controllableCharacter!!.aimOffset().second, game.controllableCharacter!!.sprite.x, game.controllableCharacter!!.sprite.y)
+        val firstProjectile = rotationFromPoint(game.controllableCharacter!!.aimOffset().first,
+            game.controllableCharacter!!.aimOffset().second,
             center[0],
             center[1],
             (PI / 6).toFloat()
         )
         val secondProjectile = rotationFromPoint(
-            game.controllableCharacter!!.target!!.sprite.x,
-            game.controllableCharacter!!.target!!.sprite.y,
+            game.controllableCharacter!!.aimOffset().first,
+            game.controllableCharacter!!.aimOffset().second,
             center[0],
             center[1],
             (-PI / 6).toFloat()
