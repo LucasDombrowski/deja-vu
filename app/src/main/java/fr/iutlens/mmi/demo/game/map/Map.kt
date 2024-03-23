@@ -290,10 +290,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             name = "",
             effect = {},
             reverseEffect = {},
-        ),
-            Blind(),
-            SpeedUp(),
-            SpeedDown())
+        ))
         val currentMap = this
         var room : Room ? = BasicRoom(currentMap, challenge = challenges.random())
         val lastRoom = roomNumber+1

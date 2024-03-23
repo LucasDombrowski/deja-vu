@@ -19,6 +19,8 @@ class ShopItem(val item : Item, var price: Int) {
         game.addSprite(textSprite)
     }
 
+    var active : Boolean = true
+
     fun copy() : ShopItem{
         return ShopItem(item,price)
     }
@@ -33,6 +35,7 @@ class ShopItem(val item : Item, var price: Int) {
             item.get(game)
             game.deleteSprite(imageSprite)
             game.deleteSprite(textSprite)
+            active = false
         }
     }
 
