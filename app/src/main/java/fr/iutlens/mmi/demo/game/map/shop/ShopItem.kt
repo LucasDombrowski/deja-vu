@@ -10,6 +10,8 @@ class ShopItem(val item : Item, var price: Int) {
     var textSprite = TextSprite(price.toString(),75f, Color.White,false,0f,0f)
     val imageSprite = ImageSprite(item.image, 150, 0f,0f)
 
+    var active = true
+
     fun display(game: Game, x:Float, y:Float){
         imageSprite.x = x
         imageSprite.y = y
@@ -33,6 +35,7 @@ class ShopItem(val item : Item, var price: Int) {
             item.get(game)
             game.deleteSprite(imageSprite)
             game.deleteSprite(textSprite)
+            active = false
         }
     }
 

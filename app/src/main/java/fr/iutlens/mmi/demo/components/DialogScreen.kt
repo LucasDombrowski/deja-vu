@@ -115,9 +115,6 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, conten
     }
 
     var textSequence = generateTextSequence()
-    textSequence.forEach {
-        Log.i("text sequence", "$it")
-    }
     var textSequenceIndex by remember {
         mutableStateOf(0)
     }

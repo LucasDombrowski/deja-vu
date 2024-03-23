@@ -47,9 +47,8 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
             x, y ->
             with(shopItems.iterator()){
                 forEach {
-                    if(it.inImageBox(x,y)){
+                    if(it.inImageBox(x,y) && it.active){
                         it.buy(game)
-                        shopItems.remove(it)
                     }
                 }
             }

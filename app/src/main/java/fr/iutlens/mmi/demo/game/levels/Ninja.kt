@@ -36,7 +36,7 @@ import kotlin.reflect.KClass
 
 class Ninja : Game(
     map = Map(
-        roomInterval = 5..7,
+        roomInterval = 8..10,
         drawable = R.drawable.ninja_level,
         treasureRooms = 1
     ),

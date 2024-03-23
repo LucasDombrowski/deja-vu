@@ -40,6 +40,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                 }
                 if (alive) {
                     if (!chasing) {
+                        targetable = false
                         sprite.setTransparencyLevel(0.75f)
                         delay(33)
                         sprite.setTransparencyLevel(0.5f)
@@ -66,6 +67,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                         sprite.setTransparencyLevel(0.75f)
                         delay(15)
                         sprite.setTransparencyLevel(1f)
+                        targetable = true
                         action = GlobalScope.launch {
                             pattern()
                         }
