@@ -120,7 +120,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             currentCol = mapChanges["currentCol"] as Int
             entranceDoor = mapChanges["entranceDoor"] as String
             sequence.add(mapChanges["nextRoom"] as String)
-            if((1..4).random() == 1 && it<roomNumber-1 && it>0 && bigRooms<treasureRooms+1){
+            if((1..4).random() == 1 && it<roomNumber-2 && it>0 && bigRooms<treasureRooms+1){
                 bigRooms++
                 mapChanges = generateNextRoom(map,currentRow,currentCol,entranceDoor,"$n.5")
                 currentRow = mapChanges["currentRow"] as Int
@@ -304,15 +304,11 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         val roomList : MutableMap<String,Room> = mutableMapOf()
         val randomTreasureRooms = mutableListOf<String>()
         repeat(treasureRooms){
-            var number = (2..roomNumber).random().toString()
+            var number = (2..<roomNumber).random().toString()
             while(number in randomTreasureRooms || findDoubleRoom(number.toInt(), challenges)!=null){
-                number = (2..roomNumber).random().toString()
+                number = (2..<roomNumber).random().toString()
             }
             randomTreasureRooms.add(number)
-        }
-        var shopRoom = (2..roomNumber).random().toString()
-        while(shopRoom in randomTreasureRooms || findDoubleRoom(shopRoom.toInt(), challenges)!=null){
-            shopRoom = (2..roomNumber).random().toString()
         }
 
         with(mapPath!!.iterator()){
@@ -325,7 +321,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                                  "1"->StartingRoom(currentMap)
                                  lastRoom.toString()->BossRoom(currentMap)
                                  in randomTreasureRooms->TreasureRoom(map = currentMap)
-                                 shopRoom->ShopRoom(currentMap)
+                                 (lastRoom-1).toString()->ShopRoom(currentMap)
                                  else->{
                                      if(!it.contains(".5")){
                                          if(findDoubleRoom(it.toInt(), challenges)!=null){
