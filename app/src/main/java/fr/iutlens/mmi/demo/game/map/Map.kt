@@ -227,6 +227,7 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
                 mapList.add(row)
             }
         }
+
         val map = StringBuilder()
         with(mapList.iterator()){
             forEach {
@@ -285,24 +286,30 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
     }
 
 
-    fun generateRooms(){
-        val challenges = mutableListOf<Challenge>(Challenge(
-            name = "",
-            effect = {},
-            reverseEffect = {},
-        ))
+    fun generateRooms() {
+        val challenges = mutableListOf<Challenge>(
+            Challenge(
+                name = "",
+                effect = {},
+                reverseEffect = {},
+            )
+        )
         val currentMap = this
-        var room : Room ? = BasicRoom(currentMap, challenge = challenges.random())
-        val lastRoom = roomNumber+1
-        val rowsToAdd = room!!.row+2
-        val colsToAdd = room!!.col+2
+        var room: Room? = BasicRoom(currentMap, challenge = challenges.random())
+        val lastRoom = roomNumber + 1
+        val rowsToAdd = room!!.row + 2
+        val colsToAdd = room!!.col + 2
         var currentRow = 0
         var currentCol = 0
-        val roomList : MutableMap<String,Room> = mutableMapOf()
+        val roomList: MutableMap<String, Room> = mutableMapOf()
         val randomTreasureRooms = mutableListOf<String>()
-        repeat(treasureRooms){
+        repeat(treasureRooms) {
             var number = (2..<roomNumber).random().toString()
-            while(number in randomTreasureRooms || findDoubleRoom(number.toInt(), challenges)!=null){
+            while (number in randomTreasureRooms || findDoubleRoom(
+                    number.toInt(),
+                    challenges
+                ) != null
+            ) {
                 number = (2..<roomNumber).random().toString()
             }
             randomTreasureRooms.add(number)
@@ -370,7 +377,11 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
             }
 
         }
-        rooms = roomList.toSortedMap().values.toMutableList()
+        rooms = roomList.toSortedMap(
+            comparator = Comparator { o1, o2 ->
+                o1.toInt() - o2.toInt()
+            }
+        ).values.toMutableList()
 
         for(i in 0..<roomSequence!!.size){
             when{
