@@ -30,7 +30,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     sprite =  BasicSprite(R.drawable.chrono,x,y,2),
     game = game,
     basicAnimationSequence = listOf(2),
-    speed = 0.1f,
+    speed = 0.125f,
     invulnerability = 750,
     hearts = setBasicHearts(5),
     leftAnimationSequence = listOf(18,19,20,21,22,23),

@@ -45,11 +45,6 @@ open class Boss(
             sprite.semiWhiteColor()
             delay(100)
             sprite.permanentColor()
-            if(filledHeart()<=hearts.size/2 && filledHeart()>hearts.size/4){
-                sprite.midLifeColor()
-            } else if(filledHeart()<=hearts.size/4){
-                sprite.lowLifeColor()
-            }
         }
         refreshHeathBar()
 

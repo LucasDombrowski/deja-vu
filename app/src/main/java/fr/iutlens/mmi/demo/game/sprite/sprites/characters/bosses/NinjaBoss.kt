@@ -25,13 +25,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.min
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     endCinematicParts = listOf(
         CinematicPart(
             "Élisa, la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
-            R.drawable.cinematic_character,
+            R.drawable.transparent,
             true,
             name = "???"
         ),
@@ -51,16 +52,21 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     val startCinematic = Cinematic(listOf(
         CinematicPart(
             "Élisa, la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
-            R.drawable.cinematic_character,
+            R.drawable.transparent,
             true,
             name = "???"
         ),
     ),game){
-        randomPattern()
+        game.blinded = false
+        game.controllableCharacter!!.recoverView()
         game.musicTrack.value = R.raw.boss
+        GlobalScope.launch {
+            delay(patternTime/5)
+            randomPattern()
+        }
     }
 
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 4f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 8f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f)
     override fun copy() : NinjaBoss{
         return NinjaBoss(sprite.x,sprite.y, game)
     }
@@ -75,10 +81,14 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
 
     val contactKnockback = 0.2f
 
+    val pauseCheckDelay = 33L
+
     override fun spawn(x: Float, y:Float){
         game.ath["boss"] = hearts
         game.addCharacter(this,true)
         changePos(x,y)
+        game.blinded = true
+        game.controllableCharacter!!.totalBlind()
         game.cinematic.value = Pair(
             startCinematic,true
         )
@@ -91,28 +101,31 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         reflect = false
         sprite.normalColor()
         game.invalidate()
-        val patterns = listOf<()->Unit>(
-            {
-                attackPlayer()
-                setPatternCountdown()
-            },
-            {
-                blind()
-            },
-            {
-                setPatternCountdown()
-                reflectShots()
-            },
-            {
-                dashToCenter()
+        if(alive) {
+            val patterns = listOf<() -> Unit>(
+                {
+                    attackPlayer()
+                    setPatternCountdown()
+                },
+                {
+                    blind()
+                },
+                {
+                    setPatternCountdown()
+                    reflectShots()
+                },
+                {
+                    dashToCenter()
+                }
+            )
+            var patternIndex = (patterns.indices).random()
+            while (patternIndex == pattern) {
+                patternIndex = (patterns.indices).random()
             }
-        )
-        var patternIndex = (patterns.indices).random()
-        while (patternIndex == pattern){
-            patternIndex = (patterns.indices).random()
+            Log.i("pattern index","$patternIndex")
+            pattern = patternIndex
+            patterns[patternIndex].invoke()
         }
-        pattern = patternIndex
-        patterns[patternIndex].invoke()
     }
     fun reflectShots(){
         reflect = true;
@@ -153,6 +166,9 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     fun setPatternCountdown(){
         patternCountdown = GlobalScope.launch {
             delay(patternTime)
+            while (game.pause){
+                delay(pauseCheckDelay)
+            }
             randomPattern()
         }
     }
@@ -162,7 +178,6 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         targetable = false
         game.controllableCharacter!!.totalBlind()
         invisible {
-            targetable = true
             game.controllableCharacter!!.recoverView()
             dashPosition()
         }
@@ -180,21 +195,21 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
                 val left = Random.nextBoolean()
                 val startCoordinates = when(left){
                     true->Pair(
-                        minMaxCoordinates.first.first,
+                        minMaxCoordinates.first.first-game.map.tileArea.w,
                         targetCoordinates.second
                     )
                     else -> Pair(
-                        minMaxCoordinates.second.first,
+                        minMaxCoordinates.second.first+game.map.tileArea.w,
                         targetCoordinates.second
                     )
                 }
                 val endCoordinates = when(left){
                     true->Pair(
-                        minMaxCoordinates.second.first,
+                        minMaxCoordinates.second.first+game.map.tileArea.w,
                         targetCoordinates.second
                     )
                     else -> Pair(
-                        minMaxCoordinates.first.first,
+                        minMaxCoordinates.first.first-game.map.tileArea.w,
                         targetCoordinates.second
                     )
                 }
@@ -208,21 +223,21 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
                 val startCoordinates = when(top){
                     true->Pair(
                         targetCoordinates.first,
-                        minMaxCoordinates.first.second
+                        minMaxCoordinates.first.second-game.map.tileArea.h
                     )
                     else->Pair(
                         targetCoordinates.first,
-                        minMaxCoordinates.second.second
+                        minMaxCoordinates.second.second+game.map.tileArea.h
                     )
                 }
                 val endCoordinates = when(top){
                     true->Pair(
                         targetCoordinates.first,
-                        minMaxCoordinates.second.second
+                        minMaxCoordinates.second.second+game.map.tileArea.h
                     )
                     else->Pair(
                         targetCoordinates.first,
-                        minMaxCoordinates.first.second
+                        minMaxCoordinates.first.second-game.map.tileArea.h
                     )
                 }
                 dash(startCoordinates,endCoordinates){
@@ -233,7 +248,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         }
     }
 
-    fun dash(startCoordinates : Pair<Float,Float>, endCoordinates : Pair<Float,Float>, dashSpeed : Float = 0.3f, action : ()->Unit){
+    fun dash(startCoordinates : Pair<Float,Float>, endCoordinates : Pair<Float,Float>, dashSpeed : Float = 0.5f, action : ()->Unit){
         intangible = true
         changePos(startCoordinates.first,startCoordinates.second)
         val dashDelay = 500L
@@ -242,11 +257,12 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         speed = dashSpeed
         GlobalScope.launch {
             delay(dashDelay)
-            while (sprite.x != endCoordinates.first || sprite.y != endCoordinates.second){
+            while (sprite.x.roundToInt() != endCoordinates.first.roundToInt() || sprite.y.roundToInt() != endCoordinates.second.roundToInt()){
                 moveTo(endCoordinates.first,endCoordinates.second)
                 if(inBoundingBox(target!!.sprite.x, target!!.sprite.y)){
                     target!!.healthDown(contactDamages, contactKnockback, currentDirection)
                 }
+                Log.i("currently dash","true")
                 delay(dashCheckDelay)
             }
             speed = oldSpeed
@@ -255,13 +271,17 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     }
 
     fun land(){
-        val globalIndex = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
-        val closestAvailableTile = closestAvailableTile(globalIndex.first, globalIndex.second)
-        val closestAvailableTileCoordinates = game.map.getPositionFromMapIndex(closestAvailableTile!!.first, closestAvailableTile!!.second)
         val landCheckDelay = 33L
         GlobalScope.launch {
             while (game.map.inForbiddenArea(sprite.x,sprite.y)){
-                moveTo(closestAvailableTileCoordinates.first, closestAvailableTileCoordinates.second)
+                val globalIndex = game.map.getMapIndexFromPosition(sprite.x, sprite.y)
+                val closestAvailableTile = closestAvailableTile(globalIndex.first, globalIndex.second)
+                val closestAvailableTileCoordinates = game.map.getPositionFromMapIndex(closestAvailableTile!!.first, closestAvailableTile!!.second)
+                val aimedCoordinates = Pair(
+                    closestAvailableTileCoordinates.first+game.map.tileArea.w/2,
+                    closestAvailableTileCoordinates.second+game.map.tileArea.h/2
+                )
+                moveTo(aimedCoordinates.first, aimedCoordinates.second)
                 delay(landCheckDelay)
             }
             targetable = true
@@ -307,7 +327,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
                     roomCenter.first,
                     roomCenter.second
                 ),
-                dashSpeed = speed
+                dashSpeed = speed*2
             ){
                 projectiles()
             }
@@ -315,28 +335,32 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     }
 
     fun projectiles(){
-        val projectilesDelay = 1000L
+        val projectilesDelay = 1500L
         GlobalScope.launch {
             repeat(3){
-                projectileWave()
-                delay(projectilesDelay)
+                while (game.pause){
+                    delay(pauseCheckDelay)
+                }
+                if(alive) {
+                    projectileWave()
+                    delay(projectilesDelay)
+                }
             }
-            randomPattern()
+            land()
         }
     }
 
     fun projectileWave(){
-        val center = getCenter(target!!.sprite.x, target!!.sprite.y, sprite.x, sprite.y)
         var radiant = 0f
-        val radiantStep = (2* PI)/6
-        val limit = 2* PI
+        val radiantStep = (2*PI)/8
+        val limit = 2*PI
         while (radiant<=limit){
             val projectileDirection = rotationFromPoint(
+                sprite.x,
+                sprite.y,
                 target!!.sprite.x,
                 target!!.sprite.y,
-                center[0],
-                center[1],
-                (PI / 2).toFloat()
+                radiant
             )
             projectile.fireProjectile(game,sprite.x,sprite.y,projectileDirection[0],projectileDirection[1])
             radiant = (radiant+radiantStep).toFloat()

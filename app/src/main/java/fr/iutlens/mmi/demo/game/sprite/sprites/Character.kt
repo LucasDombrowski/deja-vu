@@ -343,6 +343,7 @@ open class Character(
                     Music.mute = false
                     Music.musicLoop = false
                     game.musicTrack.value = R.raw.victory
+                    game.deleteSprite(game.controllableCharacter!!.targetIndicator)
                 },
                 true
             )

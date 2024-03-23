@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.util.Log
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.getSystemService
@@ -98,10 +99,11 @@ fun getTranslation(x1: Float, y1: Float, x2: Float, y2: Float) : List<Float>{
 
 fun rotationFromPoint(x : Float, y: Float, rotationX: Float, rotationY: Float, value: Float) : List<Float>{
     val centerRotation = rotationFromCenter(rotationX, rotationY, value)
-    val centerTranslation = getTranslation(centerRotation[0], centerRotation[1], rotationX, rotationY)
+    val centerPointRotation = rotationFromCenter(x,y,value)
+    val centerTranslation = getTranslation(centerPointRotation[0], centerPointRotation[1], x, y)
     return listOf(
-        rotationFromCenter(x,y, value)[0] + centerTranslation[0],
-        rotationFromCenter(x,y,value)[1] + centerTranslation[1]
+        centerRotation[0] + centerTranslation[0],
+        centerRotation[1] + centerTranslation[1]
     )
 }
 

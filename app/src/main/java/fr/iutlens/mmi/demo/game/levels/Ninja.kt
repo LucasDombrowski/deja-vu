@@ -80,7 +80,11 @@ class Ninja : Game(
              Music.mute = false
             }, true
         )
-        spawnBoss()
+        GlobalScope.launch {
+            delay(5000)
+            switchRoom(map.rooms!!.size-2)
+            map.currentRoom().placeCharacter(this@Ninja)
+        }
 
     }
 

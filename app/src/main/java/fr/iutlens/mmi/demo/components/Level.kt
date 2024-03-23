@@ -42,18 +42,28 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
         easing = LinearEasing
     ))
 
-    LaunchedEffect(key1 = "Fade In" ){
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = game ){
         enabled = true
     }
 
     game.onEnd = {
-        onEnd()
+        enabled = false
+        scope.launch {
+            delay(transitionDuration.toLong())
+            onEnd()
+        }
     }
     game.onRestart = {
-        onRestart()
+        enabled = false
+        scope.launch {
+            delay(transitionDuration.toLong())
+            onRestart()
+        }
     }
 
-    val scope = rememberCoroutineScope()
+
 
     game.onLeave = {
         enabled = false

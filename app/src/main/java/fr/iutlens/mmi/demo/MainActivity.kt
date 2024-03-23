@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.collectibles,4,2)
         loadSpritesheet(R.drawable.isaac, 9, 4)
         loadSpritesheet(R.drawable.first_boss, 2, 1)
+        loadSpritesheet(R.drawable.portal_book,1,1)
 
         loadSound(R.raw.text_sound_effect)
         loadSound(R.raw.coin)
