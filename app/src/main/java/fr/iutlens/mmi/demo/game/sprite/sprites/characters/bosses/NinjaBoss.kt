@@ -179,6 +179,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         game.controllableCharacter!!.totalBlind()
         invisible {
             game.controllableCharacter!!.recoverView()
+            sprite.normalColor()
             dashPosition()
         }
     }

@@ -73,9 +73,9 @@ class Camera(val game: Game) {
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.x < minXValue){
-                moveCamera(minXValue,sprite.y, speed = 25f)
+                moveCamera(minXValue,sprite.y, speed = 15f)
             } else if(game.controllableCharacter!!.sprite.x > maxXValue){
-                moveCamera(maxXValue,sprite.y, speed = 25f)
+                moveCamera(maxXValue,sprite.y, speed = 15f)
             } else if(distanceXWithCamera()>maxCameraDistance){
                 when{
                     x<sprite.x->{
@@ -118,9 +118,9 @@ class Camera(val game: Game) {
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.y < minYValue){
-                moveCamera(sprite.x,minYValue, speed = 25f)
+                moveCamera(sprite.x,minYValue, speed = 15f)
             } else if(game.controllableCharacter!!.sprite.y > maxYValue){
-                moveCamera(sprite.x,maxYValue, speed = 25f)
+                moveCamera(sprite.x,maxYValue, speed = 15f)
             } else if(distanceYWithCamera()>maxCameraDistance){
                 when{
                     y<sprite.y->{

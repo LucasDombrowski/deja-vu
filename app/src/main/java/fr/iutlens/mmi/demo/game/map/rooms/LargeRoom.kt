@@ -341,7 +341,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
         val minMaxPos = getMinMaxCoordinates()
         val topLeftCornerFloatPos = map.getPositionFromMapIndex(topLeftCorner!!.first, topLeftCorner!!.second)
         val bottomRightCornerFloatPos = Pair(
-            minMaxPos.second.first,
+            minMaxPos.second.first+map.tileArea.w*2,
             roomCenter.second
         )
         val center = getCenter(topLeftCornerFloatPos.first, topLeftCornerFloatPos.second, bottomRightCornerFloatPos.first, bottomRightCornerFloatPos.second)
@@ -353,7 +353,7 @@ class LargeRoom(val enterSide: String, val exitSide: String, enter: String ?=nul
         val minMaxPos = getMinMaxCoordinates()
         val bottomRightCornerFloatPos = map.getPositionFromMapIndex(bottomRightCorner!!.first, bottomRightCorner!!.second)
         val topLeftCornerFloatPos = Pair(
-            minMaxPos.first.first,
+            minMaxPos.first.first-map.tileArea.w*2,
             roomCenter.second
         )
         val center = getCenter(topLeftCornerFloatPos.first, topLeftCornerFloatPos.second, bottomRightCornerFloatPos.first, bottomRightCornerFloatPos.second)
