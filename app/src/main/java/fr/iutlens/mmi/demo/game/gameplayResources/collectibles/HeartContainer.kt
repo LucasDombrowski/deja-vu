@@ -5,10 +5,12 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.gameplayResources.items.OneHeart
+import fr.iutlens.mmi.demo.game.sprite.sprites.BigBook
 
 class HeartContainer(game: Game): Collectible(game, spriteIndex = 1, sound = R.raw.heart, collectEffect = {
     OneHeart().get(game)
     game.item["onPick"] = {
-        game.onEnd()
+        val bigBook = BigBook(game, game.map.currentRoom().getRoomCenter().first, game.map.currentRoom().getRoomCenter().second)
+        bigBook.setup()
     }
 })

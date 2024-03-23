@@ -42,7 +42,10 @@ open class Character(
     val bottomAnimationSequence : List<Int> = basicAnimationSequence,
     val animationDelay : Long = 100,
     var target : Character? = null,
-    var reflect : Boolean = false){
+    var reflect : Boolean = false,
+    var targetable : Boolean = true,
+    var flying : Boolean = false,
+    var intangible : Boolean = false){
 
 
     var movingAction : Job = GlobalScope.launch {
@@ -58,14 +61,13 @@ open class Character(
     var currentAnimationSequenceIndex : Int = 0
     val characterAnimation : Job = setInterval(0, animationDelay){
         GlobalScope.launch {
-            if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1 || game.pause || currentAnimationSequence===basicAnimationSequence){
+            if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1 || game.pause){
                 currentAnimationSequenceIndex = 0
                 sprite.ndx = currentAnimationSequence[0]
             } else {
                 currentAnimationSequenceIndex ++
                 sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
             }
-
         }
 
     }
@@ -73,11 +75,13 @@ open class Character(
         if(game.map.inForbiddenArea(
             x,
             y
-        )){
-            GlobalScope.launch {
-                stun()
-                delay(33)
-                restart()
+        ) && !intangible){
+            if(!flying || game.map.isSolidObstacle(x,y)){
+                GlobalScope.launch {
+                    stun()
+                    delay(33)
+                    restart()
+                }
             }
         } else {
             sprite.x = x
@@ -289,6 +293,7 @@ open class Character(
         game.deleteSprite(sprite)
         game.deleteCharacter(character = this)
         movingAction.cancel()
+        characterAnimation.cancel()
         if(this is Enemy && this !is Boss){
             smokeAnimation()
             action.cancel()
@@ -338,6 +343,7 @@ open class Character(
                     Music.mute = false
                     Music.musicLoop = false
                     game.musicTrack.value = R.raw.victory
+                    game.deleteSprite(game.controllableCharacter!!.targetIndicator)
                 },
                 true
             )

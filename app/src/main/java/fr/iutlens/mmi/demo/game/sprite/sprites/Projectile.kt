@@ -35,6 +35,7 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
     fun setup(game: Game, xStart: Float, yStart: Float) : Projectile{
         val newProjectile = copy()
         newProjectile.changePos(xStart,yStart)
+        newProjectile.sprite.colorFilter = sprite.colorFilter
         game.addSprite(newProjectile.sprite)
         return newProjectile
     }
@@ -92,7 +93,9 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
                                         }
                                     } else {
                                         friendly = !friendly
-                                        copy().fireProjectile(game, it.sprite.x, it.sprite.y, it.sprite.x - xStep, it.sprite.y - yStep)
+                                        val copiedProjectile = copy()
+                                        copiedProjectile.sprite.reverseColor()
+                                        copiedProjectile.fireProjectile(game, it.sprite.x, it.sprite.y, it.sprite.x - xStep, it.sprite.y - yStep)
                                     }
                                 }
                                 cancel()
@@ -113,7 +116,7 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
                         cancel()
                     }
                 }
-                if(game.map.inForbiddenArea(sprite.x, sprite.y)){
+                if(game.map.inForbiddenArea(sprite.x, sprite.y) && (game.map.isSolidObstacle(sprite.x, sprite.y))){
                     spriteAnimation.cancel()
                     game.deleteSprite(sprite)
                     cancel()

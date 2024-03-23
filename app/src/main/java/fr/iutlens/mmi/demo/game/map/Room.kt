@@ -5,10 +5,12 @@ import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Challenge
 import fr.iutlens.mmi.demo.game.gameplayResources.challenges.SpeedUp
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
+import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
+import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.utils.getCenter
 import java.util.LinkedList
@@ -37,24 +39,28 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                     when (this) {
                         is TreasureRoom -> 'ù'
                         is ShopRoom -> 'O'
+                        is BossRoom -> 'â'
                         else -> '8'
                     }
                 } else if(enter=="bottom"){
                     when(this){
                         is TreasureRoom->'*'
                         is ShopRoom->'P'
+                        is BossRoom -> 'ê'
                         else->'9'
                     }
                 } else if(enter=="left"){
                     when(this){
                         is TreasureRoom->','
                         is ShopRoom->'Q'
+                        is BossRoom->'û'
                         else->'A'
                     }
                 } else {
                     when(this){
                         is TreasureRoom->';'
                         is ShopRoom->'R'
+                        is BossRoom -> 'î'
                         else->'B'
                     }
                 }
@@ -77,24 +83,28 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                             when (this) {
                                 is TreasureRoom -> 'ù'
                                 is ShopRoom -> 'O'
+                                is BossRoom -> 'â'
                                 else -> '8'
                             }
                         } else if(exit=="bottom"){
                             when(this){
                                 is TreasureRoom->'*'
                                 is ShopRoom->'P'
+                                is BossRoom -> 'ê'
                                 else->'9'
                             }
-                        } else if (exit=="left"){
+                        } else if(exit=="left"){
                             when(this){
                                 is TreasureRoom->','
                                 is ShopRoom->'Q'
+                                is BossRoom->'û'
                                 else->'A'
                             }
                         } else {
                             when(this){
                                 is TreasureRoom->';'
                                 is ShopRoom->'R'
+                                is BossRoom -> 'î'
                                 else->'B'
                             }
                         }
@@ -104,7 +114,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         }
     }
 
-    fun randomTile(obstacles : Boolean = true): Char {
+    open fun randomTile(obstacles : Boolean = true): Char {
         when(obstacles){
             true->when((1..10).random()){
                 1->return 'J'
@@ -426,8 +436,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
 
     fun getMinMaxCoordinates() : Pair<Pair<Float,Float>,Pair<Float,Float>>{
         return Pair(
-            map.getPositionFromMapIndex(topLeftCorner!!.first, topLeftCorner!!.second),
-            map.getPositionFromMapIndex(bottomRightCorner!!.first, bottomRightCorner!!.second)
+            map.getPositionFromMapIndex(topLeftCorner!!.first+2, topLeftCorner!!.second+2),
+            map.getPositionFromMapIndex(bottomRightCorner!!.first-2, bottomRightCorner!!.second-2)
         )
     }
 

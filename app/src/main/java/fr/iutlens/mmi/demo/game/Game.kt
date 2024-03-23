@@ -96,6 +96,7 @@ import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
 import fr.iutlens.mmi.demo.game.sprite.Sprite
+import fr.iutlens.mmi.demo.game.sprite.mutableSpriteListOf
 import fr.iutlens.mmi.demo.game.sprite.sprites.Character
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
@@ -218,8 +219,11 @@ open class Game(val map : Map,
             controllableCharacter!!.dragEndBehavior()
         }
     }
-    fun addCharacter(character: Character){
+    fun addCharacter(character: Character, blindVisible : Boolean = false){
         addSprite(character.sprite)
+        if(blindVisible){
+            addNotBlindedSprite(character.sprite)
+        }
         characterList.add(character)
     }
 
@@ -229,6 +233,10 @@ open class Game(val map : Map,
 
     fun addSprite(sprite: Sprite){
         spriteList.add(0,sprite)
+    }
+
+    fun addNotBlindedSprite(sprite : Sprite){
+        notBlindedSpriteList.add(0,sprite)
     }
     fun deleteSprite(sprite : Sprite){
         if(sprite is BasicSprite) {
@@ -337,6 +345,9 @@ open class Game(val map : Map,
     var blinded = false
 
     var blindColor = Color.Black
+
+    val notBlindedSpriteList : MutableSpriteList = mutableSpriteListOf()
+    @SuppressLint("CoroutineCreationDuringComposition")
     @Composable
     fun View(modifier: Modifier = Modifier
         .fillMaxSize()
@@ -364,6 +375,7 @@ open class Game(val map : Map,
             )
             this.withTransform({ transform(transform.getMatrix(size)) }) {
                 if(blinded){
+
                     val path = Path()
                     path.addOval(
                         Rect(
@@ -374,15 +386,17 @@ open class Game(val map : Map,
                             size = Size(controllableCharacter!!.viewingDistance.toFloat()*map.tileArea.w,controllableCharacter!!.viewingDistance.toFloat()*map.tileArea.w)
                         )
                     )
-                    path.addOval(
-                        Rect(
-                            offset = Offset(
-                                controllableCharacter!!.pathIndicator.x - map.tileArea.w/2,
-                                controllableCharacter!!.pathIndicator.y - map.tileArea.w/2
-                            ),
-                            size = Size(map.tileArea.w.toFloat(), map.tileArea.w.toFloat())
+                    if(controllableCharacter!!.viewingDistance>0) {
+                        path.addOval(
+                            Rect(
+                                offset = Offset(
+                                    controllableCharacter!!.pathIndicator.x - map.tileArea.w / 2,
+                                    controllableCharacter!!.pathIndicator.y - map.tileArea.w / 2
+                                ),
+                                size = Size(map.tileArea.w.toFloat(), map.tileArea.w.toFloat())
+                            )
                         )
-                    )
+                    }
                     background.paint(this, elapsed)
                     spriteList.paint(this, elapsed)
                     drawRect(
@@ -397,6 +411,7 @@ open class Game(val map : Map,
                         background.paint(this, elapsed)
                         spriteList.paint(this, elapsed)
                     }
+                    notBlindedSpriteList.paint(this,elapsed)
                 } else {
                     background.paint(this, elapsed)
                     spriteList.paint(this, elapsed)

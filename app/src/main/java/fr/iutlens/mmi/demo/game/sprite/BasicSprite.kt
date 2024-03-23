@@ -50,7 +50,7 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
     var colorMatrix = ColorMatrix()
     override fun paint(drawScope: DrawScope, elapsed: Long) =
         drawScope.withTransform({
-            scale(scaleX,scaleY)
+            scale(scaleX,scaleY, Offset(x,y))
             rotate(rotate, Offset(x,y))
             translate(x,y)
         }){
@@ -81,6 +81,7 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
 
     fun normalColor(){
         colorFilter = ColorFilter.colorMatrix(ColorMatrix())
+        makeCurrentColorPermanent()
     }
     fun semiWhiteColor(){
         colorFilter = ColorFilter.colorMatrix(ColorMatrix(floatArrayOf(
@@ -108,6 +109,18 @@ open class BasicSprite(val spriteSheet: SpriteSheet,
             0f,0f,0.5f,0f,0f,
             0f,0f,0f,1f,0f
         ))
+        colorFilter = ColorFilter.colorMatrix(colorMatrix)
+        makeCurrentColorPermanent()
+    }
+
+    fun reverseColor(){
+        colorMatrix =
+            ColorMatrix(floatArrayOf(
+                -1f, 0f, 0f, 0f, 255f,
+                0f, -1f, 0f, 0f, 255f,
+                0f, 0f, -1f, 0f, 255f,
+                0f, 0f, 0f, 1f, 0f
+            ))
         colorFilter = ColorFilter.colorMatrix(colorMatrix)
         makeCurrentColorPermanent()
     }

@@ -24,7 +24,8 @@ import kotlin.collections.Map
 
 open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<Enemy> = listOf(), val treasureRooms : Int, var boss : Boss ? = null) {
 
-    val authorizedTiles : List<String> = listOf("C","D","E","F","G","H","I","W","X","Y","Z","&","é","(","-","è","~","¨","£","?",".")
+    val authorizedTiles : List<String> = listOf("C","D","E","F","G","H","I","W","X","Y","Z","&","é","(","-","è","~","¨","£","?",".","Ä")
+    val nonSolidObstacles : List<String> = listOf("Ë")
     var roomNumber = roomInterval.random()
     var tileMap = makeTileMap()
     var tileArea = makeTileArea()
@@ -38,14 +39,13 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         if(mapString==null) {
             generateMap()
         }
-        Log.i("mapPath","$mapPath")
         return mapString!!.trimIndent().toMutableTileMap(
-            "0123OPQRù*,;" +
-            "4567STUV:!°+" +
-            "89ABWXYZ¨£%µ" +
-            "CDEF&é(-?./§" +
-            "GHIJè_çà~#{[" +
-            "KLMN)=^$|@]}"
+            "0123OPQRù*,;âêûî" +
+            "4567STUV:!°+ôäëÿ" +
+            "89ABWXYZ¨£%µüïöÂ" +
+            "CDEF&é(-?./§ÊÛÎÔ" +
+            "GHIJè_çà~#{[ÄËÜÏ" +
+            "KLMN)=^$|@]}Ö<>¤"
         )
     }
 
@@ -90,6 +90,12 @@ open class Map(val roomInterval: IntRange, val drawable: Int, var enemies: List<
         val globalPosition = getMapIndexFromPosition(x,y)
         val room = getRoomFromMapIndex(globalPosition.first, globalPosition.second)
         return room!!.getElement(x,y) !in authorizedTiles
+    }
+
+    fun isSolidObstacle(x: Float, y: Float) : Boolean{
+        val globalPosition = getMapIndexFromPosition(x,y)
+        val room = getRoomFromMapIndex(globalPosition.first, globalPosition.second)
+        return room!!.getElement(x,y) !in nonSolidObstacles
     }
     fun generateMapPath() : MutableList<MutableList<String>>{
         var entranceDoor : String ?= null

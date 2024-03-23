@@ -30,7 +30,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     sprite =  BasicSprite(R.drawable.chrono,x,y,2),
     game = game,
     basicAnimationSequence = listOf(2),
-    speed = 0.1f,
+    speed = 0.125f,
     invulnerability = 750,
     hearts = setBasicHearts(5),
     leftAnimationSequence = listOf(18,19,20,21,22,23),
@@ -45,6 +45,8 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     val pathIndicator : DrawingSprite = DrawingSprite(R.drawable.path_indicator, sprite.x, sprite.y, drawColor = Color(243,214,55,128))
 
     var dragAction = false
+
+    var previousViewingDistance = 4
 
     var viewingDistance = 4
 
@@ -81,6 +83,15 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 targetIndicator.y = sprite.y
             }
         }
+    }
+
+    fun totalBlind(){
+        previousViewingDistance = viewingDistance
+        viewingDistance = 0
+    }
+
+    fun recoverView(){
+        viewingDistance = previousViewingDistance
     }
 
     fun targetDifference() : Float{
@@ -424,7 +435,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         val distances : MutableMap<Float,Enemy> = mutableMapOf<Float,Enemy>()
         with(game.characterList.iterator()) {
             forEach {
-                if(it is Enemy) {
+                if(it is Enemy && it.targetable) {
                     if(!game.blinded || distanceWith(it) < viewingDistance*game.map.tileArea.w) {
                         distances[getDistance(sprite.x, sprite.y, it.sprite.x, it.sprite.y)] = it
                     }
