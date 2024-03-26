@@ -45,7 +45,8 @@ open class Character(
     var reflect : Boolean = false,
     var targetable : Boolean = true,
     var flying : Boolean = false,
-    var intangible : Boolean = false){
+    var intangible : Boolean = false,
+    var solid : Boolean = false){
 
 
     var movingAction : Job = GlobalScope.launch {

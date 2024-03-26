@@ -44,7 +44,7 @@ class Chest(val itemList: List<Item>) {
     fun setup(x: Float, y:Float, game: Game){
         sprite.x = x
         sprite.y = y
-        game.addSprite(sprite)
+        game.addSprite(sprite, true)
         game.controllableCharacter!!.temporaryMovingInteraction = setCharacterInteraction(game)
     }
 }
