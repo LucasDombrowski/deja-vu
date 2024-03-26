@@ -358,7 +358,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 game.nextRoom()
             }
         } else {
-            temporaryMovingInteraction(x,y)
+            temporaryMovingInteraction(x,yCheckValue)
             if(inSolidCharacterBoundingBox(x,yCheckValue) || inSolidSpriteBoundingBox(x,yCheckValue)){
                 GlobalScope.launch {
                     stun()
