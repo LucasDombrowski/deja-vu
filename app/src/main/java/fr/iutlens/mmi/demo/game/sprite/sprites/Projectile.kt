@@ -1,8 +1,10 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites
 
 import android.util.Log
+import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
+import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.getAngle
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -12,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.round
 
-class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var speed: Float, var range: Float, var damages: Float, var knockback : Float, var aoe : Boolean = false, var onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
+class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var speed: Float, var range: Float, var damages: Float, var knockback : Float, var aoe : Boolean = false, val sound : Int , var onHitEffects : MutableList<(character : Character)->Unit> = mutableListOf()) {
 
     fun realSpeed(game: Game) : Float{
         return speed*((game.map.tileArea.w + game.map.tileArea.h)/2)
@@ -61,6 +63,8 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
     fun moveProjectile(xStep: Float, yStep: Float, game: Game){
         sprite.rotate = -getAngle(sprite.x, sprite.y, sprite.x+xStep, sprite.y+yStep)
         val spriteAnimation = animation(this)
+        val soundVolume = 0.075f
+        Music.playSound(sound, leftVolume = soundVolume, rightVolume = soundVolume)
         GlobalScope.launch {
             var contact = false
             repeat(round(realRange(game)/realSpeed(game)).toInt()){
@@ -154,6 +158,7 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
             range = range,
             damages = damages,
             knockback = knockback,
+            sound = sound
         )
         newProjectile.animation = animation
         return newProjectile

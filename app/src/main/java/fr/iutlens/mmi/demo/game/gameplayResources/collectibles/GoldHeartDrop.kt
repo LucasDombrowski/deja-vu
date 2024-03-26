@@ -8,7 +8,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 class GoldHeartDrop(game : Game) : Collectible(
     game = game,
     spriteIndex = 4,
-    sound = R.raw.heart,
+    sound = R.raw.grab_yellow_heart,
     collectEffect = {
         var toAdd = 1f
         for(heart in game.controllableCharacter!!.hearts){
