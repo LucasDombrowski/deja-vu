@@ -855,6 +855,17 @@ open class Game(val map : Map,
         }
     }
 
+    val shopkeeper = Character(
+        sprite = BasicSprite(
+            R.drawable.shopkeeper,
+            0f,
+            0f
+        ),
+        basicAnimationSequence = listOf(0),
+        game = this,
+        hearts = mutableListOf(),
+        speed = 0f
+    )
     init {
         initiate()
     }
