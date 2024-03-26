@@ -143,6 +143,8 @@ open class Game(val map : Map,
         LoyaltyCard()
     )
 
+    val solidSpriteList = mutableListOf<BasicSprite>()
+
     /**
      * Start Instant du début du jeu, utiliser pour calculer le temps écoulé
      */
@@ -231,8 +233,11 @@ open class Game(val map : Map,
         characterList.remove(character)
     }
 
-    fun addSprite(sprite: Sprite){
+    fun addSprite(sprite: Sprite, solid : Boolean = false){
         spriteList.add(0,sprite)
+        if(solid && sprite is BasicSprite){
+            solidSpriteList.add(sprite)
+        }
     }
 
     fun addNotBlindedSprite(sprite : Sprite){
@@ -782,6 +787,7 @@ open class Game(val map : Map,
         onTap = {
 
         }
+        pause = true
     }
     @Composable
     fun GameOver(){
@@ -864,7 +870,8 @@ open class Game(val map : Map,
         basicAnimationSequence = listOf(0),
         game = this,
         hearts = mutableListOf(),
-        speed = 0f
+        speed = 0f,
+        solid = true
     )
     init {
         initiate()

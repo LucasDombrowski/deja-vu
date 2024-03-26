@@ -317,9 +317,10 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     }
 
     override fun changePos(x: Float, y: Float){
+        val yCheckValue = y + (sprite.boundingBox.bottom - sprite.boundingBox.top)/3
         if(game.map.inForbiddenArea(
                 x,
-                y + (sprite.boundingBox.bottom - sprite.boundingBox.top)/3
+                yCheckValue
         )){
             GlobalScope.launch {
                 stun()
@@ -358,8 +359,16 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             }
         } else {
             temporaryMovingInteraction(x,y)
-            sprite.x = x
-            sprite.y = y
+            if(inSolidCharacterBoundingBox(x,yCheckValue) || inSolidSpriteBoundingBox(x,yCheckValue)){
+                GlobalScope.launch {
+                    stun()
+                    delay(33)
+                    restart()
+                }
+            } else {
+                sprite.x = x
+                sprite.y = y
+            }
             val collectibleListCopy = game.collectibleList.toList()
             with(collectibleListCopy.iterator()){
                 forEach {
@@ -372,6 +381,24 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             }
         }
         game.invalidate()
+    }
+
+    fun inSolidCharacterBoundingBox(x: Float,y: Float) : Boolean{
+        for(character in game.characterList){
+            if(character.inBoundingBox(x,y) && character !is MainCharacter && character.solid){
+                return true
+            }
+        }
+        return false
+    }
+
+    fun inSolidSpriteBoundingBox(x : Float,y : Float) : Boolean{
+        for(solidSprite in game.solidSpriteList){
+            if(solidSprite.boundingBox.left < x && solidSprite.boundingBox.right > x && solidSprite.boundingBox.top < y && solidSprite.boundingBox.bottom > y){
+                return true
+            }
+        }
+        return false
     }
     fun fitToFireRate(){
         autoFire.cancel()
