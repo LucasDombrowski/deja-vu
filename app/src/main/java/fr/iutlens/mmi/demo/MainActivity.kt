@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.smoke_animation,3,2)
         loadSpritesheet(R.drawable.collectibles,4,2)
         loadSpritesheet(R.drawable.isaac, 9, 4)
-        loadSpritesheet(R.drawable.first_boss, 2, 1)
+        loadSpritesheet(R.drawable.first_boss, 5, 8)
         loadSpritesheet(R.drawable.portal_book,1,1)
         loadSpritesheet(R.drawable.shopkeeper,1,1)
 

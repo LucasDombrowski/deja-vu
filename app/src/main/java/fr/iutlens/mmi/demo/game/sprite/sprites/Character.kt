@@ -62,16 +62,19 @@ open class Character(
     var currentAnimationSequenceIndex : Int = 0
     val characterAnimation : Job = setInterval(0, animationDelay){
         GlobalScope.launch {
-            if(currentAnimationSequenceIndex>=currentAnimationSequence.size-1 || game.pause){
-                currentAnimationSequenceIndex = 0
-                sprite.ndx = currentAnimationSequence[0]
-            } else {
-                currentAnimationSequenceIndex ++
-                sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
+            if(animate && !game.pause) {
+                if (currentAnimationSequenceIndex >= currentAnimationSequence.size - 1) {
+                    currentAnimationSequenceIndex = 0
+                    sprite.ndx = currentAnimationSequence[0]
+                } else {
+                    currentAnimationSequenceIndex++
+                    sprite.ndx = currentAnimationSequence[currentAnimationSequenceIndex]
+                }
             }
         }
-
     }
+
+    var animate = true
     open fun changePos(x: Float, y: Float){
         if(game.map.inForbiddenArea(
             x,

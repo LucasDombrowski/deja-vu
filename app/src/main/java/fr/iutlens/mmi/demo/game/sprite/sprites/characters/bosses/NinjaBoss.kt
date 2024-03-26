@@ -43,11 +43,12 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     speed = 0.06f,
     hearts = setBasicHearts(60),
     leftAnimationSequence = listOf(0,1),
-    topAnimationSequence = listOf(0,1),
-    bottomAnimationSequence = listOf(0,1),
-    rightAnimationSequence = listOf(0,1),
+    topAnimationSequence = listOf(25,26,27,28,29),
+    bottomAnimationSequence = listOf(20,21,22,23,24),
+    rightAnimationSequence = listOf(5,6),
     target = game.controllableCharacter!!,
 ) {
+
 
     val startCinematic = Cinematic(listOf(
         CinematicPart(
@@ -79,7 +80,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
 
     val contactDamages = 1f
 
-    val contactKnockback = 0.2f
+    val contactKnockback = 0.5f
 
     val pauseCheckDelay = 33L
 
@@ -92,6 +93,26 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         game.cinematic.value = Pair(
             startCinematic,true
         )
+    }
+
+    fun attackAnimation(){
+        if(!target!!.remainingInvulnerability) {
+            animate = false
+            val leftAttackAnimationSequence = listOf<Int>(30, 31, 32, 33, 34)
+            val rightAttackAnimationSequence = listOf<Int>(35, 36, 37, 38, 39)
+            val xDifferences = sprite.x - game.controllableCharacter!!.sprite.x
+            val animationSequence = when {
+                xDifferences > 0 -> rightAttackAnimationSequence
+                else -> leftAttackAnimationSequence
+            }
+            GlobalScope.launch {
+                for (image in animationSequence) {
+                    sprite.ndx = image
+                    delay(animationDelay)
+                }
+                animate = true
+            }
+        }
     }
 
     fun randomPattern(){
@@ -145,6 +166,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
                         followPlayer()
                     }
                 } else {
+                    attackAnimation()
                     target!!.healthDown(contactDamages, contactKnockback, currentDirection)
                     randomPattern()
                 }
@@ -214,6 +236,10 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
                         targetCoordinates.second
                     )
                 }
+                sprite.ndx = when(left){
+                    true->leftAnimationSequence.first()
+                    else->rightAnimationSequence.first()
+                }
                 dash(startCoordinates,endCoordinates){
                     game.blinded = false
                     land()
@@ -241,6 +267,10 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
                         minMaxCoordinates.first.second-game.map.tileArea.h
                     )
                 }
+                sprite.ndx = when(top){
+                    true->topAnimationSequence.first()
+                    else->bottomAnimationSequence.first()
+                }
                 dash(startCoordinates,endCoordinates){
                     game.blinded = false
                     land()
@@ -261,6 +291,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
             while (sprite.x.roundToInt() != endCoordinates.first.roundToInt() || sprite.y.roundToInt() != endCoordinates.second.roundToInt()){
                 moveTo(endCoordinates.first,endCoordinates.second)
                 if(inBoundingBox(target!!.sprite.x, target!!.sprite.y)){
+                    attackAnimation()
                     target!!.healthDown(contactDamages, contactKnockback, currentDirection)
                 }
                 Log.i("currently dash","true")

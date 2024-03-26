@@ -80,12 +80,10 @@ class Ninja : Game(
              Music.mute = false
             }, true
         )
-        /*
         GlobalScope.launch {
             delay(5000)
             spawnBoss()
         }
-         */
     }
 
     override fun copy() : Ninja{
