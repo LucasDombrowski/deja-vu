@@ -54,6 +54,11 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
             }
         }
         cinematic = createCinematic(game)
+        val shopkeeperX = getRoomCenter().first
+        val shopkeeperY = yVal - shopItems[0].imageSprite.bitmap.height - shopItems[0].textSprite.bitmap.height - game.map.tileArea.h/6
+        game.shopkeeper.sprite.x = shopkeeperX
+        game.shopkeeper.sprite.y = shopkeeperY
+        game.addCharacter(game.shopkeeper)
     }
 
     fun createCinematic(game: Game) : Cinematic{
