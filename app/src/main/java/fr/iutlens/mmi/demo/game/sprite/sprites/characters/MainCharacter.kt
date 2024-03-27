@@ -54,7 +54,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var directProjectileBehaviors : MutableList<()->Unit> = mutableListOf()
 
-    var projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,4), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f)
+    var projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,4), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f, sound = R.raw.hero_shoot)
 
     var items : MutableList<Item> = mutableListOf()
 
@@ -373,8 +373,9 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             with(collectibleListCopy.iterator()){
                 forEach {
                     if(inBoundingBox(it.sprite.x, it.sprite.y)){
+                        val soundVolume = 0.125f
                         it.collectEffect()
-                        Music.playSound(it.sound)
+                        Music.playSound(it.sound, leftVolume = soundVolume, rightVolume = soundVolume)
                         it.destroy()
                     }
                 }

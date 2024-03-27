@@ -49,9 +49,17 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.shopkeeper,1,1)
 
         loadSound(R.raw.text_sound_effect)
-        loadSound(R.raw.coin)
-        loadSound(R.raw.heart)
         loadSound(R.raw.victory)
+        loadSound(R.raw.grab_gold_coin)
+        loadSound(R.raw.grab_red_heart)
+        loadSound(R.raw.grab_silver_coin)
+        loadSound(R.raw.grab_yellow_heart)
+        loadSound(R.raw.hero_get_hit)
+        loadSound(R.raw.hero_shoot)
+        loadSound(R.raw.new_item)
+        loadSound(R.raw.open_chest)
+        loadSound(R.raw.open_menu)
+        loadSound(R.raw.press_button)
 
         setContent {
             currentContext = LocalContext.current

@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -45,21 +46,25 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.ui.theme.MainFont
+import fr.iutlens.mmi.demo.utils.Music
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun MenuButton(text: String, width : Dp, action : ()->Unit){
+    val context = LocalContext.current
     val density = LocalDensity.current
     val fontSize = with(density){
         (width*1/12).toSp()
     }
+    val soundVolume = 0.25f
     BoxWithConstraints(modifier = Modifier
         .width(width)
         .pointerInput(text) {
             detectTapGestures(
                 onTap = {
+                    Music.playSound(R.raw.press_button, leftVolume = soundVolume, rightVolume = soundVolume)
                     action()
                 }
             )

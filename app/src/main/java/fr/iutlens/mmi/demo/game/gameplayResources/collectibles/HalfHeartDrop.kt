@@ -7,7 +7,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
 class HalfHeartDrop(game : Game) : Collectible(
     game = game,
     spriteIndex = 3,
-    sound = R.raw.heart,
+    sound = R.raw.grab_red_heart,
     collectEffect = {
         var toHeal = 0.5f
         for(heart in game.controllableCharacter!!.hearts){

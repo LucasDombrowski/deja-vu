@@ -28,7 +28,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     target = game.controllableCharacter!!,
     fireRate = 1500
 ){
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 4f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 4f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f, sound = R.raw.hero_shoot)
     override fun spawn(x: Float, y: Float){
         game.addCharacter(this)
         changePos(x, y)

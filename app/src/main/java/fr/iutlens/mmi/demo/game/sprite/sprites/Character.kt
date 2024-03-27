@@ -224,6 +224,8 @@ open class Character(
             }
             getKnockback(knockback,direction)
             if(this is MainCharacter && hearts[0].filled>0) {
+                val soundVolume = 0.1f
+                Music.playSound(R.raw.hero_get_hit, leftVolume = soundVolume, rightVolume = soundVolume)
                 refreshHeathBar()
                 blink()
             }

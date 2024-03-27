@@ -481,8 +481,10 @@ open class Game(val map : Map,
                         .width((screenWidth / 15).dp)
                         .aspectRatio(1f)
                         .clickable {
+                            val soundVolume = 0.25f
                             menu["open"] = true
                             pause = true;
+                            Music.playSound(R.raw.open_menu, leftVolume = soundVolume, rightVolume = soundVolume)
                         }
                         .background(Color(0, 0, 0, 128), shape = CircleShape)
                         .padding((screenWidth / 125).dp)
