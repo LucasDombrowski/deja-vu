@@ -1,12 +1,8 @@
 package fr.iutlens.mmi.demo.game
 
 import android.annotation.SuppressLint
-import android.graphics.Region
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -31,7 +27,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,15 +43,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -105,7 +96,6 @@ import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
 import fr.iutlens.mmi.demo.ui.theme.MainFont
 import fr.iutlens.mmi.demo.utils.Music
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
@@ -123,15 +113,17 @@ import kotlin.time.TimeSource
  * par dessus (spriteList) et un point de vue (transform)
  * Il est possible de préciser en plus les interactions (onDrag/onTap)
  */
-open class Game(val map : Map,
-           var spriteList : MutableSpriteList = MutableSpriteList(list = mutableListOf()),
-           var controllableCharacter : MainCharacter ?=null,
-           var transform: CameraTransform = FitTransform(map.tileArea),
-           val backgroundMusic : Int,
-           var onDragStart: ((Offset) -> Unit)? = null,
-           var onDragMove:  ((Offset) -> Unit)? = null,
-           var onDragEnd : (()->Unit)? = null,
-           var onTap: ((Offset)-> Unit)? = null){
+open class Game(
+    val map: Map,
+    var spriteList: MutableSpriteList = MutableSpriteList(list = mutableListOf()),
+    var controllableCharacter: MainCharacter ?=null,
+    var transform: CameraTransform = FitTransform(map.tileArea),
+    val backgroundMusic: Int,
+    var screenEffect: @Composable() ((Boolean)->Unit) = {},
+    var onDragStart: ((Offset) -> Unit)? = null,
+    var onDragMove:  ((Offset) -> Unit)? = null,
+    var onDragEnd: (()->Unit)? = null,
+    var onTap: ((Offset)-> Unit)? = null){
 
     var background = map.tileArea
     val camera = Camera(this)
@@ -323,7 +315,8 @@ open class Game(val map : Map,
     open fun copy() : Game{
         return Game(
             map = map,
-            backgroundMusic = backgroundMusic
+            backgroundMusic = backgroundMusic,
+            screenEffect = screenEffect
         )
     }
 
@@ -700,6 +693,7 @@ open class Game(val map : Map,
     @Composable
     fun GameScreen(){
         View()
+        screenEffect(!pause)
         if(menu["open"] == true){
             Menu()
         } else if(item["show"] == true){

@@ -58,6 +58,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
             name = "???"
         ),
     ),game){
+        game.screenEffect = {}
         game.blinded = false
         game.controllableCharacter!!.recoverView()
         game.musicTrack.value = R.raw.boss
