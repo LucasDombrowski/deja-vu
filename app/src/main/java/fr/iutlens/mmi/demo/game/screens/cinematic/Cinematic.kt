@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import fr.iutlens.mmi.demo.components.DialogScreen
@@ -50,11 +52,13 @@ class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game, val 
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
+                            .fillMaxSize()
+                            .scale(scaleX = when(part.left){
+                                true->1f
+                                else->-1f
+                            }, scaleY = 1f)
                             .offset(
-                                x = when(part.left){
-                                    true->-boxWithConstraintsScope.maxWidth/4
-                                    else->boxWithConstraintsScope.maxWidth/4
-                                },
+                                x = -boxWithConstraintsScope.maxWidth/4,
                                 y = boxWithConstraintsScope.maxHeight/4
                             )
                     )
