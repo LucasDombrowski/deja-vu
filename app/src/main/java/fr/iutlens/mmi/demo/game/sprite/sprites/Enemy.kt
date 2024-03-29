@@ -4,6 +4,7 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
+import fr.iutlens.mmi.demo.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -56,6 +57,34 @@ open class Enemy(
             }
         }
 
+    }
+
+    override fun setupPathFollowing(){
+        val pathToFollow = currentPath.toList()
+        var currentPathIndex = 0
+        followingPath = setInterval(0,66){
+            if(currentPathIndex<pathToFollow.size) {
+                if (game.map.getMapIndexFromPosition(
+                        sprite.x,
+                        sprite.y
+                    ) == pathToFollow[currentPathIndex]
+                ) {
+                    currentPathIndex++
+                }
+                if (currentPathIndex >= pathToFollow.size) {
+                    disablePathFollowing()
+                } else {
+                    val floatValue = game.map.getPositionFromMapIndex(
+                        pathToFollow[currentPathIndex].first,
+                        pathToFollow[currentPathIndex].second
+                    )
+                    moveTo(
+                        floatValue.first + game.map.tileArea.w / 2,
+                        floatValue.second + game.map.tileArea.h / 2
+                    )
+                }
+            }
+        }
     }
 
     open fun spawn(x: Float, y: Float){

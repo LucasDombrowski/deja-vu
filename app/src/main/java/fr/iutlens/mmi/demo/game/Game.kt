@@ -855,7 +855,6 @@ open class Game(
                             fontFamily = MainFont,
                         ),
                         modifier = Modifier.clickable {
-                            pause = false
                             onRestart()
                         }
                     )

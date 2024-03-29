@@ -455,7 +455,7 @@ open class Character(
 
     }
 
-    fun setupPathFollowing(){
+    open fun setupPathFollowing(){
         followingPath = moveToPathTile()
     }
     

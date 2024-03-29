@@ -48,13 +48,23 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                         sprite.setTransparencyLevel(0.25f)
                         delay(33)
                         sprite.invisible()
-                        val xPos = when (Math.random()) {
-                            in 0f..0.5f -> target!!.sprite.x - 50f
-                            else -> target!!.sprite.x + 50f
+                        var xPos = when (Math.random()) {
+                            in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w
+                            else -> target!!.sprite.x + game.map.tileArea.w
                         }
-                        val yPos = when (Math.random()) {
-                            in 0f..0.5f -> target!!.sprite.y + 50f
-                            else -> target!!.sprite.y - 50f
+                        var yPos = when (Math.random()) {
+                            in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h
+                            else -> target!!.sprite.y - game.map.tileArea.w
+                        }
+                        while (game.map.inForbiddenArea(xPos,yPos)){
+                            xPos = when (Math.random()) {
+                                in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w
+                                else -> target!!.sprite.x + game.map.tileArea.w
+                            }
+                            yPos = when (Math.random()) {
+                                in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h
+                                else -> target!!.sprite.y - game.map.tileArea.w
+                            }
                         }
                         chasing = true
                         delay(2000)

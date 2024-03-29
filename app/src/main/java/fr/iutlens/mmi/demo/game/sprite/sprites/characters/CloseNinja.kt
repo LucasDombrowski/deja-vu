@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo.game.sprite.sprites.characters
 
+import android.util.Log
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.setBasicHearts
@@ -54,6 +55,7 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
         setupPath(target!!.sprite.x, target!!.sprite.y)
         pathFollow = true
         action = setInterval(0,100){
+            Log.i("pathFollow","true")
             if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
                 attackPlayer(0.5f, 0.2f)
             }

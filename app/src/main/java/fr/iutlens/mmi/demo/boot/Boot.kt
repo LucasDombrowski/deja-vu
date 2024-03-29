@@ -37,9 +37,9 @@ fun changeLevel(game: Game) : Game{
     return level
 }
 
-fun startFirstLevel() : Game{
+fun startFirstLevel(firstTime : Boolean = true) : Game{
     val level = levels.random().copy()
-    level.firstTime = true
+    level.firstTime = firstTime
     level.cinematic.value = Pair(
         TutorialMovements(level){
            Music.mute = false
