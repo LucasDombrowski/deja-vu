@@ -60,6 +60,9 @@ class MainActivity : ComponentActivity() {
         loadSound(R.raw.open_chest)
         loadSound(R.raw.open_menu)
         loadSound(R.raw.press_button)
+        loadSound(R.raw.open_room)
+        loadSound(R.raw.enemy_get_hit)
+        loadSound(R.raw.purchase_item)
 
         setContent {
             currentContext = LocalContext.current

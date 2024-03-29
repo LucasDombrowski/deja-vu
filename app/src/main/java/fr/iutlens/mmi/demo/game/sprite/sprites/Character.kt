@@ -231,6 +231,10 @@ open class Character(
                 refreshHeathBar()
                 blink()
             }
+            if(this is Enemy){
+                val soundVolume = 0.1f
+                Music.playSound(R.raw.enemy_get_hit, leftVolume = soundVolume, rightVolume = soundVolume)
+            }
             if(hearts[0].filled<=0){
                 if(this==game.controllableCharacter!!){
                     game.gameOver()

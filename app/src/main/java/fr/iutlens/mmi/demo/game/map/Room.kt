@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
+import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Challenge
 import fr.iutlens.mmi.demo.game.gameplayResources.challenges.SpeedUp
@@ -13,6 +14,7 @@ import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
 import fr.iutlens.mmi.demo.game.screens.cinematic.cinematics.TutorialOpenRoom
 import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
+import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.getCenter
 import java.util.LinkedList
 import java.util.Queue
@@ -529,6 +531,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     fun isOpenable(game: Game){
         if(this is BasicRoom || this is LargeRoom || this is LongRoom) {
             if (!enemiesAlive(game)) {
+                val soundVolume = 0.25f
+                Music.playSound(R.raw.open_room, leftVolume = soundVolume, rightVolume = soundVolume)
                 open()
                 endChallenge(game)
                 game.killAllEnemies()

@@ -1,10 +1,12 @@
 package fr.iutlens.mmi.demo.game.map.shop
 
 import androidx.compose.ui.graphics.Color
+import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Item
 import fr.iutlens.mmi.demo.game.sprite.ImageSprite
 import fr.iutlens.mmi.demo.game.sprite.TextSprite
+import fr.iutlens.mmi.demo.utils.Music
 
 class ShopItem(val item : Item, var price: Int) {
     var textSprite = TextSprite(price.toString(),50f, Color.White,false,0f,0f)
@@ -31,6 +33,10 @@ class ShopItem(val item : Item, var price: Int) {
 
     fun buy(game: Game){
         if(game.coins.value>=price) {
+            if(!item.major){
+                val soundVolume = 0.25f
+                Music.playSound(R.raw.purchase_item, leftVolume = soundVolume, rightVolume = soundVolume)
+            }
             game.coins.value-=price
             item.get(game)
             game.deleteSprite(imageSprite)
