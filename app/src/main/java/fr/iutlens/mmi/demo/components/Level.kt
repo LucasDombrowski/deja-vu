@@ -25,6 +25,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.LoyaltyCard
 import fr.iutlens.mmi.demo.game.gameplayResources.items.SchoolBag
 import fr.iutlens.mmi.demo.game.gameplayResources.items.Torch
 import fr.iutlens.mmi.demo.game.gameplayResources.items.Wallet
+import fr.iutlens.mmi.demo.game.screens.cinematic.cinematics.TutorialMovements
 import fr.iutlens.mmi.demo.utils.Music
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,6 +47,14 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
 
     LaunchedEffect(key1 = game ){
         enabled = true
+        if(game.firstTime){
+            game.cinematic.value = Pair(
+                TutorialMovements(game){
+                    Music.mute = false
+                },
+                true
+            )
+        }
     }
 
     game.onEnd = {

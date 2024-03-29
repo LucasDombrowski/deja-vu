@@ -53,7 +53,9 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun MenuButton(text: String, width : Dp, action : ()->Unit){
-    val context = LocalContext.current
+    var enabled by remember {
+        mutableStateOf(true)
+    }
     val density = LocalDensity.current
     val fontSize = with(density){
         (width*1/12).toSp()
@@ -64,8 +66,15 @@ fun MenuButton(text: String, width : Dp, action : ()->Unit){
         .pointerInput(text) {
             detectTapGestures(
                 onTap = {
-                    Music.playSound(R.raw.press_button, leftVolume = soundVolume, rightVolume = soundVolume)
-                    action()
+                    if(enabled) {
+                        enabled = false
+                        Music.playSound(
+                            R.raw.press_button,
+                            leftVolume = soundVolume,
+                            rightVolume = soundVolume
+                        )
+                        action()
+                    }
                 }
             )
         }){
