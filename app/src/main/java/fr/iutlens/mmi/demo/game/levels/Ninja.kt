@@ -69,10 +69,6 @@ class Ninja : Game(
              Music.mute = false
             }, true
         )
-        GlobalScope.launch {
-            delay(5000)
-            switchRoom(map.rooms!!.size-2)
-        }
     }
 
     override fun copy() : Ninja{
