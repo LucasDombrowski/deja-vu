@@ -20,6 +20,7 @@ class Chest(val itemList: List<Item>) {
         game.controllableCharacter!!.temporaryMovingInteraction = {
             x, y ->
         }
+        game.solidSpriteList.add(sprite)
         val soundVolume = 0.075f
         Music.playSound(R.raw.open_chest, leftVolume = soundVolume, rightVolume = soundVolume)
         game.pause = true
@@ -52,7 +53,7 @@ class Chest(val itemList: List<Item>) {
     fun setup(x: Float, y:Float, game: Game){
         sprite.x = x
         sprite.y = y
-        game.addSprite(sprite, true)
+        game.addSprite(sprite)
         game.controllableCharacter!!.temporaryMovingInteraction = setCharacterInteraction(game)
     }
 }

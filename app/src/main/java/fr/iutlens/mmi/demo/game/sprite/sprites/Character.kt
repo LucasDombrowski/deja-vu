@@ -386,12 +386,9 @@ open class Character(
             sprite.y<y->aimedTile.first
             else->startTile.first
         }
-        val startPosition = game.map.currentRoom().getPosition(startRow, startCol)
-        val endPosition = game.map.currentRoom().getPosition(endRow, endCol)
-        val roomList = game.map.currentRoom().toList()
-        for(i in startPosition.first..endPosition.first){
-            for(j in startPosition.second..endPosition.second){
-                if(roomList[i][j] !in game.map.authorizedTiles){
+        for(i in startRow..endRow){
+            for (j in startCol..endCol){
+                if(!isAvailableTile(row = i, col = j)){
                     return false
                 }
             }
@@ -555,7 +552,25 @@ open class Character(
 
     fun isAvailableTile(visited : MutableList<Pair<Int,Int>> = mutableListOf(), row: Int, col: Int) : Boolean{
         val floatCoordinates = game.map.getPositionFromMapIndex(row,col)
-        return inCurrentRoom(row,col) && !game.map.inForbiddenArea(floatCoordinates.first, floatCoordinates.second) && Pair(row, col) !in visited
+        return inCurrentRoom(row,col) && !game.map.inForbiddenArea(floatCoordinates.first, floatCoordinates.second) && Pair(row, col) !in visited && !solidCharacterInTile(row,col) && !solidSpriteInTile(row,col)
+    }
+
+    fun solidCharacterInTile(row: Int, col: Int) : Boolean{
+        for (character in game.characterList.filter { it.solid }){
+            if(game.map.getMapIndexFromPosition(character.sprite.x,character.sprite.y)==Pair(row,col)){
+                return true
+            }
+        }
+        return false
+    }
+
+    fun solidSpriteInTile(row: Int, col: Int) : Boolean{
+        for (solidSprite in game.solidSpriteList){
+            if(game.map.getMapIndexFromPosition(solidSprite.x,solidSprite.y) == Pair(row,col)){
+                return true
+            }
+        }
+        return false
     }
     fun inCurrentRoom(row: Int, column : Int) : Boolean{
         val minMaxIndices = game.map.currentRoom().getMinMaxIndices()
