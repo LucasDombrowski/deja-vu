@@ -9,6 +9,9 @@ import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
+import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
+import fr.iutlens.mmi.demo.game.screens.cinematic.cinematics.TutorialChest
+import fr.iutlens.mmi.demo.game.screens.cinematic.cinematics.TutorialFighting
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.utils.getDistance
 import kotlinx.coroutines.GlobalScope
@@ -21,6 +24,8 @@ import kotlin.math.min
 
 class Camera(val game: Game) {
     val sprite = BasicSprite(R.drawable.transparent,game.map.characterStartPosition().first, game.map.characterStartPosition().second)
+    var fightingTutorial = false
+    var chestTutorial = false
     var cameraMoving : Job = GlobalScope.launch {
 
     }
@@ -197,6 +202,13 @@ class Camera(val game: Game) {
                 game.map.currentRoom().spawnEnemies()
                 game.map.currentRoom().startChallenge(game)
                 game.addSprite(game.controllableCharacter!!.targetIndicator)
+                if(game.firstTime && !fightingTutorial){
+                    game.cinematic.value = Pair(
+                        TutorialFighting(game){
+                            fightingTutorial = true
+                        }, true
+                    )
+                }
             }
             if (game.map.currentRoom() is LongRoom) {
                 game.controllableCharacter!!.temporaryMovingInteraction = slideLongRoomCamera()
@@ -210,6 +222,14 @@ class Camera(val game: Game) {
             }
             if (game.map.currentRoom() is ShopRoom) {
                 (game.map.currentRoom() as ShopRoom).launchCinematic(game)
+            }
+            if(game.map.currentRoom() is TreasureRoom && game.firstTime && !chestTutorial){
+                game.cinematic.value = Pair(
+                    TutorialChest(game){
+                      chestTutorial = true
+                    },
+                    true
+                )
             }
         }
     }

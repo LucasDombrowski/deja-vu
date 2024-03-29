@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo.game.screens.cinematic
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,16 +21,17 @@ import androidx.compose.ui.res.painterResource
 import fr.iutlens.mmi.demo.components.DialogScreen
 import fr.iutlens.mmi.demo.game.Game
 
-class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game, val onEnd : ()->Unit = {}) {
+open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game, val onEnd : ()->Unit = {}) {
 
     @Composable
     fun Display(){
         game.pause = true
-        if(parts.size > 0) {
+        if(parts.isNotEmpty()) {
             var partIndex = 0
             var part by remember {
                 mutableStateOf(parts[partIndex])
             }
+            Log.i("partText",part.text)
             DialogScreen(text = part.text, onEnd = {
                 if(partIndex>=parts.size-1){
                     game.pause = false

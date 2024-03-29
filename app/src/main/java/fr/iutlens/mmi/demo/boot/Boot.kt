@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.levels.Ninja
+import fr.iutlens.mmi.demo.game.screens.cinematic.cinematics.TutorialMovements
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.MainCharacter
+import fr.iutlens.mmi.demo.utils.Music
 
 var mainCharacter : MainCharacter ?= null
 val levels : List<Game> = listOf(Ninja())
@@ -37,6 +39,13 @@ fun changeLevel(game: Game) : Game{
 
 fun startFirstLevel() : Game{
     val level = levels.random().copy()
+    level.firstTime = true
+    level.cinematic.value = Pair(
+        TutorialMovements(level){
+           Music.mute = false
+        },
+        true
+    )
     saveMainCharacter(level)
     return level
 }
