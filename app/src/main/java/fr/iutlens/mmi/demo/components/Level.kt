@@ -54,6 +54,8 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
                 },
                 true
             )
+        } else {
+            Music.mute = false
         }
     }
 
