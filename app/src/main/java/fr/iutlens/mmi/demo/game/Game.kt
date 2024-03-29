@@ -63,6 +63,7 @@ import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.components.DialogScreen
 import fr.iutlens.mmi.demo.game.ath.BossBar
 import fr.iutlens.mmi.demo.game.ath.Coins
+import fr.iutlens.mmi.demo.game.ath.ContinueArrow
 import fr.iutlens.mmi.demo.game.ath.Hearts
 import fr.iutlens.mmi.demo.game.ath.LowLife
 import fr.iutlens.mmi.demo.game.gameplayResources.Challenge
@@ -435,6 +436,7 @@ open class Game(
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
     var coins = mutableStateOf(0)
 
+
     var dropProbability = 1
     var heartDropProbability = 1
     var superCoinDropProbability = 1
@@ -477,7 +479,11 @@ open class Game(
                             val soundVolume = 0.25f
                             menu["open"] = true
                             pause = true;
-                            Music.playSound(R.raw.open_menu, leftVolume = soundVolume, rightVolume = soundVolume)
+                            Music.playSound(
+                                R.raw.open_menu,
+                                leftVolume = soundVolume,
+                                rightVolume = soundVolume
+                            )
                         }
                         .background(Color(0, 0, 0, 128), shape = CircleShape)
                         .padding((screenWidth / 125).dp)
@@ -689,6 +695,8 @@ open class Game(
     )
 
     var musicTrack = mutableStateOf(backgroundMusic)
+
+    var continueArrow = mutableStateOf(Pair(false,0f))
     @SuppressLint("CoroutineCreationDuringComposition")
     @Composable
     fun GameScreen(){
@@ -706,6 +714,9 @@ open class Game(
         } else {
             Challenge()
             Ath()
+            if(continueArrow.value.first){
+                ContinueArrow(continueArrow.value.second)
+            }
         }
         Music(musicTrack.value)
     }

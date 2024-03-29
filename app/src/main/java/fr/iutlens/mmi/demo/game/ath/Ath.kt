@@ -2,8 +2,11 @@ package fr.iutlens.mmi.demo.game.ath
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -20,13 +23,21 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -41,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.ui.theme.MainFont
+import kotlinx.coroutines.delay
 
 @Composable
 fun Heart(permanent: Boolean, filled: Float){
@@ -254,6 +266,56 @@ fun LowLife(){
         }
     }
 
+}
+
+@Composable
+fun ContinueArrow(rotate : Float){
+    val configuration = LocalConfiguration.current
+    val screenWidth = with(configuration){
+        screenWidthDp.dp
+    }
+    val imageWidth = screenWidth/10
+    @Composable
+    fun Arrow(modifier: Modifier, rotate: Float){
+        var arrowBack by remember {
+            mutableStateOf(false)
+        }
+
+        val transitionDuration = 500
+
+        val backOffsetX = -screenWidth/40
+
+        val offsetX by animateDpAsState(targetValue = if (arrowBack) 0.dp else backOffsetX, label = "Translate", animationSpec = tween(
+            durationMillis = transitionDuration,
+            easing = LinearEasing
+        ))
+
+        LaunchedEffect(key1 = arrowBack){
+            delay(transitionDuration.toLong())
+            arrowBack=!arrowBack
+        }
+
+        Image(painter = painterResource(id = R.drawable.direction_arrow),
+            contentDescription = "Arrow",
+            contentScale = ContentScale.Fit,
+            modifier = modifier
+                .width(imageWidth)
+                .rotate(rotate)
+                .offset(x = offsetX)
+        )
+    }
+    val align = when(rotate){
+        90f->Alignment.BottomCenter
+        180f->Alignment.CenterStart
+        270f->Alignment.TopCenter
+        else->Alignment.CenterEnd
+    }
+    val padding = screenWidth/20
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(padding)){
+        Arrow(modifier = Modifier.align(align), rotate = rotate)
+    }
 }
 
 
