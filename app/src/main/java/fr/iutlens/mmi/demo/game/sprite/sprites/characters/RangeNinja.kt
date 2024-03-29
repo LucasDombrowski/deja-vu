@@ -45,7 +45,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
         disablePathFollowing()
         action.cancel()
         action = setInterval(0,100){
-                if (distanceWith(target!!) > projectile.realRange(game)) {
+                if (distanceWith(target!!) > projectile.realRange(game) || !isPathFree(target!!.sprite.x, target!!.sprite.y)) {
                     moveTo(target!!.sprite.x, target!!.sprite.y)
                     if (!isPathFree(target!!.sprite.x, target!!.sprite.y)) {
                         followPlayer()
@@ -110,7 +110,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
                         secondProjectile[0],
                         secondProjectile[1]
                     )
-                    if (distanceWith(target!!) > projectile.realRange(game)) {
+                    if (distanceWith(target!!) > projectile.realRange(game) || !isPathFree(target!!.sprite.x, target!!.sprite.y)) {
                         reachPlayer()
                     }
                 }

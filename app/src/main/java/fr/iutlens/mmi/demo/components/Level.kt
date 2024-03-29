@@ -59,6 +59,7 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
         enabled = false
         scope.launch {
             delay(transitionDuration.toLong())
+            game.pause = false
             onRestart()
         }
     }
