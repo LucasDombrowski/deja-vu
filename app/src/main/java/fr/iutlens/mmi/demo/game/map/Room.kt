@@ -10,6 +10,7 @@ import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 import fr.iutlens.mmi.demo.game.map.rooms.TreasureRoom
+import fr.iutlens.mmi.demo.game.screens.cinematic.cinematics.TutorialOpenRoom
 import fr.iutlens.mmi.demo.game.sprite.sprites.Boss
 import fr.iutlens.mmi.demo.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.demo.utils.getCenter
@@ -524,6 +525,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         return false
     }
 
+
     fun isOpenable(game: Game){
         if(this is BasicRoom || this is LargeRoom || this is LongRoom) {
             if (!enemiesAlive(game)) {
@@ -532,6 +534,14 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 game.killAllEnemies()
                 enemyList = mutableListOf()
                 game.deleteSprite(game.controllableCharacter!!.targetIndicator)
+                if(game.firstTime && !game.openRoomTutorial){
+                    game.cinematic.value = Pair(
+                        TutorialOpenRoom(game){
+                            game.openRoomTutorial = true
+                        },
+                        true
+                    )
+                }
             }
         }
     }

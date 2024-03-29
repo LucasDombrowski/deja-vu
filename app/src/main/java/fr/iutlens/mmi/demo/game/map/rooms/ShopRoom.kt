@@ -11,6 +11,7 @@ import fr.iutlens.mmi.demo.game.map.shop.Shop
 import fr.iutlens.mmi.demo.game.map.shop.ShopItem
 import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.demo.game.screens.cinematic.CinematicPart
+import fr.iutlens.mmi.demo.game.screens.cinematic.cinematics.TutorialShop
 import java.lang.StringBuilder
 
 class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
@@ -43,16 +44,6 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
             shopItem.display(game,xVal,yVal)
             xVal+=xStep
         }
-        game.controllableCharacter!!.temporaryMovingInteraction = {
-            x, y ->
-            with(shopItems.iterator()){
-                forEach {
-                    if(it.inImageBox(x,y) && it.active){
-                        it.buy(game)
-                    }
-                }
-            }
-        }
         cinematic = createCinematic(game)
         val shopkeeperX = getRoomCenter().first
         val shopkeeperY = yVal - shopItems[0].imageSprite.bitmap.height - shopItems[0].textSprite.bitmap.height - game.map.tileArea.h/6
@@ -82,7 +73,25 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
                 true,
                 name = "Blaise"
             )
-        ),game)
+        ),game){
+            game.controllableCharacter!!.temporaryMovingInteraction = {
+                    x, y ->
+                if(game.firstTime && !game.shopTutorial){
+                    game.shopTutorial = true
+                    game.cinematic.value = Pair(
+                        TutorialShop(game),
+                        true
+                    )
+                }
+                with(shopItems.iterator()){
+                    forEach {
+                        if(it.inImageBox(x,y) && it.active){
+                            it.buy(game)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun launchCinematic(game: Game){

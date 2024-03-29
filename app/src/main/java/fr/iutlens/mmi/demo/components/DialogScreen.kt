@@ -64,7 +64,7 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, conten
 
 
     fun getMaxChars(): Int {
-        return (5 * lineWidth).toInt()
+        return (6 * lineWidth).toInt()
     }
 
     fun splitChars() : List<Char>{

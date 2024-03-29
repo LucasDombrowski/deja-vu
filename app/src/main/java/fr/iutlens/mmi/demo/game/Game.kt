@@ -85,6 +85,7 @@ import fr.iutlens.mmi.demo.game.screens.ItemImage
 import fr.iutlens.mmi.demo.game.screens.MenuButton
 import fr.iutlens.mmi.demo.game.screens.MenuItem
 import fr.iutlens.mmi.demo.game.screens.cinematic.Cinematic
+import fr.iutlens.mmi.demo.game.screens.cinematic.cinematics.TutorialMovements
 import fr.iutlens.mmi.demo.game.sprite.BasicSprite
 import fr.iutlens.mmi.demo.game.sprite.MutableSpriteList
 import fr.iutlens.mmi.demo.game.sprite.Sprite
@@ -137,6 +138,8 @@ open class Game(
     )
 
     val solidSpriteList = mutableListOf<BasicSprite>()
+
+    var firstTime : Boolean = false
 
     /**
      * Start Instant du début du jeu, utiliser pour calculer le temps écoulé
@@ -697,6 +700,10 @@ open class Game(
     var musicTrack = mutableStateOf(backgroundMusic)
 
     var continueArrow = mutableStateOf(Pair(false,0f))
+
+    var openRoomTutorial = false
+
+    var shopTutorial = false
     @SuppressLint("CoroutineCreationDuringComposition")
     @Composable
     fun GameScreen(){
