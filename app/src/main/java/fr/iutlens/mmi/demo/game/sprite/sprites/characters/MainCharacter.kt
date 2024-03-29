@@ -327,9 +327,20 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 yCheckValue
         )){
             GlobalScope.launch {
-                stun()
-                delay(33)
-                restart()
+                if(pathFollow){
+                    val currentTile = game.map.getMapIndexFromPosition(sprite.x,sprite.y)
+                    val currentTileFloatCoordinates = game.map.getPositionFromMapIndex(currentTile.first, currentTile.second)
+                    val currentTileCenter = Pair(
+                        currentTileFloatCoordinates.first+game.map.tileArea.w/2,
+                        currentTileFloatCoordinates.second+game.map.tileArea.h/2
+                    )
+                    changePos(currentTileCenter.first,currentTileCenter.second)
+                } else {
+                    stun()
+                    delay(33)
+                    restart()
+                }
+
             }
         } else if(game.map.inOpenDoor(x,y) && game.map.currentRoom().open){
             disablePathFollowing()
@@ -365,9 +376,19 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             temporaryMovingInteraction(x,yCheckValue)
             if(inSolidCharacterBoundingBox(x,yCheckValue) || inSolidSpriteBoundingBox(x,yCheckValue)){
                 GlobalScope.launch {
-                    stun()
-                    delay(33)
-                    restart()
+                    if(pathFollow){
+                        val currentTile = game.map.getMapIndexFromPosition(sprite.x,sprite.y)
+                        val currentTileFloatCoordinates = game.map.getPositionFromMapIndex(currentTile.first, currentTile.second)
+                        val currentTileCenter = Pair(
+                            currentTileFloatCoordinates.first+game.map.tileArea.w/2,
+                            currentTileFloatCoordinates.second+game.map.tileArea.h/2
+                        )
+                        changePos(currentTileCenter.first,currentTileCenter.second)
+                    } else {
+                        stun()
+                        delay(33)
+                        restart()
+                    }
                 }
             } else {
                 sprite.x = x
