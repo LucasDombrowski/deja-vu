@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.demo.game.map
 
 import android.util.Log
+import androidx.compose.runtime.setValue
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
@@ -69,14 +70,36 @@ class Camera(val game: Game) {
             (game.map.currentRoom() as LongRoom).getFirstHalfCenter().first,
             (game.map.currentRoom() as LongRoom).getSecondHalfCenter().first
         )
+        val exitSide = (game.map.currentRoom() as LongRoom).exitSide
         val maxCameraDistance = 4*game.map.tileArea.w
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.x < minXValue){
                 moveCamera(minXValue,sprite.y, speed = 15f)
+                if(game.map.currentRoom().open) {
+                    if (exitSide == "left") {
+                        removeDirectionArrow()
+                    } else {
+                        setDirectionArrow(0f)
+                    }
+                }
             } else if(game.controllableCharacter!!.sprite.x > maxXValue){
                 moveCamera(maxXValue,sprite.y, speed = 15f)
+                if(game.map.currentRoom().open){
+                    if(exitSide=="right"){
+                        removeDirectionArrow()
+                    } else {
+                        setDirectionArrow(180f)
+                    }
+                }
             } else if(distanceXWithCamera()>maxCameraDistance){
+                if(game.map.currentRoom().open){
+                    if(exitSide=="left"){
+                        setDirectionArrow(180f)
+                    } else {
+                        setDirectionArrow(0f)
+                    }
+                }
                 when{
                     x<sprite.x->{
                         if(sprite.x-(distanceXWithCamera()-maxCameraDistance)>minXValue){
@@ -115,13 +138,35 @@ class Camera(val game: Game) {
             (game.map.currentRoom() as LargeRoom).getSecondHalfCenter().second
         )
         val maxCameraDistance = 2*game.map.tileArea.h
+        val exitSide = (game.map.currentRoom() as LargeRoom).exitSide
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.y < minYValue){
                 moveCamera(sprite.x,minYValue, speed = 15f)
+                if(game.map.currentRoom().open){
+                    if(exitSide=="top"){
+                        removeDirectionArrow()
+                    } else {
+                        setDirectionArrow(90f)
+                    }
+                }
             } else if(game.controllableCharacter!!.sprite.y > maxYValue){
                 moveCamera(sprite.x,maxYValue, speed = 15f)
+                if(game.map.currentRoom().open){
+                    if(exitSide=="bottom"){
+                        removeDirectionArrow()
+                    } else {
+                        setDirectionArrow(270f)
+                    }
+                }
             } else if(distanceYWithCamera()>maxCameraDistance){
+                if(game.map.currentRoom().open){
+                    if(exitSide=="bottom"){
+                        setDirectionArrow(90f)
+                    } else {
+                        setDirectionArrow(270f)
+                    }
+                }
                 when{
                     y<sprite.y->{
                         if(sprite.y-(distanceYWithCamera()-maxCameraDistance)>minYValue){
@@ -167,5 +212,13 @@ class Camera(val game: Game) {
                 (game.map.currentRoom() as ShopRoom).launchCinematic(game)
             }
         }
+    }
+
+    fun setDirectionArrow(rotate: Float){
+        game.continueArrow.value = Pair(true,rotate)
+    }
+
+    fun removeDirectionArrow(){
+        game.continueArrow.value = Pair(false,game.continueArrow.value.second)
     }
 }
