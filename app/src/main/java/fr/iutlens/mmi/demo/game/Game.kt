@@ -3,6 +3,7 @@ package fr.iutlens.mmi.demo.game
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -98,6 +99,7 @@ import fr.iutlens.mmi.demo.game.transform.FitTransform
 import fr.iutlens.mmi.demo.game.transform.FocusTransform
 import fr.iutlens.mmi.demo.ui.theme.MainFont
 import fr.iutlens.mmi.demo.utils.Music
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
@@ -388,7 +390,7 @@ open class Game(
                             size = Size(controllableCharacter!!.viewingDistance.toFloat()*map.tileArea.w,controllableCharacter!!.viewingDistance.toFloat()*map.tileArea.w)
                         )
                     )
-                    if(controllableCharacter!!.viewingDistance>0) {
+                    if(controllableCharacter!!.viewingDistance>0 && !ended) {
                         path.addOval(
                             Rect(
                                 offset = Offset(
@@ -437,6 +439,7 @@ open class Game(
     }
 
     var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
+    var showAth = mutableStateOf(true)
     var coins = mutableStateOf(0)
 
 
@@ -720,7 +723,9 @@ open class Game(
             GameOver()
         } else {
             Challenge()
-            Ath()
+            if(showAth.value) {
+                Ath()
+            }
             if(continueArrow.value.first){
                 ContinueArrow(continueArrow.value.second)
             }
@@ -780,7 +785,6 @@ open class Game(
     var gameOver = mutableStateOf(false)
 
     fun gameOver(){
-        gameOver.value = true
         ended = true
         with(characterList.iterator()){
             forEach {
@@ -801,7 +805,58 @@ open class Game(
         onTap = {
 
         }
-        pause = true
+        controllableCharacter!!.movingAction.cancel()
+
+        showAth.value = false
+
+        Music.mute = true
+
+        screenEffect = {}
+
+        controllableCharacter!!.sprite.visible()
+
+        fun blindReduce(onEnd : ()->Unit){
+            var blindValue = 15
+            controllableCharacter!!.viewingDistance = blindValue
+            blinded = true
+            val blindStep = 1
+            val blindReduceDelay = 15L
+            val afterDelay = 500L
+            GlobalScope.launch {
+                while (blindValue>2){
+                    controllableCharacter!!.viewingDistance = blindValue
+                    invalidate()
+                    blindValue-=blindStep
+                    delay(blindReduceDelay)
+                }
+                delay(afterDelay)
+                onEnd()
+            }
+        }
+
+        fun scaleReduce(onEnd : ()->Unit){
+            var scaleValue = 1f
+            val scaleStep = 0.1f
+            val scaleReduceDelay = 33L
+            val afterDelay = 500L
+            GlobalScope.launch {
+                while (scaleValue>0f){
+                    controllableCharacter!!.sprite.scaleX = scaleValue
+                    controllableCharacter!!.sprite.scaleY = scaleValue
+                    invalidate()
+                    scaleValue-=scaleStep
+                    delay(scaleReduceDelay)
+                }
+                delay(afterDelay)
+                onEnd()
+            }
+        }
+
+        blindReduce {
+            scaleReduce {
+                gameOver.value = true
+            }
+        }
     }
     @Composable
     fun GameOver(){
@@ -818,14 +873,61 @@ open class Game(
         val optionSize = with(density){
             (screenWidth.dp/40).toSp()
         }
+        var enabled_first by remember {
+            mutableStateOf(false)
+        }
+        var enabled_second by remember {
+            mutableStateOf(false)
+        }
+
+        val transitionDuration = 1000
+
+        val first_alpha by animateFloatAsState(targetValue = if (enabled_first) 1f else 0f, label = "Fade In", animationSpec = tween(
+            durationMillis = transitionDuration,
+            easing = LinearEasing
+        ))
+
+        val second_alpha by animateFloatAsState(targetValue = if (enabled_second) 1f else 0f, label = "Fade In 2", animationSpec = tween(
+            durationMillis = transitionDuration,
+            easing = LinearEasing
+        ))
+
+        @Composable
+        fun GameOverButtons(){
+            Column {
+                val buttonWidth = screenWidth.dp/6
+                val spacerHeight = screenHeight.dp/100
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    MenuButton(text = "Rejouer", width = buttonWidth) {
+                        onRestart()
+                    }
+                    Spacer(modifier = Modifier.height(spacerHeight))
+                    MenuButton(text = "Quitter", width = buttonWidth) {
+                        onLeave()
+                    }
+                }
+            }
+        }
+
+        LaunchedEffect(key1 = gameOver.value){
+            enabled_first = true
+            delay(transitionDuration.toLong())
+            enabled_second = true
+        }
+
         BoxWithConstraints(
             modifier = Modifier
+                .graphicsLayer(alpha = first_alpha)
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .background(Color(0, 0, 0, 128))
+                .background(Color(0, 0, 0))
         ) {
             Column(
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .graphicsLayer(alpha = second_alpha),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -837,41 +939,11 @@ open class Game(
                     )
                 )
                 Spacer(modifier = Modifier.height(screenHeight.dp/20))
-                Text(
-                    text = "REJOUER ?",
-                    fontSize = subtitleSize,
-                    color = Color.White,
-                    style = TextStyle(
-                        fontFamily = MainFont,
-                    )
-                )
-                Spacer(modifier = Modifier.height(screenHeight.dp/20))
-                Row {
-                    Text(
-                        text = "OUI",
-                        fontSize = optionSize,
-                        color = Color.White,
-                        style = TextStyle(
-                            fontFamily = MainFont,
-                        ),
-                        modifier = Modifier.clickable {
-                            onRestart()
-                        }
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth.dp/30))
-                    Text(
-                        text = "NON",
-                        fontSize = optionSize,
-                        color = Color.White,
-                        style = TextStyle(
-                            fontFamily = MainFont,
-                        ),
-                    )
-
-                }
+                GameOverButtons()
 
             }
         }
+
     }
 
     val shopkeeper = Character(

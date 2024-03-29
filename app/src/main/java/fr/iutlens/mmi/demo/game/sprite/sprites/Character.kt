@@ -229,7 +229,9 @@ open class Character(
                 val soundVolume = 0.1f
                 Music.playSound(R.raw.hero_get_hit, leftVolume = soundVolume, rightVolume = soundVolume)
                 refreshHeathBar()
-                blink()
+                if(hearts[0].filled>0f){
+                    blink()
+                }
             }
             if(this is Enemy){
                 val soundVolume = 0.1f
@@ -302,8 +304,10 @@ open class Character(
 
     fun die(){
         alive = false
-        game.deleteSprite(sprite)
-        game.deleteCharacter(character = this)
+        if(this !is MainCharacter) {
+            game.deleteSprite(sprite)
+            game.deleteCharacter(character = this)
+        }
         movingAction.cancel()
         characterAnimation.cancel()
         if(this is Enemy && this !is Boss){
