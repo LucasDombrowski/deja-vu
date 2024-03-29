@@ -276,7 +276,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         moving = true
         GlobalScope.launch {
             if(currentTile()!=pathIndicatorTile()){
-                if(isPathFree(pathIndicator.x, pathIndicator.y)){
+                if(isPathFree(pathIndicator.x, pathIndicator.y) && !indicatorEndFollowingPath()){
                     if(pathFollow) {
                         disablePathFollowing()
                         moveTo(pathIndicator.x, pathIndicator.y)
@@ -314,6 +314,10 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 moving = false
             }
         }
+    }
+
+    fun indicatorEndFollowingPath() : Boolean{
+        return currentPath.toList().isNotEmpty() && currentPath.last() == pathIndicatorTile()
     }
 
     override fun changePos(x: Float, y: Float){
