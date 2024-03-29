@@ -1,0 +1,1147 @@
+[33mcommit 1ca1aa560c66d4c5e6c9e0f8121fb3e6b90c874b[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/ShopKeeperCinematic[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mShopKeeperCinematic[m[33m)[m
+Merge: 053c5f3 4b4448e
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Mar 28 01:04:12 2024 +0100
+
+    Merge pull request #46 from LucasDombrowski/FogEffect
+    
+    Added fog effect on first level
+
+[33mcommit 4b4448ed6129335b04fca6ed57c5b1d1a183c641[m[33m ([m[1;31morigin/FogEffect[m[33m, [m[1;32mFogEffect[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Mar 28 01:03:46 2024 +0100
+
+    Added fog effect on first level
+
+[33mcommit 053c5f321adc3aec581c667a2c22b8c071d7e7f9[m
+Merge: d94ac39 2997ec4
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 27 23:28:22 2024 +0100
+
+    Merge pull request #45 from LucasDombrowski/NewSounds
+    
+    New sounds
+
+[33mcommit 2997ec4b40835e200f047d98b85e224bbbe717f7[m[33m ([m[1;31morigin/NewSounds[m[33m, [m[1;32mNewSounds[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 27 23:27:22 2024 +0100
+
+    Added new sounds, need to correct them
+
+[33mcommit 92f14414f1dbbd0c63c8a6e7fa19ef9f8e751c35[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 27 00:40:55 2024 +0100
+
+    Added new sounds
+
+[33mcommit d94ac3968bf65c03b2bf84d7f18d38be875f8ca9[m[33m ([m[1;31morigin/PathFinderWithSolidSprites[m[33m, [m[1;32mPathFinderWithSolidSprites[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 26 12:52:23 2024 +0100
+
+    Correcting main character hitbox
+
+[33mcommit 3628abfd211af18fdbb41d193ba9b63cc78b8973[m
+Merge: dcfe378 8a3e1a7
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 26 12:22:52 2024 +0100
+
+    Merge pull request #44 from LucasDombrowski/NewBossAnimations
+    
+    New boss animations
+
+[33mcommit 8a3e1a762cfe85f123de0049d2e570039151bce0[m[33m ([m[1;31morigin/NewBossAnimations[m[33m, [m[1;32mNewBossAnimations[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 26 12:22:31 2024 +0100
+
+    Removing boss debug
+
+[33mcommit 34eb6594d98c508eb93b4f2ef83737c940442c41[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 26 12:08:26 2024 +0100
+
+    Added new boss animations
+
+[33mcommit 0740d581470e35cc2d3809777f28a124a1db5511[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 26 11:16:59 2024 +0100
+
+    Shopkeeper & Chests now have solid hitboxes
+
+[33mcommit dcfe378c4b212aef54990df8996e8dbff61f9c29[m
+Merge: 127abca b0b77a5
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 26 10:27:19 2024 +0100
+
+    Merge pull request #43 from LucasDombrowski/Shopkeeper
+    
+    Shopkeeper sprite has been added
+
+[33mcommit b0b77a56542ef814c8812bd66bb9bb333af77765[m[33m ([m[1;31morigin/Shopkeeper[m[33m, [m[1;32mShopkeeper[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 26 10:26:30 2024 +0100
+
+    Shopkeeper sprite has been added
+
+[33mcommit 127abca0d3e122651b306dc2f7b6c4ce8294456a[m
+Merge: 5457e55 0ee134c
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 23:00:24 2024 +0100
+
+    Merge pull request #42 from LucasDombrowski/Fixes
+    
+    Fixes
+
+[33mcommit 0ee134cae93e255cc60db8df84a721d233194f74[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 22:59:05 2024 +0100
+
+    Camera fixes
+
+[33mcommit 1951a379f4d3fcbcf696d3858eee57e885ab525e[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 22:28:00 2024 +0100
+
+    Rooms generation is now working properly
+
+[33mcommit edbc86a09107ba730f739b2921d9dfa35cb920f4[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 21:39:40 2024 +0100
+
+    Corrected shop crash
+
+[33mcommit c49ff45f89100e7d33b625d1ed0a0a795ed8d938[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 21:38:31 2024 +0100
+
+    Remove challenges
+
+[33mcommit 5457e557bf9b36baa4939628f0f4ca78deaf4733[m
+Merge: 57f655c bdbc140
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 19:08:58 2024 +0100
+
+    Merge pull request #41 from LucasDombrowski/ShopAtTheEnd
+    
+    Shop room now always at the end of the level
+
+[33mcommit bdbc140f6fa74555256c31aa503a30d7a5c783d2[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 19:07:27 2024 +0100
+
+    Shop room now always at the end of the level
+
+[33mcommit 57f655cd96c5f8a0cf7edcc6cca3c6e7f70b1700[m
+Merge: 6996139 91b1d8a
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 18:56:38 2024 +0100
+
+    Merge pull request #40 from LucasDombrowski/BossRoom
+    
+    Boss room
+
+[33mcommit 91b1d8a459f5c6955e706343d783a7ea20c28ce5[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 18:56:12 2024 +0100
+
+    Remove boss debuging
+
+[33mcommit 0c2d4e66427edd41a425b0f1f506371859f5d5d9[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 18:55:34 2024 +0100
+
+    Boss is finished, end animation also
+
+[33mcommit f259798b98739b107b81ef93c9f2f6c992be1747[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Mar 23 00:09:42 2024 +0100
+
+    Starting to work on the boss
+
+[33mcommit 69961398417168ef1d23a987367ef51798009a07[m
+Merge: b4186aa fa881e6
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 22 15:35:07 2024 +0100
+
+    Merge pull request #39 from LucasDombrowski/NewGraphics
+    
+    New coins sprites and new text boxes
+
+[33mcommit fa881e6f2d7e4cddc69f55971e7426ab30289444[m[33m ([m[1;31morigin/NewGraphics[m[33m, [m[1;32mNewGraphics[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 22 15:32:19 2024 +0100
+
+    New coins sprites and new text boxes
+
+[33mcommit b4186aaa5bb59577b467c413a1128d49ca1e0019[m
+Merge: 038b853 fd1dcb8
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 22 14:08:11 2024 +0100
+
+    Merge pull request #38 from LucasDombrowski/NewTargetLock
+    
+    New target lock is working
+
+[33mcommit fd1dcb89a9eb25cb6b6bcc5e849b9fd6bd5f6d39[m[33m ([m[1;31morigin/NewTargetLock[m[33m, [m[1;32mNewTargetLock[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 22 13:08:27 2024 +0100
+
+    New target lock is working
+
+[33mcommit 038b853305f816930e2d2652b0a5f860be3d1289[m
+Merge: 91d9fcd d2f1ba7
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 22 10:33:07 2024 +0100
+
+    Merge pull request #37 from LucasDombrowski/BiggerSprites
+    
+    Bigger sprites
+
+[33mcommit d2f1ba7cc246796e623dcd6f0fcc4aae7fac3864[m[33m ([m[1;31morigin/BiggerSprites[m[33m, [m[1;32mBiggerSprites[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 22 10:26:11 2024 +0100
+
+    Bigger sprites
+
+[33mcommit 91d9fcdada7d1802ed2dd6aad7bbd77c1d32a3cd[m
+Merge: 9a0e91a c72059c
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Mar 21 23:26:00 2024 +0100
+
+    Merge pull request #36 from LucasDombrowski/Transitions
+    
+    Worked on transitions related to menu
+
+[33mcommit c72059c82d27a7c69dffa27eeba636739b53eb19[m[33m ([m[1;31morigin/Transitions[m[33m, [m[1;32mTransitions[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Mar 21 23:19:31 2024 +0100
+
+    Worked on transitions related to menu
+
+[33mcommit 9a0e91a413247d377467f6a46695aa8c2b14a5c2[m
+Merge: 519c052 c9887bb
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Mar 21 19:59:52 2024 +0100
+
+    Merge pull request #35 from LucasDombrowski/Soundtrack
+    
+    Starting to add OST and sounds
+
+[33mcommit c9887bbf8df3f91d10a525d4417ac9e275e9519a[m[33m ([m[1;31morigin/Soundtrack[m[33m, [m[1;32mSoundtrack[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Mar 21 19:59:11 2024 +0100
+
+    Starting to add OST and sounds
+
+[33mcommit 519c052dafee2969f3c864ffbf988fe5f289ea90[m
+Merge: af7e919 eacdad2
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 21:46:25 2024 +0100
+
+    Merge pull request #34 from LucasDombrowski/EnhanceRoomSwitch
+    
+    No camera slide bug when leaving room to early
+
+[33mcommit eacdad26fa25a751210699e139feb4b4bc9d36c3[m[33m ([m[1;31morigin/EnhanceRoomSwitch[m[33m, [m[1;32mEnhanceRoomSwitch[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 21:45:32 2024 +0100
+
+    No camera slide bug when leaving room to early
+
+[33mcommit af7e919754665003d0dbd2c91eeae7c75f17d587[m
+Merge: 936d17a dedbf85
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 21:21:23 2024 +0100
+
+    Merge pull request #33 from LucasDombrowski/ShopItems
+    
+    New items
+
+[33mcommit dedbf85876e14ab90eb815142ab6b2b0e9d009d0[m[33m ([m[1;31morigin/ShopItems[m[33m, [m[1;32mShopItems[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 21:20:54 2024 +0100
+
+    New items
+
+[33mcommit 936d17a90509e3ab8624a169121994e0ba2f38b3[m
+Merge: 5b7cc76 053906c
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 17:28:37 2024 +0100
+
+    Merge pull request #32 from LucasDombrowski/HeartDrop
+    
+    Drops are now available, with probabilities
+
+[33mcommit 053906ce3780d48b0f64b8b7242d0d334875a1af[m[33m ([m[1;31morigin/HeartDrop[m[33m, [m[1;32mHeartDrop[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 17:25:43 2024 +0100
+
+    Drops are now available, with probabilities
+
+[33mcommit 5b7cc7624c5079a691ad71342f23170679b6a007[m
+Merge: edfc0e1 debd2b8
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 15:04:17 2024 +0100
+
+    Merge pull request #31 from LucasDombrowski/DarkRoom
+    
+    Blind mode darkness updated
+
+[33mcommit debd2b84aea1dceeb460f8026bc0c5b0085d96cf[m[33m ([m[1;31morigin/DarkRoom[m[33m, [m[1;32mDarkRoom[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 15:01:09 2024 +0100
+
+    Blind mode darkness updated
+
+[33mcommit edfc0e11060d6c93882305ea39d1d136b4a017fe[m
+Merge: 06b72ad 897b7cf
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 14:40:26 2024 +0100
+
+    Merge pull request #30 from LucasDombrowski/AlternateRooms
+    
+    Alternate rooms
+
+[33mcommit 897b7cf938a58f1c376d9f932041582709568b04[m[33m ([m[1;31morigin/AlternateRooms[m[33m, [m[1;32mAlternateRooms[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 14:39:12 2024 +0100
+
+    Updating available tiles
+
+[33mcommit 3e92f52d6bbc7c2487824525f287399e9ae3bfa8[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 13:03:48 2024 +0100
+
+    New room textures added
+
+[33mcommit 06b72adb322a95d6f2e88eb733f911b868bed3df[m
+Merge: 3132839 d9a5c9f
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 10:52:02 2024 +0100
+
+    Merge pull request #29 from LucasDombrowski/ChallengeTitle
+    
+    Game challenges are set
+
+[33mcommit d9a5c9f8787775243d759a338022194342d85082[m[33m ([m[1;31morigin/ChallengeTitle[m[33m, [m[1;32mChallengeTitle[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 20 10:42:15 2024 +0100
+
+    Game challenges are set
+
+[33mcommit 313283915bc671a094779fa4d49dd7929173f614[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 15 14:42:45 2024 +0100
+
+    Updating project
+
+[33mcommit 97c22b392f13a98cd94f1bda129117ce866edfb4[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 15 14:15:26 2024 +0100
+
+    Adding challenges titles
+
+[33mcommit 5cd2e10ebc188e3df0191a6954be0b616b4e51a2[m
+Merge: 45c06fe 8c93df7
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 15 13:28:40 2024 +0100
+
+    Merge pull request #28 from LucasDombrowski/FirstLevelTiles
+    
+    First level tiles
+
+[33mcommit 8c93df7113344747b418fca822c9818be740ff42[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Mar 15 13:03:34 2024 +0100
+
+    Doors are now placed correctly
+
+[33mcommit c91ad0b8944da11934bb9c704c9388c09439faeb[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Mar 14 23:41:44 2024 +0100
+
+    Tiles are working, still some bugs on character placement
+
+[33mcommit 165bea51956c8a707e5fa9db5b96f191e55ae2b2[m[33m ([m[1;31morigin/FirstLevelTiles[m[33m, [m[1;32mFirstLevelTiles[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Mar 14 16:50:45 2024 +0100
+
+    Continuing to work on new tiles
+
+[33mcommit 45c06febbfab4a399ee38661db121253fac651ad[m
+Merge: d31880f 55a08b9
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 13 20:38:04 2024 +0100
+
+    Merge pull request #27 from LucasDombrowski/Challenges
+    
+    Challenges are up, characters are invisible for no reason, still some…
+
+[33mcommit 55a08b9172af52535e8c8e0cefab8a605c30c183[m[33m ([m[1;31morigin/Challenges[m[33m, [m[1;32mChallenges[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 13 20:37:34 2024 +0100
+
+    Challenges are up, characters are invisible for no reason, still some crashes
+
+[33mcommit d31880fc8883378e8d868bcd0aeaf4bba0714abd[m
+Merge: 3977f91 5f87fc8
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 13 14:36:47 2024 +0100
+
+    Merge pull request #26 from LucasDombrowski/FontSpacing
+    
+    Font spacing
+
+[33mcommit 5f87fc8b795399bd7de65c78a26c241b537005ef[m[33m ([m[1;31morigin/FontSpacing[m[33m, [m[1;32mFontSpacing[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 13 14:35:30 2024 +0100
+
+    Text are now correctly spaced, font changed
+
+[33mcommit aed62395060f303bb8bebaea6fa62dc02737d83a[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 13 11:33:35 2024 +0100
+
+    Font spacing solved
+
+[33mcommit 3977f91d30a9d24c779da432497c8aadda37df6a[m
+Merge: 53f4d8a 157df9d
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 13 00:41:35 2024 +0100
+
+    Merge pull request #25 from LucasDombrowski/LowLifeAnimation
+    
+    Low life animation added
+
+[33mcommit 157df9d8de6adde32c4d9d6f7939243d9fe28fc9[m[33m ([m[1;31morigin/LowLifeAnimation[m[33m, [m[1;32mLowLifeAnimation[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Mar 13 00:41:05 2024 +0100
+
+    Low life animation added
+
+[33mcommit 53f4d8af240b1d7fde0d54bbd9c2b16f46a1f246[m
+Merge: eb3ea7d 1dec94c
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 12 14:54:05 2024 +0100
+
+    Merge pull request #24 from LucasDombrowski/StopEnemiesGameOver
+    
+    Enemies stop action when game is over
+
+[33mcommit 1dec94cc9ff2929dfb58917fe66de3660e2d8db4[m[33m ([m[1;31morigin/StopEnemiesGameOver[m[33m, [m[1;32mStopEnemiesGameOver[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 12 14:53:13 2024 +0100
+
+    Enemies stop action when game is over
+
+[33mcommit eb3ea7d9d8ffce345ebb5d887ec9a2dceefab9be[m
+Merge: a34e94e 3107ea8
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 12 14:29:28 2024 +0100
+
+    Merge pull request #23 from LucasDombrowski/NewChestSprite
+    
+    New chest sprite
+
+[33mcommit 3107ea8da232c0bbf48c91734446f73c0c07fea8[m[33m ([m[1;31morigin/NewChestSprite[m[33m, [m[1;32mNewChestSprite[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 12 14:28:56 2024 +0100
+
+    New chest sprite
+
+[33mcommit a34e94e401ac298a9f4d0d0b8b25faacbb9ce085[m
+Merge: 2ee5e4d b2a75a7
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 12 14:14:33 2024 +0100
+
+    Merge pull request #22 from LucasDombrowski/gameOverScreen
+    
+    Game over is effective, need to cancel enemies animations when player…
+
+[33mcommit b2a75a7cc6508e5589845681e7a08b4debbbe5e8[m[33m ([m[1;31morigin/gameOverScreen[m[33m, [m[1;32mgameOverScreen[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Mar 12 13:01:09 2024 +0100
+
+    Game over is effective, need to cancel enemies animations when player is dead
+
+[33mcommit 2ee5e4dfb8587e0b311b1625b0e235f7a99111e1[m
+Merge: 4755e81 9f3ec63
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Feb 27 10:48:07 2024 +0100
+
+    Merge pull request #21 from LucasDombrowski/PathIndicatorDrawing
+    
+    Enhance path drawing
+
+[33mcommit 9f3ec63cc0576b0a1a8187a200c146b8ab9ec9cb[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Feb 25 11:35:55 2024 +0100
+
+    Enhance path drawing
+
+[33mcommit 4755e8137e4c2814e1a9184221df7656bec32141[m
+Merge: bc4ec5d b299eb7
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 24 15:58:00 2024 +0100
+
+    Merge pull request #20 from LucasDombrowski/PathIndicatorDrawing
+    
+    Path cursor drawing on drag move
+
+[33mcommit b299eb75497c7519ae9f17ed99faec158014787b[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 24 15:56:48 2024 +0100
+
+    Path cursor drawing on drag move
+
+[33mcommit bc4ec5de2cf5e80aa9a78ac83c3f3d78f6b755ca[m
+Merge: 7bf22ec ce34a1b
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 24 14:21:07 2024 +0100
+
+    Merge pull request #19 from LucasDombrowski/TextBox
+    
+    Couroutines fixed, still some lag in letters apparitions
+
+[33mcommit ce34a1b6f3621e1f3105fece2c5cc5844e5f4125[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 24 14:20:30 2024 +0100
+
+    Couroutines fixed, still some lag in letters apparitions
+
+[33mcommit 7bf22ec4f791141249623ef9025bbfa5967cf8db[m
+Merge: 34f48c2 dd7f97e
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 24 12:14:39 2024 +0100
+
+    Merge pull request #18 from LucasDombrowski/NewControls
+    
+    New controls
+
+[33mcommit dd7f97e1813f71e57a7af1bc10021adc03a5a7e8[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 24 12:01:57 2024 +0100
+
+    New controls now working correctly
+
+[33mcommit 275a9b41583d9533c7887668ab8296d67111f077[m[33m ([m[1;31morigin/NewControls[m[33m, [m[1;32mNewControls[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 24 00:26:50 2024 +0100
+
+    New controls are working, need to fix character position on rooms start
+
+[33mcommit 34f48c2f72853e94f89708b2d499d35b5ffcb473[m
+Merge: 8d609a2 38c7685
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 20:49:12 2024 +0100
+
+    Merge pull request #17 from LucasDombrowski/CameraInBigRooms
+    
+    Camera in big rooms
+
+[33mcommit 38c76852cc581223b676fc4c79ad9df4033759e1[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 20:47:28 2024 +0100
+
+    Fixing large room camera
+
+[33mcommit 407cdf11abe02757bedb9e173010e4deb27c630e[m[33m ([m[1;31morigin/CameraInBigRooms[m[33m, [m[1;32mCameraInBigRooms[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 19:17:56 2024 +0100
+
+    Need to fix Large Room camera
+
+[33mcommit 442c48813a651c69d345e874aaff32eae6e8167b[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 17:11:14 2024 +0100
+
+    Camera on long rooms
+
+[33mcommit 8d609a23e36453ad0cdf657d89f107002faadf1f[m
+Merge: d004a72 6930188
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 15:59:50 2024 +0100
+
+    Merge pull request #16 from LucasDombrowski/ReachablePlayer
+    
+    Enemies now spawn at location that are reachable
+
+[33mcommit 6930188d1b6a79379cf430cc4547ac9bb28b4f03[m[33m ([m[1;31morigin/ReachablePlayer[m[33m, [m[1;32mReachablePlayer[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 15:58:14 2024 +0100
+
+    Enemies now spawn at location that are reachable
+
+[33mcommit d004a723375c6ab1c45bd7b69aee7942289e3477[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 15:25:37 2024 +0100
+
+    Fixing camera shaking in big rooms
+
+[33mcommit 2baee09bf6245b000c290c9d24c722a72b85c3d9[m[33m ([m[1;32mFixingLoadingCrash[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 15:11:12 2024 +0100
+
+    Fixed the loading crash
+
+[33mcommit c8cf20c61906c11fb002f81832dc861c44b35e32[m[33m ([m[1;31morigin/FixingLoadingCrash[m[33m, [m[1;32mPauseMenu[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 14:22:34 2024 +0100
+
+    Finishing to work for now on the pause menu
+
+[33mcommit a6a0abf9687aa7e4f0a04bfb29015e11927fa8ad[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 23 10:51:33 2024 +0100
+
+    Correcting path finding crash
+
+[33mcommit b7789182f5c3124ee99165482ceb56521018458b[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 22:53:19 2024 +0100
+
+    Adding menu image + buttons, need to correct closest tile crash
+
+[33mcommit 75447b690aa6bf72bec6ceff4e8db0eb6c20d0e7[m[33m ([m[1;31morigin/PauseMenu[m[33m)[m
+Merge: fe68f52 10f7845
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 22:02:11 2024 +0100
+
+    Merge branch 'main' of https://github.com/LucasDombrowski/android-game into PauseMenu
+
+[33mcommit 10f7845fa97c99926e0cdc33dde1f3195dc1ed09[m
+Merge: 9ea26d3 3211bee
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 22:01:25 2024 +0100
+
+    Merge pull request #15 from LucasDombrowski/MultipleRoomSizes
+    
+    Multiple room sizes
+
+[33mcommit fe68f5206dfe170e1b26b34b655ca0036d05207f[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 21:56:21 2024 +0100
+
+    Starting to working on menu
+
+[33mcommit 9ea26d3683baa14ae0daf033da2417b7619a56fb[m
+Merge: 71e98b7 110375b
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 21:50:15 2024 +0100
+
+    Merge pull request #14 from LucasDombrowski/MultipleRoomSizes
+    
+    Multiple room sizes
+
+[33mcommit 3211bee42f1496343224be623f03fdb7550ae9a6[m[33m ([m[1;31morigin/MultipleRoomSizes[m[33m, [m[1;31morigin/Lucas[m[33m, [m[1;32mMultipleRoomSizes[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 21:47:20 2024 +0100
+
+    Solving performance issues
+
+[33mcommit 5ad2538721eb1d6f8bf5e0987644074148ed365a[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 18:56:24 2024 +0100
+
+    Updating the path finder, but there are still huge lags in big rooms
+
+[33mcommit 00895b356ba312c4ddb09ec43d2dc60f6e18dd5d[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 17:40:03 2024 +0100
+
+    Enemies are working and the rooms are openable, we need to change the path finding algorithm
+
+[33mcommit 8738a727e5af40efa820815589eeb99fa3ea2f23[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 17:24:26 2024 +0100
+
+    Obstacle generation algorithm
+
+[33mcommit 35a526739a6eec4ca263956931597e3af84e4938[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 22 16:55:21 2024 +0100
+
+    Bigger rooms seem to work, now working on their obstacle generating algorithm
+
+[33mcommit fafd4a25c541fd5b15e3b7e1e95b74473fd7eff6[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Feb 21 23:40:58 2024 +0100
+
+    Need to fix room displaying
+
+[33mcommit 110375b40cafb15d0a4d5f7eebc1068cc8d3475b[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Feb 21 19:33:25 2024 +0100
+
+    Multiple room sizes available
+
+[33mcommit 60a28e7f4dbc9bedbcf951d297d53147a349f16b[m[33m ([m[1;32mLucas[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Feb 20 23:09:27 2024 +0100
+
+    Adding the shop room
+
+[33mcommit 0181731e6f3f9a3d4e4f8c4f1cd8f686a415e628[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Feb 20 17:54:57 2024 +0100
+
+    Image to sprite conversion
+
+[33mcommit cb94215392cfcec3336b650e6702463d3b85a411[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Feb 20 12:55:05 2024 +0100
+
+    Text to sprite conversion
+
+[33mcommit a76dc59d3abe2a0cf57471f1b53b09ec509aa9f8[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Mon Feb 19 22:27:21 2024 +0100
+
+    Correcting text spliting in dialog boxes
+
+[33mcommit 61630b4d7959200b213387c812c1f58f784127d6[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Mon Feb 19 22:06:41 2024 +0100
+
+    Scaling images with screen width
+
+[33mcommit 021db492f5284f02325d7e529673febe132c161f[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Mon Feb 19 19:46:01 2024 +0100
+
+    Definitive writing box
+
+[33mcommit 71e98b7e93bd9c7577297fc6b0aaa82c13b09122[m
+Merge: 7ba3c77 0c4180b
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Mon Feb 19 14:31:41 2024 +0100
+
+    Merge pull request #13 from LucasDombrowski/Lucas
+    
+    Lucas
+
+[33mcommit 0c4180b2e7b829686fcfcbbb7f3007b693726e42[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Mon Feb 19 13:42:21 2024 +0100
+
+    Changing font
+
+[33mcommit c187f2eb93b9811c194e6bc6e262c0690219b2cf[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Mon Feb 19 11:18:38 2024 +0100
+
+    Adding missing file
+
+[33mcommit d795a0d9f6bd0c475a2330cfb6630fce5e60d4af[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Feb 18 21:50:54 2024 +0100
+
+    Added coins ATH
+
+[33mcommit 97a2ec7033e15f2795e1ac6ef7bba1a0d24371db[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Feb 18 21:24:51 2024 +0100
+
+    Last project update
+
+[33mcommit a948e7a5873421cb3ca2eb8bb9118559b73bf82e[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Feb 18 20:30:12 2024 +0100
+
+    Updating enemies AI behavior
+
+[33mcommit 3069550393853fba2a7e8e03a64555638cd87f50[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Feb 18 17:15:11 2024 +0100
+
+    Improving AI to find the shortest path with obstacles
+
+[33mcommit 5b3017b0c2f65acffe3a3dc8de70f02ce6df2a5d[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 17 16:08:38 2024 +0100
+
+    Cinematics feature
+
+[33mcommit 7ba3c77902c1f1026de4fe047f713260ea442d55[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 16 18:16:31 2024 +0100
+
+    Merging branches
+
+[33mcommit bb435bd3632180bc5b6aa5ab32b874be90e4f7d2[m
+Merge: 5107a9a 77d3637
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 16 18:15:46 2024 +0100
+
+    Merge branch 'Prototype' of https://github.com/LucasDombrowski/android-game
+
+[33mcommit 77d36376d8e534459f0b9536a31813d1702a3db8[m[33m ([m[1;31morigin/Prototype[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 16 18:10:45 2024 +0100
+
+    Correcting pause feature
+
+[33mcommit eb6f0ca8a3774b647e7979ae81d1579e6d5561b6[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Feb 11 23:22:19 2024 +0100
+
+    Testable prototype
+
+[33mcommit 5107a9acbd4972572854174211b43220462930ec[m
+Merge: 04c0ffd 9f4c790
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Feb 11 21:54:32 2024 +0100
+
+    Merge pull request #12 from LucasDombrowski/Prototype
+    
+    Prototype
+
+[33mcommit 9f4c790f0eba1f1da2f2dea2c6389f4d63dfa5f4[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Feb 11 21:53:51 2024 +0100
+
+    Testable prototype
+
+[33mcommit e598208ef6ef03ddc2dbe1982339a391ce4c957b[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Feb 11 00:04:42 2024 +0100
+
+    Rotating projectiles
+
+[33mcommit 5811c70bb149885715c123f9d4d20f21cf4f0581[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 10 21:13:43 2024 +0100
+
+    Crashing version
+
+[33mcommit e007c799003b6d9f8a8226cf4955d8fc2e4e04e0[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 10 09:56:17 2024 +0000
+
+    Developping the first boss
+
+[33mcommit 04c0ffd9f0ea5736a4b0f1757c5ccecbb308f71b[m
+Merge: 88b6b7f 9724c22
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Mon Feb 5 11:05:23 2024 +0100
+
+    Merge pull request #11 from LucasDombrowski/Lucas
+    
+    Boss health bar
+
+[33mcommit 9724c228b75529e7a8bed1ae20cc312a2a290748[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Mon Feb 5 07:31:10 2024 +0100
+
+    Boss health bar
+
+[33mcommit 88b6b7fc494551aff28aa48827defdf940d40063[m
+Merge: 2cd94e0 b25b90c
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 3 13:40:46 2024 +0100
+
+    Merge pull request #10 from LucasDombrowski/Lucas
+    
+    Lucas
+
+[33mcommit b25b90cf449168025d314e6f8cbc5c03149d4326[m
+Merge: 818266c 2cd94e0
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 3 13:40:02 2024 +0100
+
+    Resolving conflicts
+
+[33mcommit 2cd94e044e36ba3afa6fc41fa888335f0560e411[m
+Merge: 296073c 65dd710
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 3 13:36:12 2024 +0100
+
+    Merge pull request #9 from LucasDombrowski/Nathan
+    
+    Nathan
+
+[33mcommit 818266c3f7c0565b35a45f9c844aa68adc7222d8[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 3 13:35:17 2024 +0100
+
+    Update controllable character movements
+
+[33mcommit 65dd7101f747c6a40483b24dbfe43efbea8f8e9e[m
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Sat Feb 3 13:28:51 2024 +0100
+
+    mise à jour algo et StartRoom BossRoom
+
+[33mcommit d9c9ef2f0b247422338cfba38b2580ec03e4073d[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 3 11:22:05 2024 +0100
+
+    Target indicator now works
+
+[33mcommit 73bc772d33ff7cba4e58f72df6d9ee36913bf08f[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 3 11:01:59 2024 +0100
+
+    Correcting animation delays
+
+[33mcommit 289b8347cc03b944e891190ee0606fa25a2e9f5e[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Feb 3 10:50:55 2024 +0100
+
+    Fixing animation crashes
+
+[33mcommit 1e02cb2bca67a57ed1afc77a446baad0be49a933[m[33m ([m[1;31morigin/Oskour[m[33m)[m
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Sat Feb 3 10:49:36 2024 +0100
+
+    algo
+
+[33mcommit 42aa7df5a834fb38c210fb2d022ac65b9a18a9df[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 2 18:52:53 2024 +0100
+
+    Starting to develop enemies spawning
+
+[33mcommit 52d996c197225869d6330c4022d59532b6820e75[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 2 15:26:34 2024 +0100
+
+    Correcting moving values
+
+[33mcommit 92804bb2f8d5f748b19c2d3c4d75dce388bb3827[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 2 14:45:10 2024 +0100
+
+    Correcting movements speed between screens
+
+[33mcommit 296073cd513ff2a0c85530c11026c24d62392caa[m
+Merge: 5ee1bfd 45c7643
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Feb 2 12:25:25 2024 +0100
+
+    Merge pull request #8 from LucasDombrowski/Lucas
+    
+    Starting to generating the map
+
+[33mcommit 45c7643ddfd8a5dcceb6e533108df636835ccefd[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Feb 1 23:39:38 2024 +0100
+
+    Starting to generating the map
+
+[33mcommit 5ee1bfd683bfd1806faa3fce2e0ab4a112754607[m
+Merge: 3aa4592 e7c53e3
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Jan 31 10:28:56 2024 +0100
+
+    Merge pull request #7 from LucasDombrowski/Lucas
+    
+    Lucas
+
+[33mcommit e7c53e30835adb87164b61995f1c764262c3b35d[m
+Merge: 3944034 3aa4592
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Jan 31 10:28:08 2024 +0100
+
+    Merge branch 'main' of https://github.com/LucasDombrowski/android-game into Lucas
+
+[33mcommit 3aa4592e8723b63eac80d2b9cf5e562581315a3c[m
+Merge: 814a42c 7981fd5
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Jan 31 10:25:52 2024 +0100
+
+    Merge pull request #6 from LucasDombrowski/Nathan_edit_Lucas
+    
+    Nathan edit lucas
+
+[33mcommit 7981fd5b771c1537407c6ecad086c72f8517a634[m[33m ([m[1;31morigin/Nathan_edit_Lucas[m[33m, [m[1;32mNathan_edit_Lucas[m[33m)[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Jan 31 10:24:57 2024 +0100
+
+    Updating feature
+
+[33mcommit 07fb72ebdf13200329b557c141053061126c1399[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Jan 31 09:47:21 2024 +0100
+
+    Updating feature
+
+[33mcommit 39440342862cf0d97e8bb92368e53ff809f18811[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Wed Jan 31 08:24:08 2024 +0100
+
+    Editing menu
+
+[33mcommit 17f5f5b711778ed999d68bc2732674470a9eb0a3[m[33m ([m[1;32mNathan[m[33m)[m
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Wed Jan 31 07:46:18 2024 +0100
+
+    algo
+
+[33mcommit 855490de9b15c6f1baedb074e406426b79165501[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Jan 30 16:50:24 2024 +0100
+
+    Starting to develop pause menu
+
+[33mcommit 8b8e41eea502f643c61fbf1d6ba23fd93d713844[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Jan 30 16:45:59 2024 +0100
+
+    Starting to develop pause menu
+
+[33mcommit 15ebbf8b5b2eee4b3f89706ee4196ae01796eaa3[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Tue Jan 30 00:19:58 2024 +0100
+
+    Starting to develop items
+
+[33mcommit 25c087d65a38b20656e18bcea01e9fd84307fae8[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Mon Jan 29 17:07:45 2024 +0100
+
+    Replacing health float point to integer one
+
+[33mcommit 36242a16940f1591965045cbeb22135dc6bc254d[m
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Mon Jan 29 16:13:23 2024 +0100
+
+    génération aléatoire des maps
+
+[33mcommit 178b7495ba6b8853fc312900f03ae59b7674e511[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Jan 28 23:35:23 2024 +0100
+
+    Fixing animation crashes
+
+[33mcommit 009dd163ce94f913a9311cab07f68282bf25d31b[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sun Jan 28 21:59:38 2024 +0100
+
+    Working on AI
+
+[33mcommit d13b3e25e2009477491c39d6b744631829f1eeab[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Sat Jan 27 19:32:33 2024 +0100
+
+    Shot abilities
+
+[33mcommit f3592404496881e2fae767ca1b80f2ebe52b3304[m
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Fri Jan 26 09:57:04 2024 +0100
+
+    item
+
+[33mcommit c9637fe274d21f0cf44b5362318a2abbf36480d6[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Fri Jan 26 09:56:27 2024 +0100
+
+    Dynamic heart ath, damages functionnality
+
+[33mcommit 62ebf4e8f6ba2294d1e1671a49740b4783098df4[m
+Merge: 35f91de 814a42c
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Thu Jan 25 23:00:44 2024 +0100
+
+    Merge branch 'main' of https://github.com/LucasDombrowski/android-game into Nathan
+
+[33mcommit 35f91de9a16ea4a6a9b3206ec1ee20957b703642[m
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Thu Jan 25 23:00:25 2024 +0100
+
+    to pull
+
+[33mcommit 814a42cd02b4a989bbb8f6e93ac6360ecc69bc9a[m
+Merge: 8ade37a 60fa06b
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Jan 25 17:09:02 2024 +0100
+
+    Merge pull request #4 from LucasDombrowski/Lucas
+    
+    Lucas
+
+[33mcommit 60fa06b61c01c1a3c948f3237434bcade858bf01[m
+Merge: ab42ab9 8ade37a
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Jan 25 17:08:02 2024 +0100
+
+    Merge branch 'main' of https://github.com/LucasDombrowski/android-game into Lucas
+
+[33mcommit 8ade37a851e57f66d511972b7bfab7464453334f[m
+Merge: 57aa86d 74eac59
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Jan 25 17:02:10 2024 +0100
+
+    Merge branch 'main' of https://github.com/LucasDombrowski/android-game
+
+[33mcommit ab42ab949c7da2a99a35516515090e9d82c78b7c[m
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Jan 25 16:57:43 2024 +0100
+
+    Update deploymentTargetDropDown.xml
+
+[33mcommit 3c1b35357f05c657dad46c443df26cbea77572d2[m
+Author: Dombrowski Lucas <lucas.dombrowski.62129@gmail.com>
+Date:   Thu Jan 25 16:52:41 2024 +0100
+
+    Resolving conflict
+
+[33mcommit 74eac59b0f2b03bbfab5f0d5df3be4d2c545f188[m
+Merge: f1b19b2 2374da5
+Author: Lucas Dombrowski <lucas.dombrowski.pro@gmail.com>
+Date:   Thu Jan 25 16:25:34 2024 +0100
+
+    Merge pull request #1 from LucasDombrowski/Nathan
+    
+    room modification
+
+[33mcommit 2374da580b569333ed1b3115b260504bc5208176[m
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Thu Jan 25 16:22:28 2024 +0100
+
+    room modification
+
+[33mcommit 2fffbd9f35866d59a85c4ba12c14ed4cbed93a63[m
+Author: Dombrowski Lucas <lucas.dombrowski.62129@gmail.com>
+Date:   Thu Jan 25 16:19:04 2024 +0100
+
+    Correcting character animation loop
+
+[33mcommit c596c2a9ea4fc536716fd05f636a8af5ab3122d8[m
+Author: Dombrowski Lucas <lucas.dombrowski.62129@gmail.com>
+Date:   Thu Jan 25 00:55:18 2024 +0100
+
+    Starting hearts development
+
+[33mcommit 57aa86d8319ca583f378d0e8dedaab5bb55cf13a[m
+Merge: a8f264d f1b19b2
+Author: Dombrowski Lucas <lucas.dombrowski.62129@gmail.com>
+Date:   Wed Jan 24 20:23:02 2024 +0100
+
+    Merge remote-tracking branch 'origin/main'
+    
+    # Conflicts:
+    #       .idea/gradle.xml
+
+[33mcommit a8f264db1430aa18d991612b2696a7b102f88936[m
+Author: Dombrowski Lucas <lucas.dombrowski.62129@gmail.com>
+Date:   Wed Jan 24 20:21:48 2024 +0100
+
+    Initializing project
+
+[33mcommit f1b19b2b4c4edae44f161a4357ef1a9d02a4c0e8[m
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Wed Jan 24 12:15:52 2024 +0100
+
+    import de la room
+
+[33mcommit 35727751bf920e9877c038b41edb66ed56eae492[m
+Author: Nathan <nathanpiet2004@gmail.com>
+Date:   Wed Jan 24 12:15:39 2024 +0100
+
+    import de la room
+
+[33mcommit bdab652e82fc2bbf0d2dd3c0c4985eaab4144199[m
+Author: Dombrowski Lucas <lucas.dombrowski.62129@gmail.com>
+Date:   Wed Jan 24 11:34:00 2024 +0100
+
+    Initializing project

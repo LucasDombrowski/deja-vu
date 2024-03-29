@@ -16,6 +16,9 @@ import fr.iutlens.mmi.demo.game.sprite.sprites.characters.TeleportNinja
 import fr.iutlens.mmi.demo.game.sprite.sprites.characters.bosses.NinjaBoss
 import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.setInterval
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class Ninja : Game(
     map = Map(
@@ -66,6 +69,10 @@ class Ninja : Game(
              Music.mute = false
             }, true
         )
+        GlobalScope.launch {
+            delay(5000)
+            switchRoom(map.rooms!!.size-2)
+        }
     }
 
     override fun copy() : Ninja{

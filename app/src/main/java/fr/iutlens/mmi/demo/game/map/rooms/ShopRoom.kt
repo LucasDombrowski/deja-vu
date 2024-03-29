@@ -62,6 +62,7 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
     }
 
     fun createCinematic(game: Game) : Cinematic{
+        val shopkeeperImage = R.drawable.cinematic_shopkeeper
         return Cinematic(listOf(
             CinematicPart(
                 "Élisa, la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
@@ -71,7 +72,7 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
             ),
             CinematicPart(
                 "la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
-                R.drawable.cinematic_character,
+                shopkeeperImage,
                 false,
                 name = "Shopkeeper"
             ),
@@ -79,7 +80,7 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
                 "Élisa, la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
                 R.drawable.cinematic_character,
                 true,
-                name = "Shopkeeper"
+                name = "Blaise"
             )
         ),game)
     }
