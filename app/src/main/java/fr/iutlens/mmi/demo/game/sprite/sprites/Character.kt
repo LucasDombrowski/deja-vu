@@ -25,6 +25,7 @@ import java.util.LinkedList
 import java.util.Queue
 import kotlin.math.abs
 import kotlin.math.round
+import kotlin.math.roundToInt
 import kotlin.reflect.typeOf
 
 
@@ -107,7 +108,7 @@ open class Character(
         game.invalidate()
     }
 
-    fun moveTo(x: Float, y:Float){
+    fun moveTo(x: Float, y:Float, onMoveEnd: () -> Unit = {}){
         if(mobile){
                 previousDirection = currentDirection
                 movingAction.cancel()
@@ -177,10 +178,11 @@ open class Character(
 
                         changePos(nextX, nextY)
                         delay(33)
-                        moveTo(x, y)
+                        moveTo(x, y, onMoveEnd)
                     } else {
                         stun()
                         restart()
+                        onMoveEnd()
                     }
                 }
             }
@@ -410,7 +412,6 @@ open class Character(
                 findShortestPath(x, y)
             }
         }
-        moveTo(x,y)
     }
     fun findShortestPath(x: Float, y: Float){
         GlobalScope.launch {
@@ -455,19 +456,38 @@ open class Character(
     }
 
     fun setupPathFollowing(){
-        var currentPathIndex = 0
-        followingPath = setInterval(0,66){
-            val pathToFollow = currentPath.toList()
-            if(game.map.getMapIndexFromPosition(sprite.x, sprite.y) == pathToFollow[currentPathIndex]){
-                currentPathIndex++
-            }
-            if(currentPathIndex >= pathToFollow.size){
-                disablePathFollowing()
+        followingPath = moveToPathTile()
+    }
+    
+    fun moveToPathTile(pathIndex : Int = 0) : Job{
+        val pathToFollow = currentPath.toList()
+        if(pathIndex<pathToFollow.size) {
+            val floatValue = pathTileFloatValue(pathToFollow[pathIndex])
+            if (sprite.x.roundToInt() == floatValue.first.roundToInt() && sprite.y.roundToInt() == floatValue.second.roundToInt()) {
+                if (pathIndex + 1 < pathToFollow.size) {
+                    return moveToPathTile(pathIndex + 1)
+                } else {
+                    pathFollow = false
+                    return GlobalScope.launch {
+                        return@launch
+                    }
+                }
             } else {
-                val floatValue = game.map.getPositionFromMapIndex(pathToFollow[currentPathIndex].first, pathToFollow[currentPathIndex].second)
-                moveTo(floatValue.first + game.map.tileArea.w/2, floatValue.second + game.map.tileArea.h/2)
+                return GlobalScope.launch {
+                    moveTo(floatValue.first, floatValue.second) {
+                        followingPath = moveToPathTile(pathIndex)
+                    }
+                }
+
             }
+        } else {
+            return GlobalScope.launch {  }
         }
+    }
+
+    fun pathTileFloatValue(indices : Pair<Int,Int>) : Pair<Float,Float>{
+        val floatValue = game.map.getPositionFromMapIndex(indices.first, indices.second)
+        return Pair(floatValue.first+game.map.tileArea.w/2,floatValue.second+game.map.tileArea.h/2)
     }
 
     fun disablePathFollowing(){
