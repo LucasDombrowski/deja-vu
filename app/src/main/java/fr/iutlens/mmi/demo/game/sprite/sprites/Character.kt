@@ -315,7 +315,7 @@ open class Character(
             action.cancel()
             game.map.currentRoom().isOpenable(game)
             if((1..2/game.dropProbability).random() == 1){
-                when((1..10/game.heartDropProbability).random()){
+                when((1..5/game.heartDropProbability).random()){
                     1->{
                         when((1..5/game.superCoinDropProbability).random()){
                             1->{

@@ -9,10 +9,10 @@ class HandHeart : Item(
     description = "Augmente la probabilité que le collectible qu'un ennemi laisse tomber soit un coeur. Vous soigne de deux coeurs.",
     effects = {
         game ->
-        if(game.heartDropProbability + 2 >= 10){
-            game.heartDropProbability = 10
+        if(game.heartDropProbability + 1 >= 5){
+            game.heartDropProbability = 5
         } else {
-            game.heartDropProbability+=2
+            game.heartDropProbability+=1
         }
 
         var toHeal = 2f
