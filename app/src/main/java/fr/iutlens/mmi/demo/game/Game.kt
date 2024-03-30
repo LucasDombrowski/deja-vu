@@ -250,6 +250,7 @@ open class Game(
     fun switchRoom(ndx : Int){
         controllableCharacter!!.stun()
         map.currentRoom = ndx
+        camera.removeDirectionArrow()
         if(map.currentRoom() is TreasureRoom){
             map.currentRoom().open()
             val chest = Chest(items)
