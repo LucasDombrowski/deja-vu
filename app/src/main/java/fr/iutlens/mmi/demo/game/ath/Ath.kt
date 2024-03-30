@@ -14,6 +14,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +57,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
 import fr.iutlens.mmi.demo.game.map.Room
@@ -101,30 +106,69 @@ fun Hearts(hearts: MutableList<Heart>){
 }
 
 @Composable
-fun BossBar(hearts : MutableList<Heart>){
+fun BossBar(modifier: Modifier, hearts : MutableList<Heart>, image: Int){
     val maxHealth = hearts.size*1f
     val currentHealth = hearts.fold(0f){
         acc, heart ->  acc + heart.filled
     }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(30.dp),
-        horizontalArrangement = Arrangement.Center) {
-        Box(modifier = Modifier
-            .fillMaxWidth(0.25f)
-            .fillMaxHeight()){
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(Color(0, 0, 0, 128)))
-            Box(modifier = Modifier
-                .fillMaxWidth(currentHealth / maxHealth)
-                .fillMaxHeight()
-                .background(Color.Red))
-        }
+    val proportion = currentHealth/maxHealth
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
+    val borderWidth = 2.dp
+    val borderColor = Color.White
+    val emptyBackgroundColor = Color(0,0,0,128)
+    val imageSize = screenWidth/20
+    @Composable
+    fun BossIcon(image: Int){
 
+        Box(modifier = Modifier
+            .zIndex(1f)
+            .clip(CircleShape)
+            .border(width = borderWidth, color = borderColor, shape = CircleShape)
+            .size(imageSize)){
+            Image(painter = painterResource(id = image),
+                contentDescription = "Icon",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize())
+        }
     }
+
+    @Composable
+    fun HealthBar(proportion : Float){
+        val barWidth = screenWidth/3
+        val barHeight = barWidth/15
+        val remainingColor = Color(215,0,4)
+        val barShape = RoundedCornerShape(topStart = 0.dp, topEnd = barHeight, bottomEnd = barHeight, bottomStart = 0.dp)
+        Box(modifier = Modifier
+            .offset(x = -imageSize/8)
+            .clip(barShape)
+            .border(width = borderWidth, color = borderColor, shape = barShape)
+            .width(barWidth)
+            .height(barHeight)
+            ){
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(emptyBackgroundColor))
+            Box(modifier = Modifier
+                .clip(barShape)
+                .fillMaxWidth(proportion)
+                .fillMaxHeight()
+                .background(remainingColor, shape = barShape))
+        }
+    }
+    
+    Box(modifier = modifier){
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ){
+            BossIcon(image = image)
+            HealthBar(proportion = proportion)
+        }
+    }
+
+
+
 }
 
 @Composable

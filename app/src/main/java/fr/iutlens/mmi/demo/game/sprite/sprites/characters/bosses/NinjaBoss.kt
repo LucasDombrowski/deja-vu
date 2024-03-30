@@ -47,6 +47,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     bottomAnimationSequence = listOf(20,21,22,23,24),
     rightAnimationSequence = listOf(5,6),
     target = game.controllableCharacter!!,
+    image = R.drawable.idle_first_boss
 ) {
 
 

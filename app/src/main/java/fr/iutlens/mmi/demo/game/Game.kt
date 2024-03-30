@@ -523,7 +523,7 @@ open class Game(
                 }
             }
             if(ath["boss"]!!.isNotEmpty()){
-                BossBar(hearts = ath["boss"] as MutableList<Heart>)
+                BossBar(modifier = Modifier.align(Alignment.TopCenter), hearts = ath["boss"] as MutableList<Heart>, image = map.boss!!.image)
             }
         }
 
@@ -832,6 +832,8 @@ open class Game(
         screenEffect = {}
 
         controllableCharacter!!.sprite.visible()
+
+        pause = true
 
         fun blindReduce(onEnd : ()->Unit){
             var blindValue = 15
