@@ -564,7 +564,7 @@ open class Character(
     }
 
     fun solidCharacterInTile(row: Int, col: Int) : Boolean{
-        for (character in game.characterList.filter { it.solid }){
+        for (character in game.characterList.toList().filter { it.solid }){
             if(game.map.getMapIndexFromPosition(character.sprite.x,character.sprite.y)==Pair(row,col)){
                 return true
             }

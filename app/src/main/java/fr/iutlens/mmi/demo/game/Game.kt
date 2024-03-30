@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.demo.game
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -67,6 +68,7 @@ import fr.iutlens.mmi.demo.game.ath.Coins
 import fr.iutlens.mmi.demo.game.ath.ContinueArrow
 import fr.iutlens.mmi.demo.game.ath.Hearts
 import fr.iutlens.mmi.demo.game.ath.LowLife
+import fr.iutlens.mmi.demo.game.ath.ProgressBar
 import fr.iutlens.mmi.demo.game.gameplayResources.Challenge
 import fr.iutlens.mmi.demo.game.gameplayResources.Chest
 import fr.iutlens.mmi.demo.game.gameplayResources.Collectible
@@ -78,6 +80,9 @@ import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
 import fr.iutlens.mmi.demo.game.gameplayResources.items.Wallet
 import fr.iutlens.mmi.demo.game.map.Camera
 import fr.iutlens.mmi.demo.game.map.Map
+import fr.iutlens.mmi.demo.game.map.Room
+import fr.iutlens.mmi.demo.game.map.rooms.BasicRoom
+import fr.iutlens.mmi.demo.game.map.rooms.BossRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.demo.game.map.rooms.LongRoom
 import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
@@ -295,6 +300,9 @@ open class Game(
                 map.currentRoom().getRoomCenter().second
             )
         }
+        if(map.currentRoom() is BasicRoom || map.currentRoom() is LargeRoom || map.currentRoom() is LongRoom || map.currentRoom() is BossRoom){
+            showProgressBar.value = false
+        }
     }
 
     fun nextRoom(){
@@ -439,8 +447,9 @@ open class Game(
         }
     }
 
-    var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>())
+    var ath = mutableStateMapOf("hearts" to mutableListOf<Heart>(), "boss" to mutableListOf<Heart>(), "clearedRooms" to mutableListOf<Room>())
     var showAth = mutableStateOf(true)
+    var showProgressBar = mutableStateOf(true)
     var coins = mutableStateOf(0)
 
 
@@ -472,13 +481,15 @@ open class Game(
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Column {
-                        ath["hearts"]?.let { Hearts(hearts = it) }
+                        ath["hearts"]?.let { Hearts(hearts = it as MutableList<Heart>) }
                         Spacer(modifier = Modifier.height(10.dp))
                         Coins(n = coins)
                     }
                 }
 
-                Row(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically) {
                     Box(modifier = Modifier
                         .width((screenWidth / 15).dp)
                         .aspectRatio(1f)
@@ -499,13 +510,20 @@ open class Game(
                             painter = painterResource(id = R.drawable.home_icon),
                             contentDescription = "Menu",
                             contentScale = ContentScale.Fit,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                    if(!map.currentRoom().enemiesAlive(this@Game) || showProgressBar.value) {
+                        ProgressBar(
+                            clearedRoomsCount = ath["clearedRooms"]!!.size,
+                            allRoomsCount = map.rooms!!.size,
+                            show = showProgressBar.value
                         )
                     }
                 }
             }
             if(ath["boss"]!!.isNotEmpty()){
-                BossBar(hearts = ath["boss"]!!)
+                BossBar(hearts = ath["boss"] as MutableList<Heart>)
             }
         }
 
@@ -723,7 +741,6 @@ open class Game(
         } else if(gameOver.value == true){
             GameOver()
         } else {
-            Challenge()
             if(showAth.value) {
                 Ath()
             }
