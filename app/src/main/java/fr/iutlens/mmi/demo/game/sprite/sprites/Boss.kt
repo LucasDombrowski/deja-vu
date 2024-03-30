@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 open class Boss(
     val endCinematicParts : List<CinematicPart>,
+    val image : Int,
     sprite: BasicSprite,
     game: Game,
     speed:Float,
