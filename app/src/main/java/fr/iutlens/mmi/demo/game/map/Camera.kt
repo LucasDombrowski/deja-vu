@@ -231,6 +231,7 @@ class Camera(val game: Game) {
                     true
                 )
             }
+            game.ath["clearedRooms"] = game.map.rooms!!.subList(0,game.map.currentRoom+1)
         }
     }
 

@@ -546,6 +546,7 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                         true
                     )
                 }
+                game.showProgressBar.value = true
             }
         }
     }

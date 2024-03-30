@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 class Ninja : Game(
     map = Map(
-        roomInterval = 8..10,
+        roomInterval = 6..8,
         drawable = R.drawable.ninja_level,
         treasureRooms = 1
     ),

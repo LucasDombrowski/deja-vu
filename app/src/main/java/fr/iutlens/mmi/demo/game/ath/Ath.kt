@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.demo.game.ath
 
+import android.util.Log
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.LinearEasing
@@ -37,10 +38,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -51,6 +55,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.gameplayResources.Heart
+import fr.iutlens.mmi.demo.game.map.Room
 import fr.iutlens.mmi.demo.ui.theme.MainFont
 import kotlinx.coroutines.delay
 
@@ -315,6 +320,53 @@ fun ContinueArrow(rotate : Float){
         .fillMaxSize()
         .padding(padding)){
         Arrow(modifier = Modifier.align(align), rotate = rotate)
+    }
+}
+
+@Composable
+fun ProgressBar(clearedRoomsCount : Int, allRoomsCount : Int, show : Boolean){
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val barWidth = screenWidth/3
+    val barHeight = barWidth/5
+    var enabled by remember {
+        mutableStateOf(!show)
+    }
+
+    val transitionDuration = 500
+
+    val offsetY by animateDpAsState(targetValue = if (enabled) 0.dp else barHeight*2, label = "Translate", animationSpec = tween(
+        durationMillis = transitionDuration,
+        easing = LinearEasing
+    ))
+    LaunchedEffect(key1 = show){
+        enabled = show
+    }
+
+    @Composable
+    fun FullBar(modifier: Modifier,clearedRoomsCount: Int, allRoomsCount: Int){
+        val proportion = clearedRoomsCount.toFloat()/(allRoomsCount+1).toFloat()
+        Image(
+            painter = painterResource(id = R.drawable.full_progress_bar),
+            contentDescription = "Progress Bar",
+            contentScale = ContentScale.FillHeight,
+            alignment = Alignment.CenterStart,
+            modifier = modifier
+                .fillMaxWidth(proportion),
+        )
+    }
+    Box(
+        modifier = Modifier
+            .width(barWidth)
+            .height(barHeight)
+            .offset(y = offsetY)
+    ){
+        Image(painter = painterResource(id = R.drawable.empty_progress_bar),
+            contentDescription = "Progress Bar",
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier.fillMaxSize(),
+            alignment = Alignment.CenterStart)
+        FullBar(modifier = Modifier, clearedRoomsCount = clearedRoomsCount, allRoomsCount = allRoomsCount)
     }
 }
 
