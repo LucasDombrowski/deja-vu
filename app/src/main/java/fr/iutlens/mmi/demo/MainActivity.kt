@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
         loadSpritesheet(R.drawable.target_indicator, 1,1)
         loadSpritesheet(R.drawable.path_indicator, 1,1)
         loadSpritesheet(R.drawable.treasure_chest,2,1)
-        loadSpritesheet(R.drawable.chrono,6,4)
+        loadSpritesheet(R.drawable.blaise,4,6)
         loadSpritesheet(R.drawable.smoke_animation,3,2)
         loadSpritesheet(R.drawable.collectibles,4,2)
         loadSpritesheet(R.drawable.isaac, 9, 4)

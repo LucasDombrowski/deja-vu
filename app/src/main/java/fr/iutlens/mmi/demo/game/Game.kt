@@ -161,12 +161,14 @@ open class Game(
     /**
      * Nombre de milliseconde souhaité entre deux images
      */
-    var animationDelayMs: Int ?= null
+    var animationDelayMs: Int ?= 33
 
     /**
      * Update : action à réaliser entre deux images
      */
-    var update: ((Game)-> Unit) ? = null
+    var update: ((Game)-> Unit) ? = {
+        invalidate()
+    }
 
 
     var characterList : MutableList<Character> = mutableListOf()
@@ -229,6 +231,7 @@ open class Game(
         if(blindVisible){
             addNotBlindedSprite(character.sprite)
         }
+        character.startCharacterAnimation()
         characterList.add(character)
     }
 
