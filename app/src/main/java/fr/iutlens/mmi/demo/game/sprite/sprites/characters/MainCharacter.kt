@@ -27,16 +27,16 @@ import kotlin.math.abs
 import kotlin.math.round
 
 class MainCharacter(x: Float, y:Float, game: Game) : Character(
-    sprite =  BasicSprite(R.drawable.chrono,x,y,2),
+    sprite =  BasicSprite(R.drawable.blaise,x,y,0),
     game = game,
-    basicAnimationSequence = listOf(2),
+    basicAnimationSequence = listOf(0,1),
     speed = 0.125f,
     invulnerability = 750,
     hearts = setBasicHearts(5),
-    leftAnimationSequence = listOf(18,19,20,21,22,23),
-    topAnimationSequence = listOf(6,7,8,9,10,11),
-    rightAnimationSequence = listOf(12,13,14,15,16,17),
-    bottomAnimationSequence = listOf(0,1,2,3,4,5),
+    leftAnimationSequence = listOf(12,13),
+    topAnimationSequence = listOf(20,21,22,23),
+    rightAnimationSequence = listOf(8,9),
+    bottomAnimationSequence = listOf(16,17,18,19),
     fireRate = 500
     ){
 
@@ -83,6 +83,15 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 targetIndicator.y = sprite.y
             }
         }
+    }
+
+    override fun basicAnimation() : List<Int>{
+        basicAnimationSequence = when(previousDirection){
+            "left"-> listOf(4,5)
+            "right"-> listOf(0,1)
+            else->basicAnimationSequence
+        }
+        return basicAnimationSequence
     }
 
     fun totalBlind(){

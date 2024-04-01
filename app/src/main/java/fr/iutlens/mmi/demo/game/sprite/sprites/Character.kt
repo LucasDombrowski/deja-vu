@@ -36,7 +36,7 @@ open class Character(
     var hearts: MutableList<Heart>,
     var fireRate : Long = 0,
     val invulnerability: Long = 0,
-    val basicAnimationSequence: List<Int>,
+    var basicAnimationSequence: List<Int>,
     val leftAnimationSequence: List<Int> = basicAnimationSequence,
     val topAnimationSequence: List<Int> = basicAnimationSequence,
     val rightAnimationSequence: List<Int> = basicAnimationSequence,
@@ -61,8 +61,10 @@ open class Character(
     var currentDirection = "static"
     var currentAnimationSequence = basicAnimationSequence
     var currentAnimationSequenceIndex : Int = 0
-    val characterAnimation : Job = setInterval(0, animationDelay){
-        GlobalScope.launch {
+    var characterAnimation : Job = GlobalScope.launch {  }
+    fun startCharacterAnimation(){
+        characterAnimation.cancel()
+        characterAnimation = setInterval(0,animationDelay){
             if(animate && !game.pause) {
                 if (currentAnimationSequenceIndex >= currentAnimationSequence.size - 1) {
                     currentAnimationSequenceIndex = 0
@@ -73,6 +75,11 @@ open class Character(
                 }
             }
         }
+    }
+
+    open fun basicAnimation() : List<Int>{
+        currentAnimationSequenceIndex = 0
+        return basicAnimationSequence
     }
 
     var animate = true
@@ -173,7 +180,7 @@ open class Character(
                             "right"->rightAnimationSequence
                             "top"->topAnimationSequence
                             "bottom"->bottomAnimationSequence
-                            else->basicAnimationSequence
+                            else->basicAnimation()
                         }
 
                         changePos(nextX, nextY)
@@ -181,6 +188,7 @@ open class Character(
                         moveTo(x, y, onMoveEnd)
                     } else {
                         stun()
+                        currentAnimationSequence = basicAnimation()
                         restart()
                         onMoveEnd()
                     }
@@ -281,6 +289,7 @@ open class Character(
     }
 
     open fun copy() : Character{
+        characterAnimation.cancel()
         return Character(
             sprite.copy(), game, speed, hearts, fireRate, invulnerability, basicAnimationSequence, leftAnimationSequence, topAnimationSequence, bottomAnimationSequence, target = target
         )

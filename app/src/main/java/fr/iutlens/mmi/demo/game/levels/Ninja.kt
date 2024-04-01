@@ -33,27 +33,28 @@ class Ninja : Game(
 ) {
     init {
         map.enemies = listOf(
-            CloseNinja(0f,0f,this),
-            RangeNinja(0f,0f,this),
-            TeleportNinja(0f,0f,this)
+            CloseNinja(0f, 0f, this),
+            RangeNinja(0f, 0f, this),
+            TeleportNinja(0f, 0f, this)
         )
         items += mutableListOf<Item>(
             NinjaScarf(),
             NinjaShuriken(),
             NinjaBoots()
         )
-        map.boss = NinjaBoss(0f,0f,this)
+        map.boss = NinjaBoss(0f, 0f, this)
         controllableCharacter!!.changeProjectileSkin(
             4
-        ){
-            projectile -> setInterval(0,33){
-                if(projectile.sprite.rotate>=360f){
+        ) { projectile ->
+            setInterval(0, 33) {
+                if (projectile.sprite.rotate >= 360f) {
                     projectile.sprite.rotate = 0f
                 } else {
-                    projectile.sprite.rotate+=36f
+                    projectile.sprite.rotate += 36f
                 }
             }
         }
+
     }
 
     override fun copy() : Ninja{
