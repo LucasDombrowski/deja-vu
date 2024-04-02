@@ -136,7 +136,7 @@ fun MainMenu(onStart : ()->Unit, onLeave : ()->Unit){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MenuButton(text = "Start", width = buttonWidth) {
+            MenuButton(text = "Nouvelle partie", width = buttonWidth) {
                 onStart()
             }
             Spacer(modifier = Modifier.height(spacerHeight))
