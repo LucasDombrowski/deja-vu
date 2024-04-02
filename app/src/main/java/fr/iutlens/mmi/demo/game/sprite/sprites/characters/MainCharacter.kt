@@ -37,7 +37,8 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
     topAnimationSequence = listOf(20,21,22,23),
     rightAnimationSequence = listOf(8,9),
     bottomAnimationSequence = listOf(16,17,18,19),
-    fireRate = 500
+    fireRate = 500,
+    animationDelay = 200L
     ){
 
     val targetIndicator : BasicSprite = BasicSprite(R.drawable.target_indicator, sprite.x, sprite.y)

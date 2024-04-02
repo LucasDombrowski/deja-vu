@@ -54,7 +54,6 @@ class Ninja : Game(
                 }
             }
         }
-
     }
 
     override fun copy() : Ninja{
