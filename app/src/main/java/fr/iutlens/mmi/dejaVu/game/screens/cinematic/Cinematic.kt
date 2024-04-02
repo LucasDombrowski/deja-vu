@@ -2,6 +2,7 @@ package fr.iutlens.mmi.dejaVu.game.screens.cinematic
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -97,7 +98,7 @@ open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game,
             }
 
             DialogScreen(text = part.text, onEnd = {
-                if(partIndex>=parts.size-1){
+                if(partIndex+1>=parts.size){
                     game.pause = false
                     game.cinematic.value = Pair(
                         this,

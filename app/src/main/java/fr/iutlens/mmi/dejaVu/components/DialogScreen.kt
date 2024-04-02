@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.dejaVu.components
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -112,14 +113,18 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
         return localTextSequence.toList()
     }
 
-    var textSequence = generateTextSequence()
+    var textSequence by remember {
+        mutableStateOf(generateTextSequence())
+    }
     var textSequenceIndex by remember {
         mutableStateOf(0)
     }
 
+
     var currentText by remember {
         mutableStateOf(textSequence[textSequenceIndex])
     }
+
     if(fullText!=text){
         fullText = text
         textSequenceIndex = 0
@@ -139,7 +144,7 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
         .pointerInput(key1 = "DialogScreen") {
             detectTapGestures {
                 Music.stopSound(R.raw.text_sound_effect)
-                if (textSequenceIndex < textSequence.size - 1) {
+                if (textSequenceIndex + 1 < textSequence.size) {
                     textSequenceIndex++
                     currentText = textSequence[textSequenceIndex]
                 } else {

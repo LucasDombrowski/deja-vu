@@ -44,7 +44,6 @@ import fr.iutlens.mmi.dejaVu.utils.setInterval
 @Composable
 fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit, name : String ? = null, highlightedWords : List<String> = listOf()){
 
-    
     var currentText by remember {
         mutableStateOf(text)
     }
@@ -81,6 +80,7 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
         null->R.drawable.dialog_box
         else->R.drawable.dialog_box_name
     }
+
 
     BoxWithConstraints(modifier = Modifier
         .width(boxWidth)

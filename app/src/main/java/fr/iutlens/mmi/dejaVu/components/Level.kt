@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import fr.iutlens.mmi.dejaVu.game.Game
+import fr.iutlens.mmi.dejaVu.game.screens.Ending
 import fr.iutlens.mmi.dejaVu.game.screens.Introduction
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.TutorialMovements
 import fr.iutlens.mmi.dejaVu.utils.Music
@@ -52,13 +53,6 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
         }
     }
 
-    game.onEnd = {
-        enabled = false
-        scope.launch {
-            delay(transitionDuration.toLong())
-            onEnd()
-        }
-    }
     game.onRestart = {
         enabled = false
         scope.launch {
@@ -83,6 +77,19 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
         mutableStateOf(game.firstTime)
     }
 
+    var ending by remember {
+        mutableStateOf(false)
+    }
+
+    game.onEnd = {
+        enabled = false
+        scope.launch {
+            delay(transitionDuration.toLong())
+            enabled = true
+            ending = true
+        }
+    }
+
     if(introduction){
         Introduction {
             enabled = false
@@ -92,6 +99,14 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
                 enabled = true
             }
 
+        }
+    } else if(ending){
+        Ending {
+            enabled = false
+            scope.launch {
+                delay(transitionDuration.toLong())
+                onLeave()
+            }
         }
     } else {
         game.GameScreen()
