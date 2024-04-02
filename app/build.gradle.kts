@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "fr.iutlens.mmi.demo"
+    namespace = "fr.iutlens.mmi.dejaVu"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "fr.iutlens.mmi.demo"
+        applicationId = "fr.iutlens.mmi.dejaVu"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
