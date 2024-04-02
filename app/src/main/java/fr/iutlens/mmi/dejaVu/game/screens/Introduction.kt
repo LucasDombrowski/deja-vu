@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.dejaVu.R
 import fr.iutlens.mmi.dejaVu.ui.theme.MainFont
+import fr.iutlens.mmi.dejaVu.utils.Music
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -59,6 +60,7 @@ fun WritingText(
 
         LaunchedEffect(text) {
             currentText = ""
+            Music.playSound(R.raw.text_sound_effect, loop = -1)
         }
 
         val punctuationDelay = 250L
@@ -76,15 +78,22 @@ fun WritingText(
         }
 
         LaunchedEffect(currentText) {
+            if(phraseEnd()){
+                Music.stopSound(R.raw.text_sound_effect)
+            }
             Thread.sleep(
                 when {
                     phraseEnd() -> punctuationDelay
                     else -> typingDelay
                 }
             )
+            if(phraseEnd()){
+                Music.playSound(R.raw.text_sound_effect, loop = -1)
+            }
             if (currentText.length < text.length) {
                 currentText += text[currentText.length]
             } else {
+                Music.stopSound(R.raw.text_sound_effect)
                 onEnd()
             }
         }
@@ -211,6 +220,7 @@ fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text
         modifier = Modifier
             .pointerInput(key1 = clickable) {
                 detectTapGestures {
+                    Music.stopSound(R.raw.text_sound_effect)
                     if (clickable || clickAvailable) {
                         if (animateTitle || animateSubtitle || animateText) {
                             animateTitle = false
@@ -249,6 +259,12 @@ fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text
                 scope.launch {
                     delay(paragraphDelay)
                     animateTitle = false
+                    if(subtitle==""){
+                        animateSubtitle = false
+                    }
+                    if(text==""){
+                        animateText = false
+                    }
                 }
             }
             if (subtitle != "") {
@@ -326,6 +342,9 @@ fun Introduction(onEnd : ()->Unit){
     }, title = parts[partIndex]["title"]!!, subtitle = parts[partIndex]["subtitle"]!!, text = parts[partIndex]["text"]!!, clickable = partIndex+1<parts.size) {
         nextPart()
     }
+
+    Music.mute = false
+    Music(R.raw.intro)
 }
 
 @Composable
@@ -365,4 +384,7 @@ fun Ending(onEnd: () -> Unit){
     }, title = parts[partIndex]["title"]!!, subtitle = parts[partIndex]["subtitle"]!!, text = parts[partIndex]["text"]!!, clickable = partIndex+1<parts.size) {
         nextPart()
     }
+
+    Music.mute = false
+    Music(R.raw.intro)
 }

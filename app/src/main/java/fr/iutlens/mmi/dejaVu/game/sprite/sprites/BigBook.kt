@@ -4,6 +4,7 @@ import fr.iutlens.mmi.dejaVu.R
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.EndCinematic
 import fr.iutlens.mmi.dejaVu.game.sprite.BasicSprite
+import fr.iutlens.mmi.dejaVu.utils.Music
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,6 +32,8 @@ class BigBook(val game : Game, x : Float, y: Float) : BasicSprite(
         scaleX = 0f
         scaleY = 0f
         game.invalidate()
+        val soundVolume = 0.05f
+        Music.playSound(R.raw.book_portal_appear, leftVolume = soundVolume, rightVolume = soundVolume)
         GlobalScope.launch {
             while (scaleX<1f && scaleY<1f){
                 scaleX+=scaleStep
@@ -79,6 +82,8 @@ class BigBook(val game : Game, x : Float, y: Float) : BasicSprite(
         val positionCheckDelay = 33L
         val steps = getMoveSteps()
         val vanishDelay = 500L
+        val soundVolume = 0.05f
+        Music.playSound(R.raw.book_portal_disappear, leftVolume = soundVolume, rightVolume = soundVolume)
         GlobalScope.launch {
             while (!inBookBoundingBox()){
                 game.controllableCharacter!!.sprite.x+=steps.first

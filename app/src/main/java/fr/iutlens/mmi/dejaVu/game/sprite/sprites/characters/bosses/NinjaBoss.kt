@@ -59,7 +59,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         }
     }
 
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 8f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f, sound = R.raw.hero_shoot)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 8f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f, sound = R.raw.ninja_shot)
     override fun copy() : NinjaBoss{
         return NinjaBoss(sprite.x,sprite.y, game)
     }

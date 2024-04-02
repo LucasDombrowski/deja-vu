@@ -201,4 +201,6 @@ fun MainMenu(onStart : ()->Unit, onLeave : ()->Unit){
             .fillMaxSize()
             .background(Color.Black)
     )
+    Music.mute = false
+    Music(R.raw.title_screen)
 }
