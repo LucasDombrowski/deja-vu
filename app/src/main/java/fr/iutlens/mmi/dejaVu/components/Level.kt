@@ -85,7 +85,13 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
 
     if(introduction){
         Introduction {
-            introduction = false
+            enabled = false
+            scope.launch {
+                delay(transitionDuration.toLong())
+                introduction = false
+                enabled = true
+            }
+
         }
     } else {
         game.GameScreen()

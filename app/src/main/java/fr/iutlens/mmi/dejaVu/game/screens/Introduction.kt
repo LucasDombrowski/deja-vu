@@ -6,7 +6,9 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,40 +36,58 @@ import kotlinx.coroutines.launch
 @Composable
 fun Introduction(onEnd : ()->Unit){
     @Composable
-    fun IntroductionPart(modifier : Modifier, title : String, subtitle : String, text : String, onEnd : ()->Unit){
+    fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text : String, onEnd : ()->Unit){
         @Composable
-        fun WritingText(text : String, fontSize : TextUnit, animate : Boolean = true, typingDelay : Long, onEnd : ()->Unit ){
-            var currentText by remember {
-                mutableStateOf("")
-            }
-
-            LaunchedEffect(text){
-                currentText=when(animate){
-                    true->""
-                    else->text
+        fun WritingText(text : String, fontSize : TextUnit, typingDelay : Long, animated : Boolean = true, onEnd : ()->Unit ){
+            if(animated) {
+                var currentText by remember {
+                    mutableStateOf("")
                 }
-            }
 
-
-            LaunchedEffect(currentText){
-                Thread.sleep(typingDelay)
-                if(currentText.length<text.length){
-                    currentText+=text[currentText.length]
-                } else if(animate){
-                    onEnd()
+                LaunchedEffect(text) {
+                    currentText = ""
                 }
-            }
 
-            Text(
-                text = currentText,
-                fontSize = fontSize,
-                color = Color.White,
-                style = TextStyle(
-                    fontFamily = MainFont
-                ),
-                textAlign = TextAlign.Center,
-                lineHeight = fontSize*1.5
-            )
+                val ponctuationDelay = 250L
+
+                fun phraseEnd() : Boolean{
+                    return currentText.length>2 && currentText[currentText.lastIndex-1] !in listOf('.','!','?') && currentText.last() in listOf('.','?','!',';',',')
+                }
+
+                LaunchedEffect(currentText) {
+                    Thread.sleep(when{
+                        phraseEnd()->ponctuationDelay
+                        else->typingDelay
+                    })
+                    if (currentText.length < text.length) {
+                        currentText += text[currentText.length]
+                    } else {
+                        onEnd()
+                    }
+                }
+
+                Text(
+                    text = currentText,
+                    fontSize = fontSize,
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = MainFont
+                    ),
+                    textAlign = TextAlign.Center,
+                    lineHeight = fontSize * 1.25
+                )
+            } else {
+                Text(
+                    text = text,
+                    fontSize = fontSize,
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = MainFont
+                    ),
+                    textAlign = TextAlign.Center,
+                    lineHeight = fontSize * 1.25
+                )
+            }
         }
 
         val configuration = LocalConfiguration.current
@@ -81,25 +101,44 @@ fun Introduction(onEnd : ()->Unit){
             (screenWidth/50).toSp()
         }
         val textFontSize = with(density){
-            (screenWidth/75).toSp()
+            (screenWidth/60).toSp()
         }
 
         val paddingValue = screenWidth/20
 
-        var titleSet by remember {
-            mutableStateOf(false)
-        }
-
-        var subtitleSet by remember {
-            mutableStateOf(false)
-        }
 
         val paragraphDelay = 500L
 
         val scope = rememberCoroutineScope()
 
+        var animateTitle by remember {
+            mutableStateOf(true)
+        }
+
+        var animateSubtitle by remember {
+            mutableStateOf(true)
+        }
+
+        var animateText by remember {
+            mutableStateOf(true)
+        }
+
         Box(
-            modifier = modifier
+            modifier = Modifier
+                .pointerInput(key1 = null) {
+                    detectTapGestures {
+                        if(animateTitle || animateSubtitle || animateText){
+                            animateTitle = false
+                            animateText = false
+                            animateSubtitle = false
+                        } else {
+                            animateTitle = true
+                            animateSubtitle = true
+                            animateText = true
+                            onClick()
+                        }
+                    }
+                }
                 .fillMaxSize()
                 .background(Color.Black)
                 .padding(paddingValue)
@@ -109,28 +148,35 @@ fun Introduction(onEnd : ()->Unit){
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
             ) {
-                WritingText(text = title, fontSize = titleFontSize, animate = !titleSet, typingDelay = 10) {
+                WritingText(text = title, fontSize = titleFontSize, typingDelay = 20, animated = animateTitle) {
                     scope.launch {
                         delay(paragraphDelay)
-                        titleSet = true
+                        animateTitle = false
                     }
                 }
-                if(titleSet){
-                    WritingText(text = subtitle, fontSize = subtitleFontSize, animate = !subtitleSet, typingDelay = 10) {
-                        scope.launch {
-                            delay(paragraphDelay)
-                            subtitleSet = true
-                        }
-                        }
+                if(subtitle!="") {
+                    Spacer(modifier = Modifier.height(screenHeight / 40))
                 }
-                if(subtitleSet){
-                    WritingText(text = text, fontSize = textFontSize, typingDelay = 5) {
+                if(!animateTitle){
+                    WritingText(text = subtitle, fontSize = subtitleFontSize, typingDelay = 20, animated = animateSubtitle) {
                         scope.launch {
                             delay(paragraphDelay)
-                            onEnd()
+                            animateSubtitle = false
+                        }
+                    }
+                    if(subtitle!=""){
+                        Spacer(modifier = Modifier.height(screenHeight/20))
+                    }
+                    if(!animateSubtitle){
+                        WritingText(text = text, fontSize = textFontSize, typingDelay = 10, animated = animateText) {
+                            scope.launch {
+                                delay(paragraphDelay)
+                                animateText = false
+                            }
                         }
                     }
                 }
+
             }
         }
     }
@@ -159,10 +205,8 @@ fun Introduction(onEnd : ()->Unit){
         }
     }
 
-    IntroductionPart(modifier = Modifier.pointerInput(key1 = null){
-                                                       detectTapGestures {
-                                                           nextPart()
-                                                       }
+    IntroductionPart(onClick = {
+        nextPart()
     }, title = parts[partIndex]["title"]!!, subtitle = parts[partIndex]["subtitle"]!!, text = parts[partIndex]["text"]!!) {
         nextPart()
     }
