@@ -456,6 +456,8 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
     }
 
     fun spawnEnemies(){
+        val soundVolume = 0.25f
+        Music.playSound(R.raw.enemies_appear, leftVolume = soundVolume, rightVolume = soundVolume)
         val n = enemies.random()
         var enemy : Enemy ? = null
         repeat(n){

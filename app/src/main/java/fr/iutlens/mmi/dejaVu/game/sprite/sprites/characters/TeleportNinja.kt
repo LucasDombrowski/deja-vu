@@ -5,6 +5,7 @@ import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.dejaVu.game.sprite.BasicSprite
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.Enemy
+import fr.iutlens.mmi.dejaVu.utils.Music
 import fr.iutlens.mmi.dejaVu.utils.setInterval
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -32,6 +33,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
         }
     }
     fun pattern() {
+        val soundVolume = 0.125f
         disablePathFollowing()
         if(!game.ended) {
             GlobalScope.launch {
@@ -41,6 +43,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                 if (alive) {
                     if (!chasing) {
                         targetable = false
+                        Music.playSound(R.raw.teleport, leftVolume = soundVolume, rightVolume = soundVolume)
                         sprite.setTransparencyLevel(0.75f)
                         delay(33)
                         sprite.setTransparencyLevel(0.5f)
@@ -69,6 +72,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                         chasing = true
                         delay(2000)
                         changePos(xPos, yPos)
+                        Music.playSound(R.raw.teleport, leftVolume = soundVolume, rightVolume = soundVolume)
                         sprite.visible()
                         sprite.setTransparencyLevel(0.25f)
                         delay(15)

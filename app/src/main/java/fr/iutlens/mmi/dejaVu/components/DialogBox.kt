@@ -163,10 +163,6 @@ fun WritingText(
             Music.playSound(R.raw.text_sound_effect, loop = -1)
         }
 
-        if(highlightedWords.isNotEmpty()){
-            val indices = highlightedWordIndices()
-
-        }
 
         LaunchedEffect(key1 = currentText){
             Thread.sleep(5)

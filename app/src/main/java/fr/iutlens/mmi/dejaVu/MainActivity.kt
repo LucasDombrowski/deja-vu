@@ -59,6 +59,15 @@ class MainActivity : ComponentActivity() {
         loadSound(R.raw.open_room)
         loadSound(R.raw.enemy_get_hit)
         loadSound(R.raw.purchase_item)
+        loadSound(R.raw.hero_death)
+        loadSound(R.raw.door)
+        loadSound(R.raw.enemies_appear)
+        loadSound(R.raw.enemy_death)
+        loadSound(R.raw.ninja_shot)
+        loadSound(R.raw.teleport)
+        loadSound(R.raw.grab_heart_container)
+        loadSound(R.raw.book_portal_appear)
+        loadSound(R.raw.book_portal_disappear)
 
         setContent {
             currentContext = LocalContext.current

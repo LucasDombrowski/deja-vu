@@ -257,6 +257,8 @@ open class Game(
         controllableCharacter!!.stun()
         map.currentRoom = ndx
         camera.removeDirectionArrow()
+        val soundVolume = 0.5f
+        Music.playSound(R.raw.door, leftVolume = soundVolume, rightVolume = soundVolume)
         if(map.currentRoom() is TreasureRoom){
             map.currentRoom().open()
             val chest = Chest(items)
@@ -873,9 +875,14 @@ open class Game(
             }
         }
 
+        val soundVolume = 0.25f
+        Music.playSound(R.raw.hero_death, leftVolume = soundVolume, rightVolume = soundVolume)
+
         blindReduce {
             scaleReduce {
                 gameOver.value = true
+                Music.mute = false
+                musicTrack.value = R.raw.game_over
             }
         }
     }

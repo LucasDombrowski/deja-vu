@@ -321,6 +321,8 @@ open class Character(
             smokeAnimation()
             action.cancel()
             game.map.currentRoom().isOpenable(game)
+            val soundVolume = 0.25f
+            Music.playSound(R.raw.enemy_death, leftVolume = soundVolume, rightVolume = soundVolume)
             if((1..2/game.dropProbability).random() == 1){
                 when((1..5/game.heartDropProbability).random()){
                     1->{
