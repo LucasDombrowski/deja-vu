@@ -8,8 +8,8 @@ import kotlin.math.PI
 
 class NinjaShuriken() : Item(
     image = R.drawable.ninja_shuriken,
-    name = "Shuriken Ninja",
-    description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque pulvinar tempor neque at eleifend. Nam odio nunc, placerat volutpat tempor non, iaculis nec lectus. Curabitur in nulla fermentum, aliquam velit eu, mattis ipsum. Suspendisse eget lectus ex. Nulla sed nisl consequat, sodales nulla eget, blandit nulla. Nunc eget rutrum est, nec euismod leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque pulvinar tempor neque at eleifend. Nam odio nunc, placerat volutpat tempor non, iaculis nec lectus. Curabitur in nulla fermentum, aliquam velit eu, mattis ipsum. Suspendisse eget lectus ex. Nulla sed nisl consequat, sodales nulla eget, blandit nulla. Nunc eget rutrum est, nec euismod leo.",
+    name = "Triple shuriken",
+    description = "Triplez vos tirs pour toucher un maximum d’ennemis. On raconte que cette arme appartenait à célèbre ninja…",
     effects = {
         game ->  game.controllableCharacter!!.directProjectileBehaviors.add {
         val center = getCenter(game.controllableCharacter!!.aimOffset().first, game.controllableCharacter!!.aimOffset().second, game.controllableCharacter!!.sprite.x, game.controllableCharacter!!.sprite.y)

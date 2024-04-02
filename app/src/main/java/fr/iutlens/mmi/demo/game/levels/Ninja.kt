@@ -3,6 +3,7 @@ package fr.iutlens.mmi.demo.game.levels
 import fr.iutlens.mmi.demo.R
 import fr.iutlens.mmi.demo.game.Game
 import fr.iutlens.mmi.demo.game.gameplayResources.Item
+import fr.iutlens.mmi.demo.game.gameplayResources.items.MoreDamagesMoreRate
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaBoots
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.demo.game.gameplayResources.items.NinjaShuriken

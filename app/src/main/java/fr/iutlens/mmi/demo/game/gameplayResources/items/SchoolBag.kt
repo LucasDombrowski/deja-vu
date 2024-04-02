@@ -13,8 +13,8 @@ import fr.iutlens.mmi.demo.game.map.rooms.ShopRoom
 
 class SchoolBag : Item(
     image = R.drawable.school_bag,
-    name = "Sac d'école",
-    description = "Les ennemis tués ont 100% de chances de faire tomber un collectible à leurs morts. Laisse tomber entre un et trois collectibles au ramassage.",
+    name = "Sac d’écolier",
+    description = "Cette nouvelle allure attendrit considérablement vos ennemis. La probabilité d’obtenir des objets augmente autant que votre candeur. Comme les enfants sont toujours plus gâtés que les adultes, vous obtenez des cadeaux supplémentaires.",
     effects = {
         game ->
         game.dropProbability = 2

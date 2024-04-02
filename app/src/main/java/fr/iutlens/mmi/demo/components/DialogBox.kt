@@ -20,8 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,13 +29,16 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.demo.R
-import fr.iutlens.mmi.demo.getCurrentActivityContext
 import fr.iutlens.mmi.demo.ui.theme.MainFont
 import fr.iutlens.mmi.demo.utils.Music
 import fr.iutlens.mmi.demo.utils.setInterval
@@ -43,7 +46,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit, name : String ? = null){
+fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit, name : String ? = null, highlightedWords : List<String> = listOf()){
 
     
     var currentText by remember {
@@ -96,17 +99,20 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
             Text(
                 text = name,
                 fontSize = fontSize*1.25,
-                modifier = Modifier.align(Alignment.TopCenter)
-                    .offset(x = -boxWidth*295/1000, y = textHeight/9),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = -boxWidth * 295 / 1000, y = textHeight / 9),
                 style = TextStyle(
                     fontFamily = MainFont
                 ),
                 textAlign = TextAlign.Center
             )
         }
-        WritingText(text = currentText, fontSize = fontSize, lineHeight = lineHeight, modifier = Modifier
-            .align(Alignment.Center)
-            .width(textWidth)) {
+        WritingText(
+            text = currentText, modifier = Modifier
+                .align(Alignment.Center)
+                .width(textWidth), fontSize = fontSize, lineHeight = lineHeight, highlightedWords = highlightedWords
+        ) {
             stopWriting()
         }
         WritingAnimation(images.toList(), isWriting,
@@ -120,14 +126,50 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
 @RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun WritingText(text: String, modifier : Modifier, fontSize : TextUnit, lineHeight: TextUnit, stopWriting : ()->Unit){
+fun WritingText(
+    text: String,
+    modifier: Modifier,
+    fontSize: TextUnit,
+    lineHeight: TextUnit,
+    highlightedWords : List<String> = listOf(),
+    stopWriting: () -> Unit
+){
+    fun highlightedWordIndices() : List<Pair<Int,Int>>{
+        val res = mutableListOf<Pair<Int,Int>>()
+        Log.i("words","$highlightedWords")
+        for(word in highlightedWords){
+            var currentTextIndex = 0
+            while (currentTextIndex<text.length){
+                val startIndex = text.indexOf(word, startIndex = currentTextIndex)
+                if(startIndex == -1){
+                    break
+                } else {
+                    val endIndex = startIndex+word.length
+                    res.add(Pair(startIndex,endIndex))
+                    currentTextIndex+=endIndex
+                }
+            }
+        }
+        return res
+    }
+
+    var highlightedWordsIndices by remember {
+        mutableStateOf(highlightedWordIndices())
+    }
+
     if(text.isNotEmpty()) {
         var currentText by remember {
             mutableStateOf("")
         }
         LaunchedEffect(key1 = text){
             currentText=""
+            highlightedWordsIndices = highlightedWordIndices()
             Music.playSound(R.raw.text_sound_effect, loop = -1)
+        }
+
+        if(highlightedWords.isNotEmpty()){
+            val indices = highlightedWordIndices()
+
         }
 
         LaunchedEffect(key1 = currentText){
@@ -140,9 +182,21 @@ fun WritingText(text: String, modifier : Modifier, fontSize : TextUnit, lineHeig
             }
         }
 
+        val currentTextDisplay = buildAnnotatedString {
+            append(currentText)
+            if(highlightedWordsIndices.isNotEmpty()){
+                for(highlightedWord in highlightedWordsIndices.filter { currentText.length>it.first }){
+                    val indices = when{
+                        currentText.length>highlightedWord.second->Pair(highlightedWord.first,highlightedWord.second)
+                        else->Pair(highlightedWord.first,currentText.length-1)
+                    }
+                    addStyle(style = SpanStyle(color = Color(153,36,41), fontWeight = FontWeight.ExtraBold), start = indices.first, end = indices.second)
+                }
+            }
+        }
 
         Text(
-            text = currentText,
+            text = currentTextDisplay,
             color = Color.Black,
             textAlign = TextAlign.Left,
             fontSize = fontSize,
