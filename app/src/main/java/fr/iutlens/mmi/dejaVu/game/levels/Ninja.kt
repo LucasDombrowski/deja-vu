@@ -8,11 +8,15 @@ import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.NinjaShuriken
 import fr.iutlens.mmi.dejaVu.game.map.Map
 import fr.iutlens.mmi.dejaVu.game.screens.screenEffects.Fog
+import fr.iutlens.mmi.dejaVu.game.sprite.sprites.BigBook
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.characters.CloseNinja
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.characters.RangeNinja
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.characters.TeleportNinja
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.characters.bosses.NinjaBoss
 import fr.iutlens.mmi.dejaVu.utils.setInterval
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class Ninja : Game(
     map = Map(

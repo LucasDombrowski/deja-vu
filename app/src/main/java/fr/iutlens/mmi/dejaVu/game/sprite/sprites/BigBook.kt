@@ -2,6 +2,7 @@ package fr.iutlens.mmi.dejaVu.game.sprite.sprites
 
 import fr.iutlens.mmi.dejaVu.R
 import fr.iutlens.mmi.dejaVu.game.Game
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.EndCinematic
 import fr.iutlens.mmi.dejaVu.game.sprite.BasicSprite
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -38,7 +39,12 @@ class BigBook(val game : Game, x : Float, y: Float) : BasicSprite(
                 delay(scaleStepDelay)
             }
             delay(actionDelay)
-            action()
+            game.cinematic.value = Pair(
+                EndCinematic(game) {
+                    action()
+                },
+                true
+            )
         }
     }
 

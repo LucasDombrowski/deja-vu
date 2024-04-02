@@ -8,7 +8,7 @@ import fr.iutlens.mmi.dejaVu.game.screens.cinematic.CinematicPart
 class TutorialMovements(game: Game, onEnd  : ()->Unit = {}) : Cinematic(
     parts = listOf(
         CinematicPart(
-            text = "Pour vous déplacer, faîtes bouger le curseur en intéragissant avec l'écran. Blaise se mettra alors en mouvement vers celui-ci.",
+            text = "Vous êtes arrivé dans un monde hostile où vous devez vous échapper. Afin de vous déplacer, faites bouger le curseur en interagissant avec l'écran. Blaise se déplacera instinctivement vers celui-ci.",
             image = R.drawable.transparent,
             left = true,
             name = null
