@@ -550,7 +550,7 @@ open class Game(
             (screenWidth/40).sp
         }
         controllableCharacter!!.currentAnimationSequenceIndex = 0
-        DialogScreen(text = item["description"] as String, onEnd = {
+        DialogScreen(text = "Vous avez obtenu ${item["name"] as String}. " + item["description"] as String, highlightedWords = listOf(item["name"] as String), onEnd = {
             item["show"] = false
             pause = false
             (item["onPick"] as ()->Unit).invoke()

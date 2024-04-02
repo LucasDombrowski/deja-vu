@@ -6,7 +6,7 @@ import fr.iutlens.mmi.demo.game.gameplayResources.Item
 class HandHeart : Item(
     image = R.drawable.hand_heart,
     name = "Coeur sur la main",
-    description = "Augmente la probabilité que le collectible qu'un ennemi laisse tomber soit un coeur. Vous soigne de deux coeurs.",
+    description = "Votre altruisme a été vivement remarqué. Les ennemis semblent être plus clément avec vous lors de leur dernier souffle. La probabilité d’obtenir plus de cœurs auprès d’un ennemi augmente.",
     effects = {
         game ->
         if(game.heartDropProbability + 1 >= 5){

@@ -5,8 +5,8 @@ import fr.iutlens.mmi.demo.game.gameplayResources.Item
 
 class Wallet : Item(
     image = R.drawable.wallet,
-    name = "Portefeuille",
-    description = "Augmente la probabilité de trouver des pièces améliorées, ajoute un montant aléatoire à vos pièces actuelles",
+    name = "Carte bancaire",
+    description = "Quoi de mieux dans la vie que d’obtenir de l’argent? En posséder encore plus ! Débloquer un montant aléatoire de pièces, et augmentez vos chances de décrocher des pièces argentées.",
     effects = {
         game ->
         if(game.superCoinDropProbability<5){
