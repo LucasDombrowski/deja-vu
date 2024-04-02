@@ -13,6 +13,9 @@ import fr.iutlens.mmi.dejaVu.game.sprite.sprites.characters.RangeNinja
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.characters.TeleportNinja
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.characters.bosses.NinjaBoss
 import fr.iutlens.mmi.dejaVu.utils.setInterval
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class Ninja : Game(
     map = Map(
