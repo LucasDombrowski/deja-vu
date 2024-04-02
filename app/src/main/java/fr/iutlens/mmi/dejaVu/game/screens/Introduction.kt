@@ -186,10 +186,10 @@ fun Introduction(onEnd : ()->Unit){
                 "On raconte même que ce lieu pourrait causer la fin du monde. Tous les pays rêvaient de s'accaparer de cet endroit mystérieux. Toutefois, le monde changea quand quelqu’un foula ces terres interdites."),
         mapOf("title" to "Mardi 2 avril ????, 22h46", "subtitle" to "Bibliothèque souterraine, couloir n° ????", "text" to "Des bruits de pas, il s’agit là de la seule chose qui résonna dans les couloirs infinis. L’architecture semblait être un mélange d’influences des quatre coins du monde. \n" +
                 "“On dirait le croisement des mondes et des siècles, la véritable histoire de la Terre” pensa tout bas le garçon.\n" +
-                "Basile, un être humain des plus ordinaires avait, par hasard, aussi malchanceux soit-il, souhaité explorer des ruines anciennes. Son exploration fut de courte durée à la suite d’une brusque chute dans une fosse. Le voilà donc errant depuis une dizaine d’heures vers un espoir de retrouver un jour la surface."),
+                "Blaise, un être humain des plus ordinaires avait, par hasard, aussi malchanceux soit-il, souhaité explorer des ruines anciennes. Son exploration fut de courte durée à la suite d’une brusque chute dans une fosse. Le voilà donc errant depuis une dizaine d’heures vers un espoir de retrouver un jour la surface."),
         mapOf("title" to "Mercredi 3 avril ????, 02h04", "subtitle" to "Bibliothèque souterraine, salle des archives", "text" to "Une immense pièce s’offre au jeune homme affaibli par la marche, la soif et la faim. Dans son champ de vision, des livres à perte de vue, des bibliothèques hautes de centaines de mètres, mais où avait-il pu atterrir?\n" +
                 "“Je vais me reposer ici...Tiens?” Soudain, au centre de la pièce surgit un livre, bien plus petit que les millions d’autres qui sommeillaient ici. Sur la couverture était inscrit : Déjà vu.\n" +
-                "Quelques pages échappèrent des doigts de Basile, le livre se mit à briller de plus en plus. Le garçon se sentit comme absorbé, cela signifie-t-il sa fin?"),
+                "Quelques pages échappèrent des doigts de Blaise, le livre se mit à briller de plus en plus. Le garçon se sentit comme absorbé, cela signifie-t-il sa fin?"),
         mapOf("title" to "", "subtitle" to "", "text" to "Il avait tort, une incroyable aventure l'attendait.")
     )
 
