@@ -61,7 +61,7 @@ open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game,
                             }, scaleY = 1f)
                             .offset(
                                 x = -boxWithConstraintsScope.maxWidth/4,
-                                y = boxWithConstraintsScope.maxHeight/4
+                                y = boxWithConstraintsScope.maxHeight/3
                             )
                     )
                 }
