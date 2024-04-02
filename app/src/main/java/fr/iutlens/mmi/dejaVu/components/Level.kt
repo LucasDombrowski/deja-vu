@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import fr.iutlens.mmi.dejaVu.game.Game
+import fr.iutlens.mmi.dejaVu.game.screens.Introduction
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.TutorialMovements
 import fr.iutlens.mmi.dejaVu.utils.Music
 import kotlinx.coroutines.delay
@@ -78,7 +79,18 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
 
     }
 
-    game.GameScreen()
+    var introduction by remember {
+        mutableStateOf(game.firstTime)
+    }
+
+    if(introduction){
+        Introduction {
+            introduction = false
+        }
+    } else {
+        game.GameScreen()
+    }
+
     Box(modifier = Modifier
         .graphicsLayer(alpha = alpha)
         .fillMaxSize()
