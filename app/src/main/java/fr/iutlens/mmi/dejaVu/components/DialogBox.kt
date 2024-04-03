@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.dejaVu.R
+import fr.iutlens.mmi.dejaVu.game.screens.MenuButton
 import fr.iutlens.mmi.dejaVu.ui.theme.MainFont
 import fr.iutlens.mmi.dejaVu.utils.Music
 import fr.iutlens.mmi.dejaVu.utils.setInterval
@@ -47,6 +49,9 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
     var currentText by remember {
         mutableStateOf(text)
     }
+
+    val configuration = LocalConfiguration.current
+
 
     var isWriting by remember {
         mutableStateOf(true)
@@ -82,6 +87,7 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
     }
 
 
+
     BoxWithConstraints(modifier = Modifier
         .width(boxWidth)
         .padding(5.dp)
@@ -115,6 +121,7 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
             Modifier
                 .align(Alignment.BottomEnd)
                 .height(textHeight))
+
 
     }
 }

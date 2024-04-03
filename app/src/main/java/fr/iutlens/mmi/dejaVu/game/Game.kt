@@ -24,8 +24,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -473,6 +475,8 @@ open class Game(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
+                .navigationBarsPadding()
+                .statusBarsPadding()
                 .padding(20.dp)
         ) {
             Column(
@@ -555,6 +559,11 @@ open class Game(
             pause = false
             (item["onPick"] as ()->Unit).invoke()
             item["onPick"] = {}
+        }, onSkip = {
+            item["show"] = false
+            pause = false
+            (item["onPick"] as ()->Unit).invoke()
+            item["onPick"] = {}
         }) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -580,7 +589,8 @@ open class Game(
     @Composable
     fun Menu(modifier: Modifier = Modifier
         .fillMaxWidth()
-        .fillMaxHeight()){
+        .fillMaxHeight()
+        ){
         controllableCharacter!!.currentAnimationSequenceIndex = 0
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp
@@ -653,7 +663,7 @@ open class Game(
 
 
 
-        Box(modifier=modifier.background(Color(0,0,0,128))){
+        Box(modifier=modifier.background(Color(0,0,0,128)).navigationBarsPadding().statusBarsPadding()){
             BoxWithConstraints(modifier = Modifier
                 .offset(y = menuOffsetY)
                 .width(bookWidth)

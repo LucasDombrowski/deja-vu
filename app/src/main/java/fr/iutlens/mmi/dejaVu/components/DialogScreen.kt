@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,10 +27,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.dejaVu.R
+import fr.iutlens.mmi.dejaVu.game.screens.MenuButton
 import fr.iutlens.mmi.dejaVu.utils.Music
 
 @Composable
-fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highlightedWords : List<String> = listOf(), content : @Composable() ()->Unit){
+fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highlightedWords : List<String> = listOf(), onSkip : ()->Unit = {}, content : @Composable() ()->Unit){
 
     var fullText by remember {
         mutableStateOf(text)
@@ -55,6 +59,8 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
     val fontSize = with(density){
         pxFontSize.toFloat().toSp()
     }
+
+    val screenWidth = configuration.screenWidthDp.dp
 
     val lineHeight = fontSize*1.25
 
@@ -153,7 +159,9 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
                 }
             }
         }
-        .background(Color(0, 0, 0, 128))){
+        .background(Color(0, 0, 0, 128))
+        .navigationBarsPadding()
+        .statusBarsPadding()){
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -163,6 +171,11 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
         ){
             content()
             DialogScreenBox(text = currentText)
+        }
+        MenuButton(modifier = Modifier.align(Alignment.TopEnd).offset(x = -screenWidth/40, y = screenWidth/50),text = "Passer", width = screenWidth/8) {
+            Music.stopSound(R.raw.text_sound_effect)
+            Music.normalMusicVolume()
+            onSkip()
         }
     }
 }

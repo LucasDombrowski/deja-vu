@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,10 +53,10 @@ import fr.iutlens.mmi.dejaVu.ui.theme.MainFont
 import fr.iutlens.mmi.dejaVu.utils.Music
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
 
-@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun MenuButton(text: String, width : Dp, clickable: Boolean = true, action : ()->Unit){
+fun MenuButton(modifier: Modifier = Modifier,text: String, width : Dp, clickable: Boolean = true, action : ()->Unit){
     var enabled by remember {
         mutableStateOf(clickable)
     }
@@ -67,7 +68,10 @@ fun MenuButton(text: String, width : Dp, clickable: Boolean = true, action : ()-
         (width*1/12).toSp()
     }
     val soundVolume = 0.25f
-    BoxWithConstraints(modifier = Modifier
+    var image by remember {
+        mutableIntStateOf(R.drawable.menu_button_background)
+    }
+    BoxWithConstraints(modifier = modifier
         .width(width)
         .pointerInput(text) {
             detectTapGestures(
@@ -81,11 +85,18 @@ fun MenuButton(text: String, width : Dp, clickable: Boolean = true, action : ()-
                         )
                         action()
                     }
+                },
+                onPress = {
+                    if(enabled) {
+                        image = R.drawable.menu_button_active_background
+                        awaitRelease()
+                        image = R.drawable.menu_button_background
+                    }
                 }
             )
         }){
         Image(
-            painter = painterResource(id = R.drawable.menu_button_background),
+            painter = painterResource(id = image),
             contentDescription = "Bouton",
             modifier = Modifier
                 .fillMaxWidth(),
@@ -164,17 +175,17 @@ fun MainMenu(onStart : ()->Unit, onLeave : ()->Unit){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MenuButton(text = "Nouvelle partie", width = buttonWidth, clickable) {
+            MenuButton(text = "Nouvelle partie", width = buttonWidth, clickable = clickable) {
                 clickable = false
                 onStart()
             }
             Spacer(modifier = Modifier.height(spacerHeight))
-            MenuButton(text = "Crédits", width = buttonWidth, clickable) {
+            MenuButton(text = "Crédits", width = buttonWidth, clickable = clickable) {
                 clickable = false
                 credits = true
             }
             Spacer(modifier = Modifier.height(spacerHeight))
-            MenuButton(text = "Quitter", width = buttonWidth, clickable) {
+            MenuButton(text = "Quitter", width = buttonWidth, clickable = clickable) {
                 clickable = false
                 onLeave()
             }
