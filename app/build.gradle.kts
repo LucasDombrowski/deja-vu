@@ -20,6 +20,12 @@ android {
         }
     }
 
+    tasks{
+        kotlinOptions{
+            freeCompilerArgs = freeCompilerArgs + "-Xskip-prerelease-check"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -67,5 +73,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("com.github.prime-zs.toolkit:core-ktx:2.0.2-alpha")
 
 }
