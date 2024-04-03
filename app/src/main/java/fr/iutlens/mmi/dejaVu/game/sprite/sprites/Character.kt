@@ -364,7 +364,16 @@ open class Character(
             Music.mute = true
             game.cinematic.value = Pair(
                 Cinematic(endCinematicParts,game){
-                    HeartContainer(game).setup(sprite.x, sprite.y)
+                    var heartX = sprite.x
+                    var heartY = sprite.y
+                    if(game.map.inForbiddenArea(heartX,heartY)){
+                        val tile = game.map.getMapIndexFromPosition(heartX,heartY)
+                        val closestTile = closestAvailableTile(tile.first,tile.second)
+                        val floatCoordinates = game.map.getPositionFromMapIndex(closestTile!!.first, closestTile.second)
+                        heartX = floatCoordinates.first + game.map.tileArea.w/2
+                        heartY = floatCoordinates.second + game.map.tileArea.h/2
+                    }
+                    HeartContainer(game).setup(heartX, heartY)
                     Music.mute = false
                     Music.musicLoop = false
                     game.musicTrack.value = R.raw.victory
