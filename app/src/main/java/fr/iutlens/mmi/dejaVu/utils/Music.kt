@@ -30,12 +30,12 @@ object Music {
     lateinit var currentMusicPlayer : MediaPlayer
 
     fun reduceMusicVolume(){
-        val volume = 0.025f
+        val volume = 0.05f
         currentMusicPlayer.setVolume(volume,volume)
     }
 
     fun normalMusicVolume(){
-        val volume = 0.075f
+        val volume = 0.1f
         currentMusicPlayer.setVolume(volume,volume)
     }
 
@@ -101,7 +101,7 @@ object Music {
     @Composable
     operator fun invoke(id: Int){
         val context = LocalContext.current
-        val volume = 0.075f
+        val volume = 0.1f
         val musicPlayer by remember(id to mute) {
             derivedStateOf {
                 MediaPlayer.create(context, id).apply {

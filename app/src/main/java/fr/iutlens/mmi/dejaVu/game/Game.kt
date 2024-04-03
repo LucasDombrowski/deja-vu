@@ -529,7 +529,7 @@ open class Game(
                     }
                 }
             }
-            if(ath["boss"]!!.isNotEmpty()){
+            if(ath["boss"]!!.isNotEmpty() && map.boss!!.alive){
                 BossBar(modifier = Modifier.align(Alignment.TopCenter), hearts = ath["boss"] as MutableList<Heart>, image = map.boss!!.image)
             }
         }

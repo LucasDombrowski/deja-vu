@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import fr.iutlens.mmi.dejaVu.components.DialogScreen
 import fr.iutlens.mmi.dejaVu.game.Game
+import fr.iutlens.mmi.dejaVu.utils.Music
 import kotlinx.coroutines.delay
 
 open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game, val onEnd : ()->Unit = {}) {
@@ -99,6 +100,7 @@ open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game,
 
             DialogScreen(text = part.text, onEnd = {
                 if(partIndex+1>=parts.size){
+                    Music.normalMusicVolume()
                     game.pause = false
                     game.cinematic.value = Pair(
                         this,
@@ -116,7 +118,7 @@ open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game,
                     false
                 )
                 onEnd()
-            }, last = partIndex+1>=parts.size-1, name = part.name) {
+            }, last = false, name = part.name) {
                 CharacterImage(images = images, left = part.left, delay = part.imageAnimationDelay)
             }
         }
