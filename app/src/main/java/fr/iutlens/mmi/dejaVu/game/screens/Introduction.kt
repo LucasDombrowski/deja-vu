@@ -300,15 +300,17 @@ fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text
                         } else {
                             if (!clickable) {
                                 clickAvailable = false
+                                onClick()
                             } else {
                                 animateTitle = true
                                 animateSubtitle = true
                                 animateText = true
                                 writing = true
+                                if(clickAvailable){
+                                    onClick()
+                                }
                             }
-                            if(clickAvailable){
-                                onClick()
-                            }
+
                         }
                     }
                 }

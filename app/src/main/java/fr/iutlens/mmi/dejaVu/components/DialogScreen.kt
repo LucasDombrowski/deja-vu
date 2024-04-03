@@ -31,7 +31,7 @@ import fr.iutlens.mmi.dejaVu.game.screens.MenuButton
 import fr.iutlens.mmi.dejaVu.utils.Music
 
 @Composable
-fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highlightedWords : List<String> = listOf(), onSkip : ()->Unit = {}, content : @Composable() ()->Unit){
+fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highlightedWords : List<String> = listOf(), onSkip : ()->Unit = {}, last: Boolean = true, content : @Composable() ()->Unit){
 
     var fullText by remember {
         mutableStateOf(text)
@@ -39,6 +39,15 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
 
     LaunchedEffect(key1 = text){
         Music.reduceMusicVolume()
+    }
+
+    var higherMusic by remember {
+        mutableStateOf(last)
+    }
+
+    LaunchedEffect(last){
+        Log.i("last","$last")
+        higherMusic = last
     }
 
     val configuration = LocalConfiguration.current
@@ -154,7 +163,9 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
                     textSequenceIndex++
                     currentText = textSequence[textSequenceIndex]
                 } else {
-                    Music.normalMusicVolume()
+                    if (higherMusic) {
+                        Music.normalMusicVolume()
+                    }
                     onEnd()
                 }
             }
@@ -172,7 +183,9 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
             content()
             DialogScreenBox(text = currentText)
         }
-        MenuButton(modifier = Modifier.align(Alignment.TopEnd).offset(x = -screenWidth/40, y = screenWidth/50),text = "Passer", width = screenWidth/8) {
+        MenuButton(modifier = Modifier
+            .align(Alignment.TopEnd)
+            .offset(x = -screenWidth / 40, y = screenWidth / 50),text = "Passer", width = screenWidth/8) {
             Music.stopSound(R.raw.text_sound_effect)
             Music.normalMusicVolume()
             onSkip()
