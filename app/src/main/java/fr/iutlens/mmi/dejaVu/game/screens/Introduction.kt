@@ -9,12 +9,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +41,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.dejaVu.R
@@ -45,6 +54,67 @@ import fr.iutlens.mmi.dejaVu.utils.Music
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
+@Composable
+fun IntroButton(text: String, width : Dp, clickable: Boolean = true, action : ()->Unit){
+    var enabled by remember {
+        mutableStateOf(clickable)
+    }
+    LaunchedEffect(clickable){
+        enabled = clickable
+    }
+    val density = LocalDensity.current
+    val fontSize = with(density){
+        (width*1/12).toSp()
+    }
+    val soundVolume = 0.25f
+    var image by remember {
+        mutableIntStateOf(R.drawable.menu_button_active_background)
+    }
+    BoxWithConstraints(modifier = Modifier
+        .width(width)
+        .pointerInput(text) {
+            detectTapGestures(
+                onTap = {
+                    if (enabled) {
+                        enabled = false
+                        Music.playSound(
+                            R.raw.press_button,
+                            leftVolume = soundVolume,
+                            rightVolume = soundVolume
+                        )
+                        action()
+                    }
+                },
+                onPress = {
+                    if (enabled) {
+                        image = R.drawable.menu_button_background
+                        awaitRelease()
+                        image = R.drawable.menu_button_active_background
+                    }
+                }
+            )
+        }){
+        Image(
+            painter = painterResource(id = image),
+            contentDescription = "Bouton",
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentScale = ContentScale.FillWidth)
+        Text(
+            text = text,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = width * 1 / 100),
+            color = Color.Black,
+            fontSize = fontSize,
+            style = TextStyle(
+                fontFamily = MainFont,
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }
+}
 @Composable
 fun WritingText(
     text: String,
@@ -123,7 +193,7 @@ fun WritingText(
 }
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text : String, clickable : Boolean = true, onEnd : ()->Unit) {
+fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text : String, clickable : Boolean = true, onSkip : ()->Unit, onEnd : ()->Unit) {
 
     val image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.intro_writing_animation)
 
@@ -236,13 +306,17 @@ fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text
                                 animateText = true
                                 writing = true
                             }
-                            onClick()
+                            if(clickAvailable){
+                                onClick()
+                            }
                         }
                     }
                 }
             }
             .fillMaxSize()
             .background(Color.Black)
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .padding(paddingValue)
     ) {
         Column(
@@ -301,13 +375,28 @@ fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text
                 }
             }
         }
-        Box(
-            modifier = Modifier
-                .width(screenWidth / 10)
-                .aspectRatio(1f)
-                .align(Alignment.BottomCenter)
+        Row(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            verticalAlignment = Alignment.CenterVertically
         ){
-            WritingAnimation(writing)
+            val spacing = screenWidth/50
+            Box(
+                modifier = Modifier
+                    .width(screenWidth / 10)
+                    .aspectRatio(1f)
+            ){
+                WritingAnimation(writing)
+            }
+            Spacer(modifier = Modifier.width(spacing))
+            IntroButton(text = "Passer", width = screenWidth/8) {
+                clickAvailable = false
+                animateTitle = false
+                animateText = false
+                animateSubtitle = false
+                writing = false
+                Music.stopSound(R.raw.text_sound_effect)
+                onSkip()
+            }
         }
     }
 }
@@ -339,7 +428,9 @@ fun Introduction(onEnd : ()->Unit){
 
     IntroductionPart(onClick = {
         nextPart()
-    }, title = parts[partIndex]["title"]!!, subtitle = parts[partIndex]["subtitle"]!!, text = parts[partIndex]["text"]!!, clickable = partIndex+1<parts.size) {
+    }, title = parts[partIndex]["title"]!!, subtitle = parts[partIndex]["subtitle"]!!, text = parts[partIndex]["text"]!!, clickable = partIndex+1<parts.size, onSkip = {
+        onEnd()
+    }) {
         nextPart()
     }
 
@@ -381,7 +472,9 @@ fun Ending(onEnd: () -> Unit){
 
     IntroductionPart(onClick = {
         nextPart()
-    }, title = parts[partIndex]["title"]!!, subtitle = parts[partIndex]["subtitle"]!!, text = parts[partIndex]["text"]!!, clickable = partIndex+1<parts.size) {
+    }, title = parts[partIndex]["title"]!!, subtitle = parts[partIndex]["subtitle"]!!, text = parts[partIndex]["text"]!!, clickable = partIndex+1<parts.size, onSkip = {
+        onEnd()
+    }) {
         nextPart()
     }
 

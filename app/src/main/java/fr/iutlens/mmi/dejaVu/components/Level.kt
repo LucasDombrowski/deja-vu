@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.core.view.ViewCompat
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.screens.Ending
 import fr.iutlens.mmi.dejaVu.game.screens.Introduction
@@ -89,6 +90,7 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
             ending = true
         }
     }
+
 
     if(introduction){
         Introduction {

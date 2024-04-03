@@ -109,6 +109,13 @@ open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game,
                     partIndex++
                     part = parts[partIndex]
                 }
+            }, onSkip = {
+                game.pause = false
+                game.cinematic.value = Pair(
+                    this,
+                    false
+                )
+                onEnd()
             }, name = part.name) {
                 CharacterImage(images = images, left = part.left, delay = part.imageAnimationDelay)
             }
