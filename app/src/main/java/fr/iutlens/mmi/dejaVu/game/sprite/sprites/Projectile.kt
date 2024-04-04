@@ -97,7 +97,7 @@ class Projectile(var sprite: BasicSprite, var friendly : Boolean = false, var sp
                                         friendly = !friendly
                                         val copiedProjectile = copy()
                                         copiedProjectile.sprite.reverseColor()
-                                        copiedProjectile.fireProjectile(game, it.sprite.x, it.sprite.y, it.sprite.x - xStep, it.sprite.y - yStep)
+                                        copiedProjectile.fireProjectile(game, it.sprite.x, it.sprite.y, it.sprite.x - xStep*realRange(game), it.sprite.y - yStep*realRange(game))
                                     }
                                 }
                                 cancel()

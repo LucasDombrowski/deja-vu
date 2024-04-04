@@ -31,9 +31,9 @@ class Ninja : Game(
 ) {
     init {
         map.enemies = listOf(
+            TeleportNinja(0f, 0f, this),
             CloseNinja(0f, 0f, this),
             RangeNinja(0f, 0f, this),
-            TeleportNinja(0f, 0f, this)
         )
         items += mutableListOf<Item>(
             NinjaScarf(),

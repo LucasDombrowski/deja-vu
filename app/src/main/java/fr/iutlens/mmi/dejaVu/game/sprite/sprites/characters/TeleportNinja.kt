@@ -51,6 +51,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                         sprite.setTransparencyLevel(0.25f)
                         delay(33)
                         sprite.invisible()
+                        delay(2000)
                         var xPos = when (Math.random()) {
                             in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w
                             else -> target!!.sprite.x + game.map.tileArea.w
@@ -70,7 +71,6 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                             }
                         }
                         chasing = true
-                        delay(2000)
                         changePos(xPos, yPos)
                         Music.playSound(R.raw.teleport, leftVolume = soundVolume, rightVolume = soundVolume)
                         sprite.visible()

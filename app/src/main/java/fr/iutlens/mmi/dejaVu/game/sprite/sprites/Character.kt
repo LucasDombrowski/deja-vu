@@ -198,11 +198,12 @@ open class Character(
         movingAction.cancel()
         mobile = false
         currentDirection = "static"
-        currentAnimationSequence = basicAnimationSequence
+        animate = false
     }
 
     fun restart(){
         mobile = true
+        animate = true
     }
     fun inBoundingBox(x: Float, y:Float) : Boolean{
         return (sprite.boundingBox.left < x &&

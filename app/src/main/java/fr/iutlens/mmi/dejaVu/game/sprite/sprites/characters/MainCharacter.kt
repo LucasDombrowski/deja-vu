@@ -352,6 +352,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         } else if(game.map.inOpenDoor(x,y) && game.map.currentRoom().open){
             disablePathFollowing()
             stun()
+            currentAnimationSequence = basicAnimation()
             GlobalScope.launch {
                 sprite.setTransparencyLevel(0.75f)
                 game.invalidate()
