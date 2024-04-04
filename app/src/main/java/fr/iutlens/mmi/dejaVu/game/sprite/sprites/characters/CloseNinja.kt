@@ -38,9 +38,10 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
         if(!game.ended) {
             action = setInterval(0, 100) {
                 if (!target!!.inBoundingBox(sprite.x, sprite.y)) {
-                    moveTo(target!!.sprite.x, target!!.sprite.y)
                     if (!isPathFree(target!!.sprite.x, target!!.sprite.y)) {
                         followPlayer()
+                    } else {
+                        moveTo(target!!.sprite.x, target!!.sprite.y)
                     }
                 } else {
                     target!!.healthDown(damages, knockback, currentDirection)
@@ -54,7 +55,6 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
         setupPath(target!!.sprite.x, target!!.sprite.y)
         pathFollow = true
         action = setInterval(0,100){
-            Log.i("pathFollow","true")
             if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
                 attackPlayer(0.5f, 0.2f)
             }

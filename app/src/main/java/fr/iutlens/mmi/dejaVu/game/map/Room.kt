@@ -13,6 +13,7 @@ import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.TutorialOpenRoom
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.dejaVu.utils.Music
 import fr.iutlens.mmi.dejaVu.utils.getCenter
+import fr.iutlens.mmi.dejaVu.utils.getDistance
 import java.util.LinkedList
 import java.util.Queue
 import kotlin.math.abs
@@ -482,11 +483,14 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
         val minMaxCoordinates = getMinMaxCoordinates()
         val xVal = (minMaxCoordinates.first.first + Math.random() * (minMaxCoordinates.second.first - minMaxCoordinates.first.first)).toFloat()
         val yVal = (minMaxCoordinates.first.second + Math.random() * (minMaxCoordinates.second.second - minMaxCoordinates.first.second)).toFloat()
-        return if(map.inForbiddenArea(xVal,yVal) || !reachablePlayer(xVal,yVal,enemy.game)){
+        val tile = map.getMapIndexFromPosition(xVal,yVal)
+        val floatTile = map.getPositionFromMapIndex(tile.first,tile.second)
+        val minDistance = map.tileArea.w*2
+        return if(map.inForbiddenArea(xVal,yVal) || !reachablePlayer(xVal,yVal,enemy.game) || getDistance(enemy.game.controllableCharacter!!.sprite.x, enemy.game.controllableCharacter!!.sprite.y, xVal, yVal) < minDistance){
             spawnEnemy()
             null
         } else {
-            enemy.spawn(xVal,yVal)
+            enemy.spawn(floatTile.first+map.tileArea.w/2,floatTile.second+map.tileArea.h/2)
             enemy.smokeAnimation()
             enemy
         }
