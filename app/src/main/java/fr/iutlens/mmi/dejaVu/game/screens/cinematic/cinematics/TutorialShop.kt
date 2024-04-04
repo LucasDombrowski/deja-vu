@@ -4,6 +4,7 @@ import fr.iutlens.mmi.dejaVu.R
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.CinematicPart
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematicParts.MainCharacterPart
 
 class TutorialShop(game: Game, onEnd  : ()->Unit = {}) : Cinematic(
     parts = listOf(
@@ -12,7 +13,8 @@ class TutorialShop(game: Game, onEnd  : ()->Unit = {}) : Cinematic(
             image = R.drawable.transparent,
             left = true,
             name = null
-        )
+        ),
+        MainCharacterPart("Hm, que vais-je acheter ?")
     ),
     game = game,
     onEnd = onEnd

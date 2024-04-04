@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -44,7 +45,7 @@ import fr.iutlens.mmi.dejaVu.utils.Music
 import fr.iutlens.mmi.dejaVu.utils.setInterval
 
 @Composable
-fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit, name : String ? = null, highlightedWords : List<String> = listOf()){
+fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit, name : String ? = null, highlightedWords : List<String> = listOf(), italicWords : List<String> = listOf()){
 
     var currentText by remember {
         mutableStateOf(text)
@@ -113,7 +114,7 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
         WritingText(
             text = currentText, modifier = Modifier
                 .align(Alignment.Center)
-                .width(textWidth), fontSize = fontSize, lineHeight = lineHeight, highlightedWords = highlightedWords
+                .width(textWidth), fontSize = fontSize, lineHeight = lineHeight, highlightedWords = highlightedWords, italicWords = italicWords
         ) {
             stopWriting()
         }
@@ -135,6 +136,7 @@ fun WritingText(
     fontSize: TextUnit,
     lineHeight: TextUnit,
     highlightedWords : List<String> = listOf(),
+    italicWords: List<String> = listOf(),
     stopWriting: () -> Unit
 ){
     fun highlightedWordIndices() : List<Pair<Int,Int>>{
@@ -156,8 +158,30 @@ fun WritingText(
         return res
     }
 
+    fun italicWordIndices() : List<Pair<Int,Int>>{
+        val res = mutableListOf<Pair<Int,Int>>()
+        for(word in italicWords){
+            var currentTextIndex = 0
+            while (currentTextIndex<text.length){
+                val startIndex = text.indexOf(word, startIndex = currentTextIndex)
+                if(startIndex == -1){
+                    break
+                } else {
+                    val endIndex = startIndex+word.length
+                    res.add(Pair(startIndex,endIndex))
+                    currentTextIndex+=endIndex
+                }
+            }
+        }
+        return res
+    }
+
     var highlightedWordsIndices by remember {
         mutableStateOf(highlightedWordIndices())
+    }
+
+    var italicWordsIndices by remember {
+        mutableStateOf(italicWordIndices())
     }
 
     if(text.isNotEmpty()) {
@@ -167,6 +191,7 @@ fun WritingText(
         LaunchedEffect(key1 = text){
             currentText=""
             highlightedWordsIndices = highlightedWordIndices()
+            italicWordsIndices = italicWordIndices()
             Music.playSound(R.raw.text_sound_effect, loop = -1)
         }
 
@@ -190,6 +215,15 @@ fun WritingText(
                         else->Pair(highlightedWord.first,currentText.length-1)
                     }
                     addStyle(style = SpanStyle(color = Color(153,36,41), fontWeight = FontWeight.ExtraBold), start = indices.first, end = indices.second)
+                }
+            }
+            if(italicWordsIndices.isNotEmpty()){
+                for(italicWord in italicWordsIndices.filter { currentText.length>it.first }){
+                    val indices = when{
+                        currentText.length>italicWord.second->Pair(italicWord.first,italicWord.second)
+                        else->Pair(italicWord.first,currentText.length-1)
+                    }
+                    addStyle(style = SpanStyle(fontStyle = FontStyle.Italic), start = indices.first, end = indices.second)
                 }
             }
         }
