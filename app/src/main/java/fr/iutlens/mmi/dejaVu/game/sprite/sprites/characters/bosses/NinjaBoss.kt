@@ -6,6 +6,9 @@ import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.CinematicPart
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematicParts.MainCharacterPart
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematicParts.NarratorPart
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematicParts.NinjaBossPart
 import fr.iutlens.mmi.dejaVu.game.sprite.BasicSprite
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.Boss
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.Projectile
@@ -20,12 +23,10 @@ import kotlin.random.Random
 
 class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     endCinematicParts = listOf(
-        CinematicPart(
-            "Élisa, la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
-            R.drawable.transparent,
-            true,
-            name = "???"
-        ),
+        NinjaBossPart("Petit effronté, comment as-tu pu ?", true),
+        MainCharacterPart("… Tu ne m’en as pas laissé le choix, j’ai uniquement répondu à ta provocation."),
+        NinjaBossPart("Tu n’as pas conscience des conséquences qu’auront tes actes.", true),
+        NarratorPart("Ainsi sont les derniers mots du Corbeau. Notre héros, grand vainqueur de ce combat acharné, s’éloigna lentement du corps de son ennemi.")
     ),
     sprite = BasicSprite(R.drawable.first_boss,x,y,0),
     game = game,
@@ -42,12 +43,14 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
 
 
     val startCinematic = Cinematic(listOf(
-        CinematicPart(
-            "Élisa, la femme de chambre de Mme de Rênal, n’avait pas manqué de devenir amoureuse du jeune précepteur ; elle en parlait souvent à sa maîtresse. L’amour de Mlle Élisa avait valu à Julien la haine d’un des valets. Un jour, il entendit cet homme qui disait à Élisa : Vous ne voulez plus me parler depuis que ce précepteur crasseux est entré dans la maison. Julien ne méritait pas cette injure ; mais, par instinct de joli garçon, il redoubla de soins pour sa personne. La haine de M. Valenod redoubla aussi. Il dit publiquement que tant de coquetterie ne convenait pas à un jeune abbé. À la soutane près, c’était le costume que portait Julien.",
-            R.drawable.transparent,
-            true,
-            name = "???"
-        ),
+        MainCharacterPart("Quel silence.."),
+        NarratorPart("Un vent fort brusqua Blaise, il sentit alors une main se poser sur son épaule. L’atmosphère changea brutalement rendant le corps de Blaise vulnérable."),
+        MainCharacterPart("Qui êtes-vous ?"),
+        NinjaBossPart("Je suis le maître de ces lieux, on me surnomme le Corbeau, décline ton identité soldat."),
+        MainCharacterPart("Moi ? Comment dire.. je ne suis qu’un simple voyageur…"),
+        NinjaBossPart("Un voyageur armé, pour qui me prenez-vous pauvre fou ?  Soldats, éliminez cet intrus !",true),
+        NarratorPart("Un silence envahit la salle."),
+        NinjaBossPart("Pourquoi personne ne répond?! Ne me dis pas.. tu les as tous tués? Très bien, je vais te tuer de mes propres mains.", true)
     ),game){
         game.screenEffect = {}
         game.blinded = false
@@ -58,6 +61,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
             randomPattern()
         }
     }
+
 
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 8f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f, sound = R.raw.ninja_shot)
     override fun copy() : NinjaBoss{

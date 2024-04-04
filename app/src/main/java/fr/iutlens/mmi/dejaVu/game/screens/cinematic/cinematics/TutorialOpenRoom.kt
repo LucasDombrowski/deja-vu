@@ -4,6 +4,7 @@ import fr.iutlens.mmi.dejaVu.R
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.CinematicPart
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematicParts.MainCharacterPart
 
 class TutorialOpenRoom(game: Game, onEnd  : ()->Unit = {}) : Cinematic(
     parts = listOf(
@@ -13,6 +14,7 @@ class TutorialOpenRoom(game: Game, onEnd  : ()->Unit = {}) : Cinematic(
             left = true,
             name = null
         ),
+        MainCharacterPart("Ouf, j’ai eu chaud !"),
         CinematicPart(
             text = "La vie de Blaise se situe en haut à gauche de l’écran, si la totalité de conteneurs sont vides cela signifierait la fin de notre histoire.",
             image = R.drawable.transparent,
