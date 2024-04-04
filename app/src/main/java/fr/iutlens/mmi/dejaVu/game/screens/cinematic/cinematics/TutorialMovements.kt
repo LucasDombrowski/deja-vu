@@ -16,7 +16,7 @@ class TutorialMovements(game: Game, onEnd  : ()->Unit = {}) : Cinematic(
         MainCharacterPart("Impossible, le château est encore en construction ! Waouh mais qu’est ce que c’est que cet accoutrement, et cette arme ce n’est visiblement pas une réplique !"),
         NarratorPart("En effet, Blaise avait été téléporté en 1594 au cours de l’ère Sengoku au Japon. Construit entre 1593 et 1594, le château de Matsumoto est de nos jours l’un des douzes derniers authentiques châteaux du Japon. Célèbre pour sa couleur noire, il est surnommé “le corbeau” pour cette raison."),
         MainCharacterPart("Ne cède pas à la panique, allons voir au château si quelqu’un peut m’aider."),
-        NarratorPart("Vous êtes arrivé dans un monde hostile où vous devez vous échapper. Afin de vous déplacer, un GRIMOIRE BLANC vous montrera le chemin. Faites le bouger en interagissant avec l'écran. Blaise se déplacera instinctivement vers celui-ci, quelle confiance aveugle !", highlightedWords = listOf("GRIMOIRE BLANC")),
+        NarratorPart("Vous êtes arrivé dans un monde hostile où vous devez vous échapper. Afin de vous déplacer, un Grimoire Blanc vous montrera le chemin. Faites le bouger en interagissant avec l'écran. Blaise se déplacera instinctivement vers celui-ci, quelle confiance aveugle !", highlightedWords = listOf("Grimoire Blanc")),
         MainCharacterPart("Mes vêtements ont peut-être changé, mais je ne semble pas avoir perdu mon habilité. Essayons !")
     ),
     game = game,
