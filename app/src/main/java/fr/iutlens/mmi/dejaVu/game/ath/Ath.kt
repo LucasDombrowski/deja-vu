@@ -1,11 +1,14 @@
 package fr.iutlens.mmi.dejaVu.game.ath
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -40,11 +43,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -134,7 +141,7 @@ fun BossBar(modifier: Modifier, hearts : MutableList<Heart>, image: Int){
         val remainingColor = Color(215,0,4)
         val barShape = RoundedCornerShape(topStart = 0.dp, topEnd = barHeight, bottomEnd = barHeight, bottomStart = 0.dp)
         Box(modifier = Modifier
-            .offset(x = -imageSize/8)
+            .offset(x = -imageSize / 8)
             .clip(barShape)
             .border(width = borderWidth, color = borderColor, shape = barShape)
             .width(barWidth)
@@ -316,36 +323,95 @@ fun ContinueArrow(rotate : Float){
     val screenWidth = with(configuration){
         screenWidthDp.dp
     }
-    val imageWidth = screenWidth/10
+    val image = BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.direction_arrow)
+    val images = mutableListOf<Bitmap>()
+    repeat(3){
+        val slicedWidth = image.width/3
+        images.add(
+            Bitmap.createBitmap(
+                image,
+                it*slicedWidth,
+                0,
+                slicedWidth,
+                image.height
+            )
+        )
+    }
     @Composable
     fun Arrow(modifier: Modifier, rotate: Float){
-        var arrowBack by remember {
+
+        var complete by remember {
             mutableStateOf(false)
         }
 
-        val transitionDuration = 500
+        var firstArrow by remember {
+            mutableStateOf(false)
+        }
+        var secondArrow by remember {
+            mutableStateOf(false)
+        }
+        var thirdArrow by remember {
+            mutableStateOf(false)
+        }
 
-        val backOffsetX = -screenWidth/40
+        val transitionDuration = 250
 
-        val offsetX by animateDpAsState(targetValue = if (arrowBack) 0.dp else backOffsetX, label = "Translate", animationSpec = tween(
+        val firstAlpha by animateFloatAsState(targetValue = if (firstArrow) 1f else 0f, label = "Fade In", animationSpec = tween(
             durationMillis = transitionDuration,
             easing = LinearEasing
         ))
 
-        LaunchedEffect(key1 = arrowBack){
-            delay(transitionDuration.toLong())
-            arrowBack=!arrowBack
+        val secondAlpha by animateFloatAsState(targetValue = if (secondArrow) 1f else 0f, label = "Fade In", animationSpec = tween(
+            durationMillis = transitionDuration,
+            easing = LinearEasing
+        ))
+
+        val thirdAlpha by animateFloatAsState(targetValue = if (thirdArrow) 1f else 0f, label = "Fade In", animationSpec = tween(
+            durationMillis = transitionDuration,
+            easing = LinearEasing
+        ))
+
+        LaunchedEffect(complete){
+            if(!complete){
+                firstArrow = true
+                delay(transitionDuration.toLong())
+                secondArrow = true
+                delay(transitionDuration.toLong())
+                thirdArrow = true
+                delay(transitionDuration.toLong())
+                complete = true
+            } else {
+                firstArrow = false
+                delay(transitionDuration.toLong())
+                secondArrow = false
+                delay(transitionDuration.toLong())
+                thirdArrow = false
+                delay(transitionDuration.toLong())
+                complete = false
+            }
         }
 
-        Image(painter = painterResource(id = R.drawable.direction_arrow),
-            contentDescription = "Arrow",
-            contentScale = ContentScale.Fit,
-            modifier = modifier
-                .width(imageWidth)
-                .rotate(rotate)
-                .offset(x = offsetX)
-        )
+        val imageWidth = screenWidth/10
+        @Composable
+        fun ArrowImage(index: Int, alpha : Float){
+            Image(
+                bitmap = images[index].asImageBitmap(),
+                contentDescription = null,
+                modifier = modifier
+                    .graphicsLayer(alpha = alpha)
+                    .width(imageWidth)
+                    .aspectRatio(1f)
+                    .rotate(rotate),
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        ArrowImage(index = 0, alpha = firstAlpha)
+        ArrowImage(index = 1, alpha = secondAlpha)
+        ArrowImage(index = 2, alpha = thirdAlpha)
+
     }
+
     val align = when(rotate){
         90f->Alignment.BottomCenter
         180f->Alignment.CenterStart
@@ -356,7 +422,7 @@ fun ContinueArrow(rotate : Float){
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(padding)){
-        Arrow(modifier = Modifier.align(align), rotate = rotate)
+        Arrow(modifier = Modifier.align(align), rotate = rotate-90f)
     }
 }
 
