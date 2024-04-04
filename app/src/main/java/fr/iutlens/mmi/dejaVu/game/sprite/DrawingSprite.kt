@@ -12,6 +12,8 @@ class DrawingSprite(id: Int, x: Float, y: Float, ndx: Int = 0, val drawColor: an
     var lastPositions = mutableListOf<Pair<Float,Float>>()
 
     var drawing = false
+
+    val maxPointNumber = 15
     fun newPosition(){
         if(drawing) {
             lastPositions.removeLast()
@@ -20,7 +22,7 @@ class DrawingSprite(id: Int, x: Float, y: Float, ndx: Int = 0, val drawColor: an
     }
     fun resetPositions(){
         val positionsList = mutableListOf<Pair<Float,Float>>()
-        repeat(10){
+        repeat(maxPointNumber){
             positionsList.add(Pair(x,y))
         }
         lastPositions = positionsList
@@ -41,15 +43,18 @@ class DrawingSprite(id: Int, x: Float, y: Float, ndx: Int = 0, val drawColor: an
         }
     }
     override fun paint(drawScope: DrawScope, elapsed: Long) {
+        var maxStrokeWidth = (h2/maxPointNumber)*lastPositions.size
+        val reduceStep = maxStrokeWidth/lastPositions.size
         for (i in 0..<lastPositions.size - 1) {
             if(i+1<lastPositions.size) {
                 drawScope.drawLine(
                     color = drawColor,
                     start = Offset(lastPositions[i].first, lastPositions[i].second),
                     end = Offset(lastPositions[i + 1].first, lastPositions[i + 1].second),
-                    strokeWidth = 10f
+                    strokeWidth = maxStrokeWidth
                 )
             }
+            maxStrokeWidth-=reduceStep
         }
         drawScope.withTransform({
             scale(scaleX, scaleY)

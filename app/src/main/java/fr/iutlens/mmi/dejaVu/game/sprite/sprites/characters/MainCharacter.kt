@@ -40,7 +40,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     val targetIndicator : BasicSprite = BasicSprite(R.drawable.target_indicator, sprite.x, sprite.y)
 
-    val pathIndicator : DrawingSprite = DrawingSprite(R.drawable.path_indicator, sprite.x, sprite.y, drawColor = Color(243,214,55,128))
+    val pathIndicator : DrawingSprite = DrawingSprite(R.drawable.path_indicator, sprite.x, sprite.y, drawColor = Color(255,255,255,192))
 
     var dragAction = false
 
