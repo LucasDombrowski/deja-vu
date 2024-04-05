@@ -12,6 +12,7 @@ import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematicParts.NinjaBossPart
 import fr.iutlens.mmi.dejaVu.game.sprite.BasicSprite
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.Boss
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.Projectile
+import fr.iutlens.mmi.dejaVu.utils.Music
 import fr.iutlens.mmi.dejaVu.utils.rotationFromPoint
 import fr.iutlens.mmi.dejaVu.utils.setInterval
 import kotlinx.coroutines.GlobalScope
@@ -93,6 +94,8 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
 
     fun attackAnimation(){
         if(!target!!.remainingInvulnerability) {
+            val soundVolume = 0.25f
+            Music.playSound(R.raw.ninja_boss_attack, leftVolume = soundVolume, rightVolume = soundVolume)
             animate = false
             val leftAttackAnimationSequence = listOf<Int>(30, 31, 32, 33, 34)
             val rightAttackAnimationSequence = listOf<Int>(35, 36, 37, 38, 39)
@@ -325,6 +328,8 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         val stepDelay = 33L
         val startDelay = 750L
         val endDelay = 1000L
+        val soundVolume = 0.25f
+        Music.playSound(R.raw.ninja_boss_dash, leftVolume = soundVolume, rightVolume = soundVolume)
         GlobalScope.launch {
             delay(startDelay)
             while (invisibleValue>=0f){
