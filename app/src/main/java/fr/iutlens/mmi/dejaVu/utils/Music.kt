@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import fr.iutlens.mmi.dejaVu.utils.LoopMediaPlayer
 
 /**
  * Music permet de jouer de la musique ou des sons pendant le jeu
@@ -27,16 +28,17 @@ object Music {
 
     var musicLoop by mutableStateOf(true)
 
-    lateinit var currentMusicPlayer : MediaPlayer
+    @SuppressLint("StaticFieldLeak")
+    lateinit var currentMusicPlayer : LoopMediaPlayer
 
     fun reduceMusicVolume(){
         val volume = 0.05f
-        currentMusicPlayer.setVolume(volume,volume)
+        currentMusicPlayer.setVolume(volume)
     }
 
     fun normalMusicVolume(){
         val volume = 0.1f
-        currentMusicPlayer.setVolume(volume,volume)
+        currentMusicPlayer.setVolume(volume)
     }
 
     /**
@@ -104,25 +106,12 @@ object Music {
         val volume = 0.1f
         val musicPlayer by remember(id to mute) {
             derivedStateOf {
-                MediaPlayer.create(context, id).apply {
-                    setAudioAttributes(
-                        AudioAttributes.Builder()
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .setUsage(AudioAttributes.USAGE_GAME).build()
-                    )
-                }
+                LoopMediaPlayer(context,id)
             }
         }
 
         if (!mute) DisposableEffect(id) {
-            musicPlayer.apply {
-                isLooping = musicLoop
-                start()
-            }.setVolume(
-                volume,
-                volume
-            )
-
+            musicPlayer.setVolume(volume)
             onDispose {
                 musicPlayer.stop()
             }
