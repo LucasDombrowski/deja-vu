@@ -97,7 +97,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                         }
 
                     } else if (target!!.inBoundingBox(sprite.x, sprite.y)) {
-                        target!!.healthDown(0.5f, 0.2f, currentDirection)
+                        target!!.healthDown(0.25f, 0.2f, currentDirection)
                         chasing = false
                         action = GlobalScope.launch {
                             delay(100)

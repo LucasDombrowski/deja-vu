@@ -28,7 +28,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     animationDelay = 100L,
     fireRate = 1500
 ){
-    val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 6f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f, sound = R.raw.ninja_shot)
+    val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 6f, speed = 0.1f, friendly = false, damages =  0.25f, knockback = 0.2f, sound = R.raw.ninja_shot)
 
     var shotAwaitTick = fireRate
 
