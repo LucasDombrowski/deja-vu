@@ -12,16 +12,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
-    sprite = BasicSprite(R.drawable.isaac,x,y,1),
+    sprite = BasicSprite(R.drawable.teleport_ninja,x,y,0),
     game = game,
-    basicAnimationSequence = listOf(4),
+    basicAnimationSequence = listOf(0),
     speed = 0.05f,
     hearts = setBasicHearts(6),
-    leftAnimationSequence = listOf(12,13,14),
-    topAnimationSequence = listOf(30,31,32),
-    bottomAnimationSequence = listOf(3,4,5),
-    rightAnimationSequence = listOf(21,22,23),
+    leftAnimationSequence = listOf(12,13,14,15),
+    topAnimationSequence = listOf(6,7),
+    bottomAnimationSequence = listOf(2,3),
+    rightAnimationSequence = listOf(8,9,10,11),
     target = game.controllableCharacter!!,
+    animationDelay = 100L
 ){
     var chasing = false
     override fun spawn(x: Float, y: Float){

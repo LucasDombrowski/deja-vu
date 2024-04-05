@@ -144,7 +144,7 @@ fun MainMenu(onStart : ()->Unit, onLeave : ()->Unit){
         screenHeightDp.dp
     }
 
-    val logoWidth = screenWidth/4
+    val logoWidth = screenWidth/8
 
     var start by remember {
         mutableStateOf(true)
@@ -196,7 +196,7 @@ fun MainMenu(onStart : ()->Unit, onLeave : ()->Unit){
         start = false
     }
 
-    val spacerHeight = screenHeight/50
+    val spacerHeight = screenHeight/40
     val paddingValue = screenWidth/20
 
 
@@ -208,7 +208,7 @@ fun MainMenu(onStart : ()->Unit, onLeave : ()->Unit){
     ){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxHeight(),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center
         ){
             Image(painter = painterResource(id = R.drawable.logo),
