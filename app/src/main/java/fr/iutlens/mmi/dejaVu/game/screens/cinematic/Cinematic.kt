@@ -99,6 +99,7 @@ open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game,
             }
 
             DialogScreen(text = part.text, onEnd = {
+                part.onEnd()
                 if(partIndex+1>=parts.size){
                     Music.normalMusicVolume()
                     game.pause = false

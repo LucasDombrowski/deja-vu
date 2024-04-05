@@ -97,8 +97,10 @@ fun Heart(permanent: Boolean, filled: Float){
 }
 
 @Composable
-fun Hearts(hearts: MutableList<Heart>){
-    Row {
+fun Hearts(hearts: MutableList<Heart>, modifier : Modifier = Modifier){
+    Row(
+        modifier = modifier
+    ) {
         for(heart in hearts){
             fr.iutlens.mmi.dejaVu.game.ath.Heart(permanent = heart.permanent, filled = heart.filled)
         }
@@ -172,7 +174,7 @@ fun BossBar(modifier: Modifier, hearts : MutableList<Heart>, image: Int){
 }
 
 @Composable
-fun Coins(n: MutableState<Int>){
+fun Coins(n: MutableState<Int>, modifier: Modifier = Modifier){
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
     val screenWidth = with(configuration){
@@ -427,7 +429,7 @@ fun ContinueArrow(rotate : Float){
 }
 
 @Composable
-fun ProgressBar(clearedRoomsCount : Int, allRoomsCount : Int, show : Boolean){
+fun ProgressBar(clearedRoomsCount : Int, allRoomsCount : Int, show : Boolean, modifier: Modifier = Modifier){
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val barWidth = screenWidth/3
@@ -459,7 +461,7 @@ fun ProgressBar(clearedRoomsCount : Int, allRoomsCount : Int, show : Boolean){
         )
     }
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(barWidth)
             .height(barHeight)
             .offset(y = offsetY)
