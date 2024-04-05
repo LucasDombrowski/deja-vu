@@ -52,10 +52,6 @@ class Ninja : Game(
                 }
             }
         }
-        GlobalScope.launch {
-            delay(10000)
-            spawnBoss()
-        }
     }
 
     override fun copy() : Ninja{
