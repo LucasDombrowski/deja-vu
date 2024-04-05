@@ -24,7 +24,7 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
     override fun spawn(x: Float, y:Float){
         game.addCharacter(this)
         changePos(x,y)
-        attackPlayer(0.5f,0.2f)
+        attackPlayer(0.25f,0.2f)
     }
 
     override fun basicAnimation() : List<Int>{
@@ -66,7 +66,7 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
         pathFollow = true
         action = setInterval(0,100){
             if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
-                attackPlayer(0.5f, 0.2f)
+                attackPlayer(0.25f, 0.2f)
             }
         }
     }
