@@ -63,21 +63,21 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
                         sprite.invisible()
                         delay(2000)
                         var xPos = when (Math.random()) {
-                            in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w
-                            else -> target!!.sprite.x + game.map.tileArea.w
+                            in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w*2
+                            else -> target!!.sprite.x + game.map.tileArea.w*2
                         }
                         var yPos = when (Math.random()) {
-                            in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h
-                            else -> target!!.sprite.y - game.map.tileArea.w
+                            in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h*2
+                            else -> target!!.sprite.y - game.map.tileArea.h*2
                         }
                         while (game.map.inForbiddenArea(xPos,yPos)){
                             xPos = when (Math.random()) {
-                                in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w
-                                else -> target!!.sprite.x + game.map.tileArea.w
+                                in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w*2
+                                else -> target!!.sprite.x + game.map.tileArea.w*2
                             }
                             yPos = when (Math.random()) {
-                                in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h
-                                else -> target!!.sprite.y - game.map.tileArea.w
+                                in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h*2
+                                else -> target!!.sprite.y - game.map.tileArea.h*2
                             }
                         }
                         chasing = true
