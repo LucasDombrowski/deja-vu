@@ -12,7 +12,7 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
     sprite = BasicSprite(R.drawable.close_ninja,x,y,0),
     game = game,
     basicAnimationSequence = listOf(0),
-    speed = 0.1f,
+    speed = 0.06f,
     hearts = setBasicHearts(6),
     leftAnimationSequence = listOf(12,13,14,15),
     topAnimationSequence = listOf(6,7),

@@ -127,30 +127,6 @@ fun getAngle(xCenter : Float, yCenter: Float, x : Float, y : Float) : Float{
     }
 }
 
-fun vibrate(time: Long){
-    val context = getCurrentActivityContext()
-    when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            val vibrationEffect = VibrationEffect.createOneShot(time, VibrationEffect.DEFAULT_AMPLITUDE)
-            val vibrator = vibratorManager.defaultVibrator
-            vibrator.vibrate(vibrationEffect)
-        }
-
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT < Build.VERSION_CODES.S -> {
-            // For Android 8.0 (Oreo) to Android 11 (R)
-            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            val vibrationEffect = VibrationEffect.createOneShot(time, VibrationEffect.DEFAULT_AMPLITUDE)
-            vibrator.vibrate(vibrationEffect)
-        }
-
-        else -> {
-            // For Android versions below Oreo (API level 26)
-            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            vibrator.vibrate(time)
-        }
-    }
-}
 
 
 
