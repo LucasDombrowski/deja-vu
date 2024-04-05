@@ -72,6 +72,9 @@ class MainActivity : ComponentActivity() {
         loadSound(R.raw.grab_heart_container)
         loadSound(R.raw.book_portal_appear)
         loadSound(R.raw.book_portal_disappear)
+        loadSound(R.raw.ninja_boss_attack)
+        loadSound(R.raw.shot_reflected)
+        loadSound(R.raw.ninja_boss_dash)
 
         setContent {
             currentContext = LocalContext.current
