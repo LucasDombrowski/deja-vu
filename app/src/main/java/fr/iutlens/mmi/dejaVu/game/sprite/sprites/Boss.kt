@@ -39,7 +39,7 @@ open class Boss(
     bottomAnimationSequence,
     target,
     fireRate,
-    action){
+    action = action){
     override fun hit(damages: Float, knockback: Float, direction: String){
         healthDown(damages, 0f, direction)
         GlobalScope.launch {

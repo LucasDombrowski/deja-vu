@@ -15,16 +15,17 @@ import kotlinx.coroutines.launch
 import kotlin.math.PI
 
 class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
-    sprite = BasicSprite(R.drawable.isaac,x,y,1),
+    sprite = BasicSprite(R.drawable.range_ninja,x,y,0),
     game = game,
-    basicAnimationSequence = listOf(7),
-    speed = 0.05f,
+    basicAnimationSequence = listOf(0),
+    speed = 0.08f,
     hearts = setBasicHearts(6),
-    leftAnimationSequence = listOf(15,16,17),
-    topAnimationSequence = listOf(33,34,35),
-    bottomAnimationSequence = listOf(6,7,8),
-    rightAnimationSequence = listOf(24,25,26),
+    leftAnimationSequence = listOf(12,13,14,15),
+    topAnimationSequence = listOf(6,7),
+    bottomAnimationSequence = listOf(2,3),
+    rightAnimationSequence = listOf(8,9,10,11),
     target = game.controllableCharacter!!,
+    animationDelay = 100L,
     fireRate = 1500
 ){
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 6f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f, sound = R.raw.ninja_shot)
@@ -32,6 +33,15 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
     var shotAwaitTick = fireRate
 
     var delayPatternTime = 100
+
+    override fun basicAnimation() : List<Int>{
+        basicAnimationSequence = when(previousDirection){
+            "left"-> listOf(4)
+            "right"-> listOf(0)
+            else->basicAnimationSequence
+        }
+        return basicAnimationSequence
+    }
     override fun spawn(x: Float, y: Float){
         game.addCharacter(this)
         changePos(x, y)
@@ -128,6 +138,7 @@ class RangeNinja(x: Float, y:Float, game: Game) : Enemy(
                             secondProjectile[1]
                         )
                     } else {
+                        currentAnimationSequence = basicAnimation()
                         shotAwaitTick += delayPatternTime
                     }
                 }

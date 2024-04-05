@@ -22,6 +22,7 @@ open class Enemy(
     bottomAnimationSequence: List<Int> = basicAnimationSequence,
     target: Character? = null,
     fireRate: Long = 0,
+    animationDelay : Long = 100L,
     open var action: Job = GlobalScope.launch {
         return@launch
     },
@@ -37,7 +38,8 @@ open class Enemy(
     rightAnimationSequence = rightAnimationSequence,
     bottomAnimationSequence = bottomAnimationSequence,
     target = target,
-    fireRate = fireRate
+    fireRate = fireRate,
+    animationDelay = animationDelay
 ){
     open fun hit(damages: Float, knockback: Float, direction: String){
         healthDown(damages, knockback, direction)
@@ -90,7 +92,7 @@ open class Enemy(
     }
 
     override fun copy() : Enemy{
-        return Enemy(sprite.copy(), game, speed, hearts, basicAnimationSequence, leftAnimationSequence, topAnimationSequence, rightAnimationSequence, bottomAnimationSequence, target, fireRate, action)
+        return Enemy(sprite.copy(), game, speed, hearts, basicAnimationSequence, leftAnimationSequence, topAnimationSequence, rightAnimationSequence, bottomAnimationSequence, target, fireRate, animationDelay, action)
     }
 
 

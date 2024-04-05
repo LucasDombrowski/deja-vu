@@ -9,21 +9,31 @@ import fr.iutlens.mmi.dejaVu.game.sprite.sprites.Enemy
 import fr.iutlens.mmi.dejaVu.utils.setInterval
 
 class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
-    sprite = BasicSprite(R.drawable.isaac,x,y,1),
+    sprite = BasicSprite(R.drawable.close_ninja,x,y,0),
     game = game,
-    basicAnimationSequence = listOf(1),
-    speed = 0.05f,
+    basicAnimationSequence = listOf(0),
+    speed = 0.1f,
     hearts = setBasicHearts(6),
-    leftAnimationSequence = listOf(9,10,11),
-    topAnimationSequence = listOf(27,28,29),
-    bottomAnimationSequence = listOf(0,1,2),
-    rightAnimationSequence = listOf(18,19,20),
+    leftAnimationSequence = listOf(12,13,14,15),
+    topAnimationSequence = listOf(6,7),
+    bottomAnimationSequence = listOf(2,3),
+    rightAnimationSequence = listOf(8,9,10,11),
     target = game.controllableCharacter!!,
+    animationDelay = 100L
 ){
     override fun spawn(x: Float, y:Float){
         game.addCharacter(this)
         changePos(x,y)
         attackPlayer(0.5f,0.2f)
+    }
+
+    override fun basicAnimation() : List<Int>{
+        basicAnimationSequence = when(previousDirection){
+            "left"-> listOf(4)
+            "right"-> listOf(0)
+            else->basicAnimationSequence
+        }
+        return basicAnimationSequence
     }
 
     override fun copy() : CloseNinja{
