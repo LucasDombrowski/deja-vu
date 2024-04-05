@@ -32,7 +32,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     sprite = BasicSprite(R.drawable.first_boss,x,y,0),
     game = game,
     basicAnimationSequence = listOf(0,1),
-    speed = 0.06f,
+    speed = 0.08f,
     hearts = setBasicHearts(60),
     leftAnimationSequence = listOf(0,1),
     topAnimationSequence = listOf(25,26,27,28,29),

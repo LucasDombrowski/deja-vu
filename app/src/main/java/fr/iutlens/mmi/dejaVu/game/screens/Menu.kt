@@ -144,7 +144,7 @@ fun MainMenu(onStart : ()->Unit, onLeave : ()->Unit){
         screenHeightDp.dp
     }
 
-    val logoWidth = screenWidth/8
+    val logoWidth = screenWidth/3
 
     var start by remember {
         mutableStateOf(true)
@@ -196,7 +196,7 @@ fun MainMenu(onStart : ()->Unit, onLeave : ()->Unit){
         start = false
     }
 
-    val spacerHeight = screenHeight/40
+    val spacerHeight = screenHeight/20
     val paddingValue = screenWidth/20
 
 

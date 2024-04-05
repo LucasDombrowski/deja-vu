@@ -15,7 +15,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     sprite = BasicSprite(R.drawable.teleport_ninja,x,y,0),
     game = game,
     basicAnimationSequence = listOf(0),
-    speed = 0.05f,
+    speed = 0.06f,
     hearts = setBasicHearts(6),
     leftAnimationSequence = listOf(12,13,14,15),
     topAnimationSequence = listOf(6,7),
@@ -25,6 +25,15 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     animationDelay = 100L
 ){
     var chasing = false
+
+    override fun basicAnimation() : List<Int>{
+        basicAnimationSequence = when(previousDirection){
+            "left"-> listOf(4)
+            "right"-> listOf(0)
+            else->basicAnimationSequence
+        }
+        return basicAnimationSequence
+    }
     override fun spawn(x: Float, y: Float){
         game.addCharacter(this)
         changePos(x, y)
