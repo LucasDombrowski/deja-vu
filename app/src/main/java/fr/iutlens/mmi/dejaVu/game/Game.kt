@@ -455,13 +455,20 @@ open class Game(
     var showProgressBar = mutableStateOf(true)
     var coins = mutableStateOf(0)
 
+    val athOverride = mutableStateMapOf<String,Boolean>(
+        "hearts" to false,
+        "coins" to false,
+        "menu" to false,
+        "bar" to false
+    )
+
 
     var dropProbability = 1
     var heartDropProbability = 1
     var superCoinDropProbability = 1
     var goldHeartDropProbability = 1
     @Composable
-    fun Ath(){
+    fun Ath(showHeart: Boolean = true, showCoin : Boolean = true, showMenuButton : Boolean = true, showBar : Boolean = true){
         val configuration = LocalConfiguration.current
         val screenWidth = with(configuration){
             this.screenWidthDp
@@ -486,9 +493,17 @@ open class Game(
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Column {
-                        ath["hearts"]?.let { Hearts(hearts = it as MutableList<Heart>) }
+                        ath["hearts"]?.let { Hearts(hearts = it as MutableList<Heart>, modifier = Modifier.graphicsLayer(alpha = when(showHeart){
+                            true->1f
+                            else->0f
+                        })) }
                         Spacer(modifier = Modifier.height(10.dp))
-                        Coins(n = coins)
+                        if(showCoin) {
+                            Coins(n = coins, modifier = Modifier.graphicsLayer(alpha = when(showCoin){
+                                true->1f
+                                else->0f
+                            }))
+                        }
                     }
                 }
 
@@ -496,6 +511,10 @@ open class Game(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
                     Box(modifier = Modifier
+                        .graphicsLayer(alpha = when(showMenuButton){
+                            true->1f
+                            else->0f
+                        })
                         .width((screenWidth / 15).dp)
                         .aspectRatio(1f)
                         .clickable {
@@ -518,11 +537,15 @@ open class Game(
                             modifier = Modifier.fillMaxSize(),
                         )
                     }
-                    if(!map.currentRoom().enemiesAlive(this@Game) || showProgressBar.value) {
+                    if((!map.currentRoom().enemiesAlive(this@Game) || showProgressBar.value)) {
                         ProgressBar(
                             clearedRoomsCount = ath["clearedRooms"]!!.size,
                             allRoomsCount = map.rooms!!.size,
-                            show = showProgressBar.value
+                            show = showProgressBar.value,
+                            modifier = Modifier.graphicsLayer(alpha = when(showBar){
+                                true->1f
+                                else->0f
+                            })
                         )
                     }
                 }
@@ -759,6 +782,12 @@ open class Game(
                 ContinueArrow(continueArrow.value.second)
             }
         }
+        Ath(
+            showHeart = athOverride["hearts"]!!,
+            showCoin = athOverride["coins"]!!,
+            showMenuButton = athOverride["menu"]!!,
+            showBar = athOverride["bar"]!!
+        )
         Music(musicTrack.value)
     }
 
