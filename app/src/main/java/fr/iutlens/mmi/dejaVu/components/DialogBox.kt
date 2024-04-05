@@ -43,6 +43,7 @@ import fr.iutlens.mmi.dejaVu.game.screens.MenuButton
 import fr.iutlens.mmi.dejaVu.ui.theme.MainFont
 import fr.iutlens.mmi.dejaVu.utils.Music
 import fr.iutlens.mmi.dejaVu.utils.setInterval
+import kotlinx.coroutines.delay
 
 @Composable
 fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit, name : String ? = null, highlightedWords : List<String> = listOf(), italicWords : List<String> = listOf()){
@@ -87,6 +88,8 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
         else->R.drawable.dialog_box_name
     }
 
+    val screenWidth = configuration.screenWidthDp.dp
+
 
 
     BoxWithConstraints(modifier = Modifier
@@ -118,10 +121,15 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
         ) {
             stopWriting()
         }
-        WritingAnimation(images.toList(), isWriting,
-            Modifier
-                .align(Alignment.BottomEnd)
-                .height(textHeight))
+        if(!isWriting) {
+            WritingAnimation(
+                images.toList(),
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .height(screenWidth/12)
+                    .offset(y = -screenWidth/40)
+            )
+        }
 
 
     }
@@ -188,6 +196,19 @@ fun WritingText(
         var currentText by remember {
             mutableStateOf("")
         }
+
+        fun phraseEnd(): Boolean {
+            return currentText.length > 2 && currentText[currentText.lastIndex - 1] !in listOf(
+                '.',
+                '!',
+                '?'
+            ) && currentText.last() in listOf('.', '?', '!', ';', ',') && (currentText.length < text.length && text[currentText.length] !in listOf(
+                '.',
+                '!',
+                '?'
+            ))
+        }
+
         LaunchedEffect(key1 = text){
             currentText=""
             highlightedWordsIndices = highlightedWordIndices()
@@ -196,8 +217,22 @@ fun WritingText(
         }
 
 
+        val typingDelay = 10L
+        val punctuationDelay = 150L
+
         LaunchedEffect(key1 = currentText){
-            Thread.sleep(5)
+            if(phraseEnd()){
+                Music.stopSound(R.raw.text_sound_effect)
+            }
+            Thread.sleep(
+                when {
+                    phraseEnd() -> punctuationDelay
+                    else -> typingDelay
+                }
+            )
+            if(phraseEnd()){
+                Music.playSound(R.raw.text_sound_effect, loop = -1)
+            }
             if(currentText!=text && currentText.length<text.length){
                 currentText += text[currentText.length]
             } else {
@@ -244,37 +279,17 @@ fun WritingText(
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun WritingAnimation(images : List<Bitmap>, writing: Boolean, modifier: Modifier){
+fun WritingAnimation(images : List<Bitmap>, modifier: Modifier){
     var imageIndex by remember {
         mutableIntStateOf(0)
     }
-    var animate by remember {
-        mutableStateOf(writing)
-    }
-    var imageAnimation by remember {
-        mutableStateOf(
-            setInterval(0,100){
-                if (imageIndex >= images.size - 1) {
-                    imageIndex = 0
-                } else {
-                    imageIndex++
-                }
-            }
-        )
-    }
-    if(animate!=writing){
-        if(!writing){
-            imageAnimation.cancel()
+    LaunchedEffect(key1 = imageIndex){
+        delay(100)
+        if (imageIndex >= images.size - 1) {
+            imageIndex = 0
         } else {
-            imageAnimation = setInterval(0,100){
-                if (imageIndex >= images.size - 1) {
-                    imageIndex = 0
-                } else {
-                    imageIndex++
-                }
-            }
+            imageIndex++
         }
-        animate = writing
     }
 
     Image(bitmap = images[imageIndex].asImageBitmap(),
