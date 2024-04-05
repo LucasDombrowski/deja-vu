@@ -259,8 +259,6 @@ open class Game(
         controllableCharacter!!.stun()
         map.currentRoom = ndx
         camera.removeDirectionArrow()
-        val soundVolume = 0.5f
-        Music.playSound(R.raw.door, leftVolume = soundVolume, rightVolume = soundVolume)
         if(map.currentRoom() is TreasureRoom){
             map.currentRoom().open()
             val chest = Chest(items)
