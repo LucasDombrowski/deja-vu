@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun IntroButton(text: String, width : Dp, clickable: Boolean = true, action : ()->Unit){
+fun IntroButton(modifier: Modifier = Modifier, text: String, width : Dp, clickable: Boolean = true, action : ()->Unit){
     var enabled by remember {
         mutableStateOf(clickable)
     }
@@ -71,7 +71,7 @@ fun IntroButton(text: String, width : Dp, clickable: Boolean = true, action : ()
     var image by remember {
         mutableIntStateOf(R.drawable.menu_button_active_background)
     }
-    BoxWithConstraints(modifier = Modifier
+    BoxWithConstraints(modifier = modifier
         .width(width)
         .pointerInput(text) {
             detectTapGestures(
@@ -232,7 +232,8 @@ fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text
         (screenWidth / 60).toSp()
     }
 
-    val paddingValue = screenWidth / 20
+    val paddingValueX = screenWidth / 40
+    val paddinvValueY = screenWidth / 50
 
 
     val paragraphDelay = 500L
@@ -260,19 +261,17 @@ fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text
     }
 
     @Composable
-    fun WritingAnimation(writing : Boolean = true){
+    fun WritingAnimation(){
         var imageIndex by remember {
             mutableIntStateOf(0)
         }
         val animationDelay = 100L
         LaunchedEffect(imageIndex,writing){
-            if(writing){
-                delay(animationDelay)
-                if(imageIndex+1<images.size){
-                    imageIndex++
-                } else {
-                    imageIndex=0
-                }
+            delay(animationDelay)
+            if(imageIndex+1<images.size){
+                imageIndex++
+            } else {
+                imageIndex=0
             }
         }
 
@@ -319,53 +318,57 @@ fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text
             .background(Color.Black)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(paddingValue)
+            .padding(horizontal = paddingValueX, vertical = paddinvValueY)
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
-            WritingText(
-                text = title,
-                fontSize = titleFontSize,
-                typingDelay = 20,
-                animated = animateTitle
-            ) {
-                scope.launch {
-                    delay(paragraphDelay)
-                    animateTitle = false
-                    if(subtitle==""){
-                        animateSubtitle = false
-                    }
-                    if(text==""){
-                        animateText = false
+            if(title!="") {
+                WritingText(
+                    text = title,
+                    fontSize = titleFontSize,
+                    typingDelay = 30,
+                    animated = animateTitle
+                ) {
+                    scope.launch {
+                        delay(paragraphDelay)
+                        animateTitle = false
+                        if (subtitle == "") {
+                            animateSubtitle = false
+                        }
+                        if (text == "") {
+                            animateText = false
+                        }
                     }
                 }
             }
             if (subtitle != "") {
                 Spacer(modifier = Modifier.height(screenHeight / 40))
             }
-            if (!animateTitle && (subtitle!="" || text!="")) {
-                WritingText(
-                    text = subtitle,
-                    fontSize = subtitleFontSize,
-                    typingDelay = 20,
-                    animated = animateSubtitle
-                ) {
-                    scope.launch {
-                        delay(paragraphDelay)
-                        animateSubtitle = false
+            if ((!animateTitle && (subtitle!="" || text!="")) || title=="") {
+                if(subtitle!="") {
+                    WritingText(
+                        text = subtitle,
+                        fontSize = subtitleFontSize,
+                        typingDelay = 30,
+                        animated = animateSubtitle
+                    ) {
+                        scope.launch {
+                            delay(paragraphDelay)
+                            animateSubtitle = false
+                        }
                     }
                 }
                 if (subtitle != "") {
                     Spacer(modifier = Modifier.height(screenHeight / 20))
                 }
-                if (!animateSubtitle) {
+                if (!animateSubtitle || subtitle=="") {
                     WritingText(
                         text = text,
                         fontSize = textFontSize,
-                        typingDelay = 10,
+                        typingDelay = 20,
                         animated = animateText
                     ) {
                         scope.launch {
@@ -377,42 +380,38 @@ fun IntroductionPart(onClick : ()->Unit, title : String, subtitle : String, text
                 }
             }
         }
-        Row(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            val spacing = screenWidth/50
+        if(!writing) {
             Box(
                 modifier = Modifier
-                    .width(screenWidth / 10)
+                    .align(Alignment.BottomEnd)
+                    .width(screenWidth / 15)
                     .aspectRatio(1f)
-            ){
-                WritingAnimation(writing)
+            ) {
+                WritingAnimation()
             }
-            Spacer(modifier = Modifier.width(spacing))
-            IntroButton(text = "Passer", width = screenWidth/8) {
-                clickAvailable = false
-                animateTitle = false
-                animateText = false
-                animateSubtitle = false
-                writing = false
-                Music.stopSound(R.raw.text_sound_effect)
-                onSkip()
-            }
+        }
+        IntroButton(modifier = Modifier.align(Alignment.TopEnd), text = "Passer", width = screenWidth/8) {
+            clickAvailable = false
+            animateTitle = false
+            animateText = false
+            animateSubtitle = false
+            writing = false
+            Music.stopSound(R.raw.text_sound_effect)
+            onSkip()
         }
     }
 }
 @Composable
 fun Introduction(onEnd : ()->Unit){
     val parts = listOf(
-        mapOf("title" to "","subtitle" to "","text" to "Il existe quelque part au tréfond de la Terre une bibliothèque. Au fil des siècles, nombre de légendes extravagantes, sordides et parfois grotesques ont émergé. Démons, monstres, fous, bêtes sauvages, dieux. Tout être surnaturel subsisterait ci-bas. \n" +
+        mapOf("title" to "","subtitle" to "","text" to "Il existe quelque part au tréfond de la Terre une bibliothèque. Au fil des siècles, nombre de légendes extravagantes, sordides et parfois grotesques ont émergé. Démons, monstres, fous, bêtes sauvages, dieux. Tout être surnaturel subsisterait ci-bas. \n\n" +
                 "On raconte même que ce lieu pourrait causer la fin du monde. Tous les pays rêvaient de s'accaparer de cet endroit mystérieux. Toutefois, le monde changea quand quelqu’un foula ces terres interdites."),
-        mapOf("title" to "Mardi 2 avril ????, 22h46", "subtitle" to "Bibliothèque souterraine, couloir n° ????", "text" to "Des bruits de pas, il s’agit là de la seule chose qui résonna dans les couloirs infinis. L’architecture semblait être un mélange d’influences des quatre coins du monde. \n" +
-                "“On dirait le croisement des mondes et des siècles, la véritable histoire de la Terre” pensa tout bas le garçon.\n" +
+        mapOf("title" to "Mardi 2 avril ????, 22h46", "subtitle" to "Bibliothèque souterraine, couloir n° ????", "text" to "Des bruits de pas, il s’agit là de la seule chose qui résonna dans les couloirs infinis. L’architecture semblait être un mélange d’influences des quatre coins du monde. \n\n" +
+                "“On dirait le croisement des mondes et des siècles, la véritable histoire de la Terre” pensa tout bas le garçon.\n\n" +
                 "Blaise, un être humain des plus ordinaires avait, par hasard, aussi malchanceux soit-il, souhaité explorer des ruines anciennes. Son exploration fut de courte durée à la suite d’une brusque chute dans une fosse. Le voilà donc errant depuis une dizaine d’heures vers un espoir de retrouver un jour la surface."),
-        mapOf("title" to "Mercredi 3 avril ????, 02h04", "subtitle" to "Bibliothèque souterraine, salle des archives", "text" to "Une immense pièce s’offre au jeune homme affaibli par la marche, la soif et la faim. Dans son champ de vision, des livres à perte de vue, des bibliothèques hautes de centaines de mètres, mais où avait-il pu atterrir?\n" +
-                "“Je vais me reposer ici...Tiens?” Soudain, au centre de la pièce surgit un livre, bien plus petit que les millions d’autres qui sommeillaient ici. Sur la couverture était inscrit : Déjà vu.\n" +
-                "Quelques pages échappèrent des doigts de Blaise, le livre se mit à briller de plus en plus. Le garçon se sentit comme absorbé, cela signifie-t-il sa fin?"),
+        mapOf("title" to "Mercredi 3 avril ????, 02h04", "subtitle" to "Bibliothèque souterraine, salle des archives", "text" to "Une immense pièce s’offre au jeune homme affaibli par la marche, la soif et la faim. Dans son champ de vision, des livres à perte de vue, des bibliothèques hautes de centaines de mètres, mais où avait-il pu atterrir ?\n\n" +
+                "“Je vais me reposer ici...Tiens ?” Soudain, au centre de la pièce surgit un livre, bien plus petit que les millions d’autres qui sommeillaient ici. Sur la couverture était inscrit : Déjà vu.\n\n" +
+                "Quelques pages échappèrent des doigts de Blaise, le livre se mit à briller de plus en plus. Le garçon se sentit comme absorbé, cela signifie-t-il sa fin ?"),
         mapOf("title" to "", "subtitle" to "", "text" to "Il avait tort, une incroyable aventure l'attendait.")
     )
 

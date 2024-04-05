@@ -45,6 +45,9 @@ class LoopMediaPlayer(context: Context, resId: Int) {
     fun setVolume(volume: Float) {
         this.volume = volume
         mCurrentPlayer!!.setVolume(volume,volume)
+        if(mNextPlayer!=null){
+            mNextPlayer!!.setVolume(volume,volume)
+        }
     }
 
     @Throws(IllegalStateException::class)
