@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -511,10 +512,12 @@ open class Game(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
                     Box(modifier = Modifier
-                        .graphicsLayer(alpha = when(showMenuButton){
-                            true->1f
-                            else->0f
-                        })
+                        .graphicsLayer(
+                            alpha = when (showMenuButton) {
+                                true -> 1f
+                                else -> 0f
+                            }
+                        )
                         .width((screenWidth / 15).dp)
                         .aspectRatio(1f)
                         .clickable {
@@ -623,6 +626,10 @@ open class Game(
         var item : MutableState<Item?> = remember {
             mutableStateOf(null)
         }
+        val density = LocalDensity.current
+        val titleFontSize = with(density){
+            ((screenWidth.dp)/40).toSp()
+        }
 
         @Composable
         fun LeftPage(content : @Composable ()->Unit){
@@ -637,6 +644,14 @@ open class Game(
                         .align(Alignment.CenterEnd)
                 ) {
                     val columnWidth = this.maxWidth
+                    Image(Q
+                        painter = painterResource(id = R.drawable.pause_menu_icon),
+                        contentDescription = "Logo",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .size((screenHeight.dp) / 12)
+                            .offset(y = (screenHeight.dp / 37) * 8))
                     FlowColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -666,7 +681,7 @@ open class Game(
             mutableStateOf(false)
         }
 
-        val transitionDuration = 350
+        val transitionDuration = 250
 
         val menuOffsetY by animateDpAsState(targetValue = if (active) 0.dp else screenHeight.dp, animationSpec = tween(
             durationMillis = transitionDuration,
@@ -684,7 +699,19 @@ open class Game(
 
 
 
-        Box(modifier=modifier.background(Color(0,0,0,128)).navigationBarsPadding().statusBarsPadding()){
+        Box(modifier= modifier
+            .background(Color(0, 0, 0, 128))
+            .navigationBarsPadding()
+            .statusBarsPadding()
+            .pointerInput(null) {
+                detectTapGestures(
+                    onTap = {
+                        if (item.value != null) {
+                            item.value = null
+                        }
+                    }
+                )
+            }){
             BoxWithConstraints(modifier = Modifier
                 .offset(y = menuOffsetY)
                 .width(bookWidth)
@@ -723,9 +750,19 @@ open class Game(
                         modifier
                             .fillMaxWidth(0.5f)
                             .fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                        MenuButton(text = "REPRENDRE", width = maxPageWidth*6/10) {
+                        val topSpacer = (screenHeight.dp / 17) * 4
+                        val titleSpacer = screenHeight.dp/9
+                        Spacer(modifier = Modifier.height(topSpacer))
+                        Text(
+                            text = "PAUSE",
+                            fontSize = titleFontSize,
+                            fontFamily = MainFont,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(149,98,18)
+                        )
+                        Spacer(modifier = Modifier.height(titleSpacer))
+                        MenuButton(text = "Reprendre", width = maxPageWidth*55/100) {
                             active = false
                             scope.launch {
                                 delay(transitionDuration.toLong())
@@ -735,7 +772,7 @@ open class Game(
                             }
                         }
                         Spacer(modifier = Modifier.height((screenHeight*0.001).dp))
-                        MenuButton(text = "QUITTER", width = maxPageWidth*6/10) {
+                        MenuButton(text = "Quitter", width = maxPageWidth*55/100) {
                             onLeave()
                         }
 
