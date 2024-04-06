@@ -644,7 +644,7 @@ open class Game(
                         .align(Alignment.CenterEnd)
                 ) {
                     val columnWidth = this.maxWidth
-                    Image(Q
+                    Image(
                         painter = painterResource(id = R.drawable.pause_menu_icon),
                         contentDescription = "Logo",
                         contentScale = ContentScale.Fit,
