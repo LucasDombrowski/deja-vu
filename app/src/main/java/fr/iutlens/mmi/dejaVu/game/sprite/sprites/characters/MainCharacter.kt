@@ -5,6 +5,7 @@ import fr.iutlens.mmi.dejaVu.R
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.Heart
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.Item
+import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.OneHeart
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.setBasicHearts
 import fr.iutlens.mmi.dejaVu.game.map.rooms.LargeRoom
 import fr.iutlens.mmi.dejaVu.game.map.rooms.LongRoom
@@ -54,7 +55,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,4), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f, sound = R.raw.hero_shoot)
 
-    var items : MutableList<Item> = mutableListOf()
+    var items : MutableList<Item> = mutableListOf(OneHeart())
 
     var autoFire : Job = setInterval(0,fireRate){
         if(game.pause){
