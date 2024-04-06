@@ -1,6 +1,8 @@
 package fr.iutlens.mmi.dejaVu.game.map.rooms
 
 import fr.iutlens.mmi.dejaVu.R
+import fr.iutlens.mmi.dejaVu.boot.checkedTutorials
+import fr.iutlens.mmi.dejaVu.boot.commitBooleanSharedPreferences
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.LoyaltyCard
 import fr.iutlens.mmi.dejaVu.game.map.Map
@@ -124,16 +126,16 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
                 imageSliceX = 2,
                 imageAnimationDelay = 200
             ),
-        ),game){
+        ) + if(game.firstTime && !game.shopTutorial && !checkedTutorials["shop"]!!) { TutorialShop(game).parts } else {
+            listOf()
+        },game){
+            game.shopTutorial = true
+            if(!checkedTutorials["shop"]!!){
+                commitBooleanSharedPreferences("shopTutorial",true)
+            }
             game.controllableCharacter!!.temporaryMovingInteraction = {
                     x, y ->
-                if(game.firstTime && !game.shopTutorial){
-                    game.shopTutorial = true
-                    game.cinematic.value = Pair(
-                        TutorialShop(game),
-                        true
-                    )
-                }
+
                 with(shopItems.iterator()){
                     forEach {
                         if(it.inImageBox(x,y) && it.active){

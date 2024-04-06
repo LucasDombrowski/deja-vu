@@ -1,9 +1,12 @@
 package fr.iutlens.mmi.dejaVu.game.gameplayResources.collectibles
 
 import fr.iutlens.mmi.dejaVu.R
+import fr.iutlens.mmi.dejaVu.boot.checkedTutorials
+import fr.iutlens.mmi.dejaVu.boot.commitBooleanSharedPreferences
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.Collectible
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.Heart
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.TutorialGoldHeart
 
 class GoldHeartDrop(game : Game) : Collectible(
     game = game,
@@ -33,6 +36,16 @@ class GoldHeartDrop(game : Game) : Collectible(
             }
         }
         game.controllableCharacter!!.refreshHeathBar()
+        if(game.firstTime && !checkedTutorials["goldHeart"]!!){
+            game.athOverride["hearts"] = true
+            game.cinematic.value = Pair(
+                TutorialGoldHeart(game){
+                    game.athOverride["hearts"] = false
+                    commitBooleanSharedPreferences("goldHeartTutorial",true)
+                },
+                true
+            )
+        }
     }
 ){
 }

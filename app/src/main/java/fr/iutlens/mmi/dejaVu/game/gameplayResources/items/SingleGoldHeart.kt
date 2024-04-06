@@ -1,8 +1,11 @@
 package fr.iutlens.mmi.dejaVu.game.gameplayResources.items
 
 import fr.iutlens.mmi.dejaVu.R
+import fr.iutlens.mmi.dejaVu.boot.checkedTutorials
+import fr.iutlens.mmi.dejaVu.boot.commitBooleanSharedPreferences
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.Heart
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.Item
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.TutorialGoldHeart
 
 class SingleGoldHeart : Item(
     image = R.drawable.gold_heart,
@@ -33,6 +36,16 @@ class SingleGoldHeart : Item(
             }
         }
         game.controllableCharacter!!.refreshHeathBar()
+        if(game.firstTime && !checkedTutorials["goldHeart"]!!){
+            game.athOverride["hearts"] = true
+            game.cinematic.value = Pair(
+                TutorialGoldHeart(game){
+                    game.athOverride["hearts"] = false
+                    commitBooleanSharedPreferences("goldHeartTutorial",true)
+                },
+                true
+            )
+        }
     },
     major = false
 ) {

@@ -1,6 +1,8 @@
 package fr.iutlens.mmi.dejaVu.game.map
 
 import fr.iutlens.mmi.dejaVu.R
+import fr.iutlens.mmi.dejaVu.boot.checkedTutorials
+import fr.iutlens.mmi.dejaVu.boot.commitBooleanSharedPreferences
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.map.rooms.BasicRoom
 import fr.iutlens.mmi.dejaVu.game.map.rooms.BossRoom
@@ -221,15 +223,25 @@ class Camera(val game: Game) {
         GlobalScope.launch {
             game.resetCollectibles()
             game.controllableCharacter!!.restart()
+            if(game.map.currentRoom() is TreasureRoom && game.firstTime && !chestTutorial && !checkedTutorials["chest"]!!){
+                game.cinematic.value = Pair(
+                    TutorialChest(game){
+                        chestTutorial = true
+                        commitBooleanSharedPreferences("chestTutorial",true)
+                    },
+                    true
+                )
+            }
             delay(1000)
             if ((game.map.currentRoom() is BasicRoom || game.map.currentRoom() is LongRoom || game.map.currentRoom() is LargeRoom) && game.map.currentRoom() !is BossRoom) {
                 game.map.currentRoom().spawnEnemies()
                 game.map.currentRoom().startChallenge(game)
                 game.addSprite(game.controllableCharacter!!.targetIndicator)
-                if(game.firstTime && !fightingTutorial){
+                if(game.firstTime && !fightingTutorial && !checkedTutorials["fighting"]!!){
                     game.cinematic.value = Pair(
                         TutorialFighting(game){
                             fightingTutorial = true
+                            commitBooleanSharedPreferences("fightingTutorial",true)
                         }, true
                     )
                 }
@@ -247,14 +259,7 @@ class Camera(val game: Game) {
             if (game.map.currentRoom() is ShopRoom) {
                 (game.map.currentRoom() as ShopRoom).launchCinematic(game)
             }
-            if(game.map.currentRoom() is TreasureRoom && game.firstTime && !chestTutorial){
-                game.cinematic.value = Pair(
-                    TutorialChest(game){
-                      chestTutorial = true
-                    },
-                    true
-                )
-            }
+
             game.ath["clearedRooms"] = game.map.rooms!!.subList(0,game.map.currentRoom+1)
         }
     }

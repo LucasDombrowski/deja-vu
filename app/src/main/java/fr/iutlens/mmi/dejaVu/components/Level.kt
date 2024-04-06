@@ -17,9 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.core.view.ViewCompat
+import fr.iutlens.mmi.dejaVu.boot.checkedTutorials
+import fr.iutlens.mmi.dejaVu.boot.commitBooleanSharedPreferences
 import fr.iutlens.mmi.dejaVu.game.Game
+import fr.iutlens.mmi.dejaVu.game.levels.Ninja
 import fr.iutlens.mmi.dejaVu.game.screens.Ending
 import fr.iutlens.mmi.dejaVu.game.screens.Introduction
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.Cinematic
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.NinjaIntro
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.TutorialMovements
 import fr.iutlens.mmi.dejaVu.utils.Music
 import kotlinx.coroutines.delay
@@ -42,16 +47,22 @@ fun Level(game: Game, onEnd : ()->Unit, onRestart : ()->Unit, onLeave : ()->Unit
 
     LaunchedEffect(key1 = game ){
         enabled = true
-        if(game.firstTime){
-            game.cinematic.value = Pair(
-                TutorialMovements(game){
-                    Music.mute = false
-                },
-                true
-            )
-        } else {
-            Music.mute = false
-        }
+        val cinematic = Cinematic(
+            parts = NinjaIntro(game).parts +
+            if(game.firstTime && !checkedTutorials["moving"]!!){ TutorialMovements(game).parts } else { listOf()
+            },
+            game = game,
+            onEnd = {
+                Music.mute = false
+                if(!checkedTutorials["moving"]!!){
+                    commitBooleanSharedPreferences("movingTutorial",true)
+                }
+            }
+        )
+        game.cinematic.value = Pair(
+            cinematic,
+            true
+        )
     }
 
     game.onRestart = {

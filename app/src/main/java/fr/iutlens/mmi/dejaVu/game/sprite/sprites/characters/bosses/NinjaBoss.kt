@@ -57,6 +57,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         game.blinded = false
         game.controllableCharacter!!.recoverView()
         game.musicTrack.value = R.raw.boss
+        game.ath["boss"] = hearts
         GlobalScope.launch {
             delay(patternTime/5)
             randomPattern()
@@ -82,7 +83,6 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     val pauseCheckDelay = 33L
 
     override fun spawn(x: Float, y:Float){
-        game.ath["boss"] = hearts
         game.addCharacter(this,true)
         changePos(x,y)
         game.blinded = true

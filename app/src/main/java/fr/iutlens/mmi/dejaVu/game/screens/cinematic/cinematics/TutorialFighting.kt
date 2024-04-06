@@ -1,10 +1,12 @@
 package fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics
 
 import fr.iutlens.mmi.dejaVu.R
+import fr.iutlens.mmi.dejaVu.components.EnemyColor
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.Cinematic
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.CinematicPart
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematicParts.MainCharacterPart
+import fr.iutlens.mmi.dejaVu.game.sprite.sprites.Enemy
 
 class TutorialFighting(game: Game, onEnd  : ()->Unit = {}) : Cinematic(
     parts = listOf(
@@ -17,6 +19,16 @@ class TutorialFighting(game: Game, onEnd  : ()->Unit = {}) : Cinematic(
         MainCharacterPart("J’ai jamais utilisé d’arme de ma vie mais bon, je crois que je n’ai pas le choix.")
     ),
     game = game,
-    onEnd = onEnd
+    onEnd = {
+            game.uniqueDialogScreen.value = Pair(
+                {
+                    EnemyColor(sprite = game.characterList.filter { it is Enemy }.first().sprite)
+                },
+                "La couleur d'un emnemi basculera progressivement vers le rouge en fonction des projectiles reçu. C'est un bon indicateur pour savoir si celui-ci est proche de la mort ou non. "
+            )
+            onEnd()
+    },
+    resetMusic = false,
+    unpause = false
 ) {
 }

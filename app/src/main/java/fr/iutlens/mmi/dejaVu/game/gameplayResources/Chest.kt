@@ -58,7 +58,7 @@ class Chest(val itemList: List<Item>) {
     fun setCharacterInteraction(game: Game) : (x:Float, y:Float)->Unit{
         return {
                 x, y ->
-                if(x in sprite.boundingBox.left..sprite.boundingBox.right && y in sprite.boundingBox.top..sprite.boundingBox.bottom && (!game.firstTime || game.camera.chestTutorial)){
+                if(x in sprite.boundingBox.left..sprite.boundingBox.right && y in sprite.boundingBox.top..sprite.boundingBox.bottom){
                     open(game)
                 }
         }
