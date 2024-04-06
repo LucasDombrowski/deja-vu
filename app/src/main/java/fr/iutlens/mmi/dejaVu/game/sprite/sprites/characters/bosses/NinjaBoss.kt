@@ -31,7 +31,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     ),
     sprite = BasicSprite(R.drawable.first_boss,x,y,0),
     game = game,
-    basicAnimationSequence = listOf(0,1),
+    basicAnimationSequence = listOf(5,6),
     speed = 0.07f,
     hearts = setBasicHearts(60),
     leftAnimationSequence = listOf(0,1),
@@ -68,6 +68,17 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     val projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,5), range = 8f, speed = 0.1f, friendly = false, damages =  0.5f, knockback = 0.2f, sound = R.raw.ninja_shot)
     override fun copy() : NinjaBoss{
         return NinjaBoss(sprite.x,sprite.y, game)
+    }
+
+    override fun basicAnimation() : List<Int>{
+        basicAnimationSequence = when{
+            previousDirection == "left"-> listOf(0,1)
+            previousDirection== "right"-> listOf(5,6)
+            target!=null&&target!!.sprite.x<sprite.x-> listOf(5,6)
+            target!=null&&target!!.sprite.x>sprite.x-> listOf(0,1)
+            else->basicAnimationSequence
+        }
+        return basicAnimationSequence
     }
 
     var pattern : Int  ? = null
@@ -368,6 +379,7 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     }
 
     fun projectiles(){
+        currentAnimationSequence = basicAnimation()
         val projectilesDelay = 1500L
         GlobalScope.launch {
             repeat(3){
