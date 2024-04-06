@@ -28,9 +28,11 @@ class CloseNinja(x: Float, y:Float, game: Game) : Enemy(
     }
 
     override fun basicAnimation() : List<Int>{
-        basicAnimationSequence = when(previousDirection){
-            "left"-> listOf(4)
-            "right"-> listOf(0)
+        basicAnimationSequence = when{
+            previousDirection == "left"-> listOf(4)
+            previousDirection== "right"-> listOf(0)
+            target!=null&&target!!.sprite.x<sprite.x-> listOf(0)
+            target!=null&&target!!.sprite.x>sprite.x-> listOf(4)
             else->basicAnimationSequence
         }
         return basicAnimationSequence
