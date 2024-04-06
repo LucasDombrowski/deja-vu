@@ -27,7 +27,7 @@ import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.utils.Music
 import kotlinx.coroutines.delay
 
-open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game, val onEnd : ()->Unit = {}) {
+open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game, val resetMusic : Boolean = true, val unpause: Boolean = true, val onEnd : ()->Unit = {}) {
 
     @Composable
     fun Display(){
@@ -101,8 +101,12 @@ open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game,
             DialogScreen(text = part.text, onEnd = {
                 part.onEnd()
                 if(partIndex+1>=parts.size){
-                    Music.normalMusicVolume()
-                    game.pause = false
+                    if(resetMusic) {
+                        Music.normalMusicVolume()
+                    }
+                    if(unpause) {
+                        game.pause = false
+                    }
                     game.cinematic.value = Pair(
                         this,
                         false
@@ -119,7 +123,7 @@ open class Cinematic(val parts : List<CinematicPart> = listOf(), val game: Game,
                     false
                 )
                 onEnd()
-            }, last = false, name = part.name, highlightedWords = part.highlightedWords, italicWords = part.italicWords) {
+            }, last = false, name = part.name, highlightedWords = part.highlightedWords, italicWords = part.italicWords, resetMusic = resetMusic) {
                 CharacterImage(images = images, left = part.left, delay = part.imageAnimationDelay)
             }
         }

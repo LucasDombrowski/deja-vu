@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.dejaVu
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -12,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import fr.iutlens.mmi.dejaVu.boot.changeLevel
+import fr.iutlens.mmi.dejaVu.boot.resetCheckedTutorials
 import fr.iutlens.mmi.dejaVu.boot.startFirstLevel
 import fr.iutlens.mmi.dejaVu.components.Level
 import fr.iutlens.mmi.dejaVu.game.screens.MainMenu
@@ -23,6 +25,11 @@ import fr.iutlens.mmi.dejaVu.utils.loadSpritesheet
 
 var currentContext : Context ?= null
 
+var sharedPreferences : SharedPreferences ? = null
+
+fun getCurrentSharedPreferences() : SharedPreferences{
+    return sharedPreferences!!
+}
 fun getCurrentActivityContext() : Context{
     return currentContext!!
 }
@@ -81,6 +88,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             currentContext = LocalContext.current
+            sharedPreferences = getSharedPreferences("Deja vu",0)
+
+            resetCheckedTutorials()
 
             var game by remember {
                 mutableStateOf(startFirstLevel())

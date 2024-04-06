@@ -817,6 +817,25 @@ open class Game(
     var openRoomTutorial = false
 
     var shopTutorial = false
+
+    var uniqueDialogScreen : MutableState<(Pair< @Composable ()->Unit ,String >) ?> = mutableStateOf(null)
+
+    @Composable
+    fun UniqueDialogScreen(text : String, element : @Composable ()->Unit){
+        pause = true
+        Music.reduceMusicVolume()
+        DialogScreen(text = text, onEnd = {
+            Music.normalMusicVolume()
+            pause = false
+            uniqueDialogScreen.value = null
+        }, onSkip = {
+            Music.normalMusicVolume()
+            pause = false
+            uniqueDialogScreen.value = null
+        }) {
+            element()
+        }
+    }
     @SuppressLint("CoroutineCreationDuringComposition")
     @Composable
     fun GameScreen(){
@@ -831,6 +850,10 @@ open class Game(
             cinematic.value.first.Display()
         } else if(gameOver.value == true){
             GameOver()
+        } else if(uniqueDialogScreen.value != null){
+            UniqueDialogScreen(text = uniqueDialogScreen.value!!.second) {
+                uniqueDialogScreen.value!!.first()
+            }
         } else {
             if(showAth.value) {
                 Ath()

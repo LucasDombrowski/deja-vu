@@ -1,6 +1,8 @@
 package fr.iutlens.mmi.dejaVu.game.map
 
 import fr.iutlens.mmi.dejaVu.R
+import fr.iutlens.mmi.dejaVu.boot.checkedTutorials
+import fr.iutlens.mmi.dejaVu.boot.commitBooleanSharedPreferences
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.Challenge
 import fr.iutlens.mmi.dejaVu.game.map.rooms.BasicRoom
@@ -539,10 +541,11 @@ open class Room(val row: Int, val col: Int, val map: Map, var enter: String ?= n
                 game.killAllEnemies()
                 enemyList = mutableListOf()
                 game.deleteSprite(game.controllableCharacter!!.targetIndicator)
-                if(game.firstTime && !game.openRoomTutorial){
+                if(game.firstTime && !game.openRoomTutorial && !checkedTutorials["openRoom"]!!){
                     game.cinematic.value = Pair(
                         TutorialOpenRoom(game){
                             game.openRoomTutorial = true
+                            commitBooleanSharedPreferences("openRoomTutorial",true)
                         },
                         true
                     )

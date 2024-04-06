@@ -1,6 +1,7 @@
 package fr.iutlens.mmi.dejaVu.game.levels
 
 import fr.iutlens.mmi.dejaVu.R
+import fr.iutlens.mmi.dejaVu.components.EnemyColor
 import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.Item
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.NinjaBoots

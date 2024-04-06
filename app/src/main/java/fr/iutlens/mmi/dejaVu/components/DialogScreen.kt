@@ -31,7 +31,7 @@ import fr.iutlens.mmi.dejaVu.game.screens.MenuButton
 import fr.iutlens.mmi.dejaVu.utils.Music
 
 @Composable
-fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highlightedWords : List<String> = listOf(), italicWords : List<String> = listOf(), onSkip : ()->Unit = {}, last: Boolean = true, content : @Composable() ()->Unit){
+fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highlightedWords : List<String> = listOf(), italicWords : List<String> = listOf(), onSkip : ()->Unit = {}, last: Boolean = true, resetMusic : Boolean = true, content : @Composable() ()->Unit){
 
     var fullText by remember {
         mutableStateOf(text)
@@ -163,7 +163,7 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
                     textSequenceIndex++
                     currentText = textSequence[textSequenceIndex]
                 } else {
-                    if (higherMusic) {
+                    if (higherMusic && resetMusic) {
                         Music.normalMusicVolume()
                     }
                     onEnd()
@@ -187,7 +187,9 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
             .align(Alignment.TopEnd)
             .offset(x = -screenWidth / 40, y = screenWidth / 50),text = "Passer", width = screenWidth/8) {
             Music.stopSound(R.raw.text_sound_effect)
-            Music.normalMusicVolume()
+            if(resetMusic) {
+                Music.normalMusicVolume()
+            }
             onSkip()
         }
     }
