@@ -74,7 +74,7 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
                 "Bienvenu petit étranger.",
                 shopkeeperImage,
                 false,
-                name = "Shopkeeper"
+                name = "Marchand"
             ),
             CinematicPart(
                 "AH !",
@@ -88,7 +88,7 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
                 "Range cette arme je te prie, je ne suis qu’un simple marchand.",
                 shopkeeperImage,
                 false,
-                name = "Shopkeeper"
+                name = "Marchand"
             ),
             CinematicPart(
                 "Au beau milieu d’un champ de bambou ?",
@@ -102,7 +102,7 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
                 "Ah les jeunes toujours là pour remuer le couteau dans la plaie, disons que j’ai été banni du château. C’est une longue histoire.",
                 shopkeeperImage,
                 false,
-                name = "Shopkeeper"
+                name = "Marchand"
             ),
             CinematicPart(
                 "Et c’est censé me rassurer ?",
@@ -116,7 +116,7 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
                 "Sois tranquille, tu trouveras ici de quoi poursuivre ton aventure, nous discuterons de moi plus tard. Tant que tu payes tu peux rester aussi longtemps que tu peux.",
                 shopkeeperImage,
                 false,
-                name = "Shopkeeper"
+                name = "Marchand"
             ),
             CinematicPart(
                 "Super… Merci j’imagine ?",
