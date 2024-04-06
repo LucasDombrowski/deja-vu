@@ -16,13 +16,17 @@ class Chest(val itemList: List<Item>) {
         game.controllableCharacter!!.temporaryMovingInteraction = {
             x, y ->
         }
+        game.solidSpriteList.add(sprite)
         val tile = game.map.getMapIndexFromPosition(game.controllableCharacter!!.sprite.x,game.controllableCharacter!!.sprite.y)
-        val nextTile = when(game.controllableCharacter!!.currentDirection){
-            "right"->Pair(tile.first,tile.second-1)
-            "left"->Pair(tile.first,tile.second+1)
-            "top"->Pair(tile.first+1,tile.second)
-            "bottom"->Pair(tile.first-1,tile.second)
-            else->Pair(tile.first,tile.second)
+        val nextTile = when(game.controllableCharacter!!.solidSpriteInTile(tile.first,tile.second)){
+            true->when(game.controllableCharacter!!.currentDirection){
+                "right"->Pair(tile.first,tile.second-1)
+                "left"->Pair(tile.first,tile.second+1)
+                "top"->Pair(tile.first+1,tile.second)
+                "bottom"->Pair(tile.first-1,tile.second)
+                else->Pair(tile.first,tile.second)
+            }
+            else->tile
         }
         val floatTile = game.map.getPositionFromMapIndex(nextTile.first,nextTile.second)
         game.controllableCharacter!!.changePos(
@@ -30,7 +34,6 @@ class Chest(val itemList: List<Item>) {
             floatTile.second + game.map.tileArea.h/2
         )
         game.controllableCharacter!!.stun()
-        game.solidSpriteList.add(sprite)
         val soundVolume = 0.075f
         Music.playSound(R.raw.open_chest, leftVolume = soundVolume, rightVolume = soundVolume)
         game.pause = true

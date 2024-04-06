@@ -74,6 +74,7 @@ class Camera(val game: Game) {
         )
         val exitSide = (game.map.currentRoom() as LongRoom).exitSide
         val maxCameraDistance = 4*game.map.tileArea.w
+        val roomCenter = game.map.currentRoom().getRoomCenter()
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.x < minXValue){
@@ -97,9 +98,17 @@ class Camera(val game: Game) {
             } else if(distanceXWithCamera()>maxCameraDistance){
                 if(game.map.currentRoom().open){
                     if(exitSide=="left"){
-                        setDirectionArrow(180f)
+                        if(x<roomCenter.first){
+                            arrowToRoomExit()
+                        } else {
+                            setDirectionArrow(180f)
+                        }
                     } else {
-                        setDirectionArrow(0f)
+                        if(x>roomCenter.first){
+                            arrowToRoomExit()
+                        } else {
+                            setDirectionArrow(0f)
+                        }
                     }
                 }
                 when{
@@ -122,6 +131,15 @@ class Camera(val game: Game) {
         }
     }
 
+    fun arrowToRoomExit(){
+        when(game.map.currentRoom().exit){
+            "top"->setDirectionArrow(270f)
+            "right"->setDirectionArrow(0f)
+            "bottom"->setDirectionArrow(90f)
+            else->setDirectionArrow(180f)
+        }
+    }
+
     fun distanceXWithCamera() : Float{
         return abs(game.controllableCharacter!!.sprite.x - sprite.x)
     }
@@ -141,6 +159,7 @@ class Camera(val game: Game) {
         )
         val maxCameraDistance = 2*game.map.tileArea.h
         val exitSide = (game.map.currentRoom() as LargeRoom).exitSide
+        val roomCenter = game.map.currentRoom().getRoomCenter()
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.y < minYValue){
@@ -164,9 +183,17 @@ class Camera(val game: Game) {
             } else if(distanceYWithCamera()>maxCameraDistance){
                 if(game.map.currentRoom().open){
                     if(exitSide=="bottom"){
-                        setDirectionArrow(90f)
+                        if(y>roomCenter.second){
+                            arrowToRoomExit()
+                        } else {
+                            setDirectionArrow(90f)
+                        }
                     } else {
-                        setDirectionArrow(270f)
+                        if(y<roomCenter.second){
+                            arrowToRoomExit()
+                        } else {
+                            setDirectionArrow(270f)
+                        }
                     }
                 }
                 when{
