@@ -369,6 +369,27 @@ open class Game(
     fun View(modifier: Modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)) {
+
+        var blindRoom by remember {
+            mutableStateOf(blinded)
+        }
+
+        val transitionDuration = 500
+
+        LaunchedEffect(blinded){
+            blindRoom = if(blinded) {
+                true
+            } else {
+                delay(transitionDuration.toLong())
+                false
+            }
+        }
+
+        val alpha by animateFloatAsState(targetValue = if (blinded) 1f else 0f, label = "Fade In", animationSpec = tween(
+            durationMillis = transitionDuration,
+            easing = LinearEasing
+        ))
+
         Canvas(modifier = modifier
             .pointerInput(key1 = this) {
                 if (onTap != null) detectTapGestures {
@@ -391,8 +412,7 @@ open class Game(
                 Color.Black
             )
             this.withTransform({ transform(transform.getMatrix(size)) }) {
-                if(blinded){
-
+                if(blindRoom){
                     val path = Path()
                     path.addOval(
                         Rect(
@@ -418,7 +438,7 @@ open class Game(
                     spriteList.paint(this, elapsed)
                     drawRect(
                         topLeft = Offset.Zero,
-                        color = blindColor,
+                        color = blindColor.copy(alpha = alpha),
                         size = Size(
                             (map.tileArea.sizeX*map.tileArea.w).toFloat(),
                             (map.tileArea.sizeY*map.tileArea.h).toFloat()
