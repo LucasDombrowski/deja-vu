@@ -16,6 +16,20 @@ class Chest(val itemList: List<Item>) {
         game.controllableCharacter!!.temporaryMovingInteraction = {
             x, y ->
         }
+        val tile = game.map.getMapIndexFromPosition(game.controllableCharacter!!.sprite.x,game.controllableCharacter!!.sprite.y)
+        val nextTile = when(game.controllableCharacter!!.currentDirection){
+            "right"->Pair(tile.first,tile.second-1)
+            "left"->Pair(tile.first,tile.second+1)
+            "top"->Pair(tile.first+1,tile.second)
+            "bottom"->Pair(tile.first-1,tile.second)
+            else->Pair(tile.first,tile.second)
+        }
+        val floatTile = game.map.getPositionFromMapIndex(nextTile.first,nextTile.second)
+        game.controllableCharacter!!.changePos(
+            floatTile.first + game.map.tileArea.w/2,
+            floatTile.second + game.map.tileArea.h/2
+        )
+        game.controllableCharacter!!.stun()
         game.solidSpriteList.add(sprite)
         val soundVolume = 0.075f
         Music.playSound(R.raw.open_chest, leftVolume = soundVolume, rightVolume = soundVolume)
@@ -25,6 +39,7 @@ class Chest(val itemList: List<Item>) {
         val itemDelay = 500L
         GlobalScope.launch {
             delay(itemDelay)
+            game.controllableCharacter!!.restart()
             item.get(game)
         }
     }
