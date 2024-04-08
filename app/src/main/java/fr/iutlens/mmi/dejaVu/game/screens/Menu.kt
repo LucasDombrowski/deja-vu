@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -87,7 +88,7 @@ fun MenuButton(modifier: Modifier = Modifier,text: String, width : Dp, clickable
                     }
                 },
                 onPress = {
-                    if(enabled) {
+                    if (enabled) {
                         image = R.drawable.menu_button_active_background
                         awaitRelease()
                         image = R.drawable.menu_button_background
@@ -196,19 +197,39 @@ fun MainMenu(onStart : ()->Unit, onLeave : ()->Unit){
         start = false
     }
 
+    val titleWidthProportion = 0.5f
+
+    @Composable
+    fun Background(){
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ){
+            Image(
+                painter = painterResource(id = R.drawable.title_screen_background),
+                contentDescription = "Titlescreen background",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize().offset(x = screenWidth*titleWidthProportion/2))
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .background(brush = Brush.horizontalGradient(
+                        titleWidthProportion to Color.Black,
+                        1f-titleWidthProportion+0.1f to Color.Transparent
+                    ))
+            )
+        }
+    }
+
     val spacerHeight = screenHeight/20
     val paddingValue = screenWidth/20
 
-
+    Background()
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
-            .padding(paddingValue)
     ){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxHeight().fillMaxWidth(titleWidthProportion),
             verticalArrangement = Arrangement.Center
         ){
             Image(painter = painterResource(id = R.drawable.logo),
