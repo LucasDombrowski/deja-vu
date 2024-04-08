@@ -53,12 +53,6 @@ class Ninja : Game(
                 }
             }
         }
-        GlobalScope.launch {
-            delay(10000)
-            coins.value = 99
-            switchRoom(map.rooms!!.size-2)
-            map.currentRoom().placeCharacter(this@Ninja)
-        }
     }
 
     override fun copy() : Ninja{
