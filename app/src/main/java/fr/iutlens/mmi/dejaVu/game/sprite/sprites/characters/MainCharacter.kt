@@ -55,7 +55,7 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
 
     var projectile : Projectile = Projectile(BasicSprite(R.drawable.projectiles, sprite.x, sprite.y,4), range = 4f, speed = 0.1f, friendly = true, damages =  1f, knockback = 0.5f, sound = R.raw.hero_shoot)
 
-    var items : MutableList<Item> = mutableListOf(OneHeart())
+    var items : MutableList<Item> = mutableListOf()
 
     var autoFire : Job = setInterval(0,fireRate){
         if(game.pause){

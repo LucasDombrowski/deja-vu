@@ -24,7 +24,7 @@ class TutorialFighting(game: Game, onEnd  : ()->Unit = {}) : Cinematic(
                 {
                     EnemyColor(sprite = game.characterList.filter { it is Enemy }.first().sprite)
                 },
-                "La couleur d'un emnemi basculera progressivement vers le rouge en fonction des projectiles reçu. C'est un bon indicateur pour savoir si celui-ci est proche de la mort ou non. "
+                "Vos ennemis possèdent des points de vie. Afin de cerner leur état, une aura enveloppera un ennemi une fois un certain stade de vie atteint. Lorsqu’il est à la moitié de sa vie, son corps est entouré d’une aura jaune. Celle-ci devient rouge quand votre ennemi est sur le point de rendre l’âme. "
             )
             onEnd()
     },

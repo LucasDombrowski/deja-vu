@@ -45,12 +45,13 @@ class DrawingSprite(id: Int, x: Float, y: Float, ndx: Int = 0, val drawColor: an
     override fun paint(drawScope: DrawScope, elapsed: Long) {
         var maxStrokeWidth = (h2/maxPointNumber)*lastPositions.size
         val reduceStep = maxStrokeWidth/lastPositions.size
+        val lastPositionsCopy = lastPositions.toList()
         for (i in 0..<lastPositions.size - 1) {
             if(i+1<lastPositions.size) {
                 drawScope.drawLine(
                     color = drawColor,
-                    start = Offset(lastPositions[i].first, lastPositions[i].second),
-                    end = Offset(lastPositions[i + 1].first, lastPositions[i + 1].second),
+                    start = Offset(lastPositionsCopy[i].first, lastPositionsCopy[i].second),
+                    end = Offset(lastPositionsCopy[i + 1].first, lastPositionsCopy[i + 1].second),
                     strokeWidth = maxStrokeWidth
                 )
             }

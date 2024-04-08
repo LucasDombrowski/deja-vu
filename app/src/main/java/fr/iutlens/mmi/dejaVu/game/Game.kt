@@ -671,7 +671,7 @@ open class Game(
                         modifier = Modifier
                             .align(Alignment.TopCenter)
                             .size((screenHeight.dp) / 12)
-                            .offset(y = (screenHeight.dp / 37) * 8))
+                            .offset(y = (screenHeight.dp / 15) * 4))
                     FlowColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -721,8 +721,8 @@ open class Game(
 
         Box(modifier= modifier
             .background(Color(0, 0, 0, 128))
-            .navigationBarsPadding()
             .statusBarsPadding()
+            .navigationBarsPadding()
             .pointerInput(null) {
                 detectTapGestures(
                     onTap = {
@@ -771,9 +771,9 @@ open class Game(
                             .fillMaxWidth(0.5f)
                             .fillMaxHeight(),
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                        val topSpacer = (screenHeight.dp / 17) * 4
+                        val topSpacer = (screenHeight.dp / 14) * 4
                         val titleSpacer = screenHeight.dp/9
-                        Spacer(modifier = Modifier.height(topSpacer))
+                        Spacer(modifier = Modifier.padding(top = topSpacer))
                         Text(
                             text = "PAUSE",
                             fontSize = titleFontSize,
@@ -923,6 +923,7 @@ open class Game(
     var gameOver = mutableStateOf(false)
 
     fun gameOver(){
+        ath["boss"] = listOf<Heart>().toMutableList()
         ended = true
         with(characterList.iterator()){
             forEach {

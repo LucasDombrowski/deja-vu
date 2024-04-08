@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.dejaVu.game.map
 
+import android.util.Log
 import fr.iutlens.mmi.dejaVu.R
 import fr.iutlens.mmi.dejaVu.boot.checkedTutorials
 import fr.iutlens.mmi.dejaVu.boot.commitBooleanSharedPreferences
@@ -13,6 +14,7 @@ import fr.iutlens.mmi.dejaVu.game.map.rooms.TreasureRoom
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.TutorialChest
 import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.TutorialFighting
 import fr.iutlens.mmi.dejaVu.game.sprite.BasicSprite
+import fr.iutlens.mmi.dejaVu.utils.getDistance
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -77,59 +79,75 @@ class Camera(val game: Game) {
         val exitSide = (game.map.currentRoom() as LongRoom).exitSide
         val maxCameraDistance = 4*game.map.tileArea.w
         val roomCenter = game.map.currentRoom().getRoomCenter()
+        val endLocalTile = game.map.currentRoom().findEndPosition(game.map.currentRoom().toList().map{
+            it.map {
+                it.single()
+            }
+        })
+        val endGlobalTile = game.map.currentRoom().getGlobalPosition(endLocalTile!!.first, endLocalTile.second)
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.x < minXValue){
                 moveCamera(minXValue,sprite.y, speed = 15f)
-                if(game.map.currentRoom().open) {
-                    if (exitSide == "left") {
-                        removeDirectionArrow()
+                if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)) {
+                    if(exitSide=="left"){
+                        arrowToRoomExit()
                     } else {
                         setDirectionArrow(0f)
                     }
+                } else {
+                    removeDirectionArrow()
                 }
             } else if(game.controllableCharacter!!.sprite.x > maxXValue){
                 moveCamera(maxXValue,sprite.y, speed = 15f)
-                if(game.map.currentRoom().open){
+                if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)){
                     if(exitSide=="right"){
-                        removeDirectionArrow()
+                        arrowToRoomExit()
                     } else {
                         setDirectionArrow(180f)
                     }
+                } else {
+                    removeDirectionArrow()
                 }
-            } else if(distanceXWithCamera()>maxCameraDistance){
-                if(game.map.currentRoom().open){
+            } else{
+                if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)){
                     if(exitSide=="left"){
-                        if(x<roomCenter.first){
-                            arrowToRoomExit()
-                        } else {
-                            setDirectionArrow(180f)
-                        }
+                        setDirectionArrow(180f)
                     } else {
-                        if(x>roomCenter.first){
-                            arrowToRoomExit()
-                        } else {
-                            setDirectionArrow(0f)
-                        }
+                        setDirectionArrow(0f)
                     }
+                } else {
+                    removeDirectionArrow()
                 }
-                when{
-                    x<sprite.x->{
-                        if(sprite.x-(distanceXWithCamera()-maxCameraDistance)>minXValue){
-                            sprite.x-=(distanceXWithCamera()-maxCameraDistance)
-                        } else {
-                            sprite.x = minXValue
+                if(distanceXWithCamera()>maxCameraDistance) {
+                    when {
+                        x < sprite.x -> {
+                            if (sprite.x - (distanceXWithCamera() - maxCameraDistance) > minXValue) {
+                                sprite.x -= (distanceXWithCamera() - maxCameraDistance)
+                            } else {
+                                sprite.x = minXValue
+                            }
                         }
-                    }
-                    else->{
-                        if(sprite.x+(distanceXWithCamera()-maxCameraDistance)<maxXValue){
-                            sprite.x+=(distanceXWithCamera()-maxCameraDistance)
-                        } else {
-                            sprite.x = maxXValue
+
+                        else -> {
+                            if (sprite.x + (distanceXWithCamera() - maxCameraDistance) < maxXValue) {
+                                sprite.x += (distanceXWithCamera() - maxCameraDistance)
+                            } else {
+                                sprite.x = maxXValue
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+
+    fun characterCloseToDoor(endTile : Pair<Int,Int>): Boolean {
+        val characterTile = game.map.getMapIndexFromPosition(game.controllableCharacter!!.sprite.x, game.controllableCharacter!!.sprite.y)
+        return when(game.map.currentRoom().exit){
+            "top","bottom"->abs(characterTile.first - endTile.first)<=1
+            "right","left"->abs(characterTile.second - endTile.second)<=1
+            else->false
         }
     }
 
@@ -162,60 +180,66 @@ class Camera(val game: Game) {
         val maxCameraDistance = 2*game.map.tileArea.h
         val exitSide = (game.map.currentRoom() as LargeRoom).exitSide
         val roomCenter = game.map.currentRoom().getRoomCenter()
+        val endLocalTile = game.map.currentRoom().findEndPosition(game.map.currentRoom().toList().map{
+            it.map {
+                it.single()
+            }
+        })
+        val endGlobalTile = game.map.currentRoom().getGlobalPosition(endLocalTile!!.first, endLocalTile.second)
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.y < minYValue){
                 moveCamera(sprite.x,minYValue, speed = 15f)
-                if(game.map.currentRoom().open){
+                if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)){
                     if(exitSide=="top"){
-                        removeDirectionArrow()
+                        arrowToRoomExit()
                     } else {
                         setDirectionArrow(90f)
                     }
+                } else {
+                    removeDirectionArrow()
                 }
             } else if(game.controllableCharacter!!.sprite.y > maxYValue){
                 moveCamera(sprite.x,maxYValue, speed = 15f)
-                if(game.map.currentRoom().open){
+                if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)){
                     if(exitSide=="bottom"){
-                        removeDirectionArrow()
+                        arrowToRoomExit()
                     } else {
                         setDirectionArrow(270f)
                     }
+                } else {
+                    removeDirectionArrow()
                 }
-            } else if(distanceYWithCamera()>maxCameraDistance){
-                if(game.map.currentRoom().open){
+            } else {
+                if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)){
                     if(exitSide=="bottom"){
-                        if(y>roomCenter.second){
-                            arrowToRoomExit()
-                        } else {
-                            setDirectionArrow(90f)
-                        }
+                        setDirectionArrow(90f)
                     } else {
-                        if(y<roomCenter.second){
-                            arrowToRoomExit()
-                        } else {
-                            setDirectionArrow(270f)
-                        }
+                        setDirectionArrow(270f)
                     }
+                } else {
+                    removeDirectionArrow()
                 }
-                when{
-                    y<sprite.y->{
-                        if(sprite.y-(distanceYWithCamera()-maxCameraDistance)>minYValue){
-                            sprite.y-=(distanceYWithCamera()-maxCameraDistance)
-                        } else {
-                            sprite.y = minYValue
+                if(distanceYWithCamera()>maxCameraDistance) {
+                    when {
+                        y < sprite.y -> {
+                            if (sprite.y - (distanceYWithCamera() - maxCameraDistance) > minYValue) {
+                                sprite.y -= (distanceYWithCamera() - maxCameraDistance)
+                            } else {
+                                sprite.y = minYValue
+                            }
                         }
-                    }
-                    else->{
-                        if(sprite.y+(distanceYWithCamera()-maxCameraDistance)<maxYValue){
-                            sprite.y+=(distanceYWithCamera()-maxCameraDistance)
-                        } else {
-                            sprite.y = maxYValue
+
+                        else -> {
+                            if (sprite.y + (distanceYWithCamera() - maxCameraDistance) < maxYValue) {
+                                sprite.y += (distanceYWithCamera() - maxCameraDistance)
+                            } else {
+                                sprite.y = maxYValue
+                            }
                         }
                     }
                 }
             }
-
         }
     }
 
@@ -269,6 +293,8 @@ class Camera(val game: Game) {
     }
 
     fun removeDirectionArrow(){
-        game.continueArrow.value = Pair(false,game.continueArrow.value.second)
+        if(game.continueArrow.value.first) {
+            game.continueArrow.value = Pair(false, game.continueArrow.value.second)
+        }
     }
 }
