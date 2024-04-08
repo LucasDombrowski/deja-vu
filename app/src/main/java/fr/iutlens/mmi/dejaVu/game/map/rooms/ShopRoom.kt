@@ -135,10 +135,9 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
             }
             game.controllableCharacter!!.temporaryMovingInteraction = {
                     x, y ->
-
                 with(shopItems.iterator()){
                     forEach {
-                        if(it.inImageBox(x,y) && it.active){
+                        if(it.inItemBox(x,y) && it.active){
                             it.buy(game)
                         }
                     }
