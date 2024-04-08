@@ -1,5 +1,6 @@
 package fr.iutlens.mmi.dejaVu.game.map.shop
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import fr.iutlens.mmi.dejaVu.R
 import fr.iutlens.mmi.dejaVu.game.Game
@@ -29,6 +30,14 @@ class ShopItem(val item : Item, var price: Int) {
 
     fun inImageBox(x: Float, y:Float) : Boolean{
         return x in imageSprite.boundingBox.left..imageSprite.boundingBox.right && y in imageSprite.boundingBox.top..imageSprite.boundingBox.bottom
+    }
+
+    fun inTextBox(x: Float, y: Float) : Boolean{
+        return x in textSprite.boundingBox.left..textSprite.boundingBox.right && y in textSprite.boundingBox.top..textSprite.boundingBox.bottom
+    }
+
+    fun inItemBox(x : Float, y : Float) : Boolean{
+        return inImageBox(x,y) || inTextBox(x,y)
     }
 
     fun buy(game: Game){
