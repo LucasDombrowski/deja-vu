@@ -8,6 +8,7 @@ import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.NinjaBoots
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.NinjaScarf
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.NinjaShuriken
 import fr.iutlens.mmi.dejaVu.game.map.Map
+import fr.iutlens.mmi.dejaVu.game.screens.cinematic.cinematics.VideoCinematic
 import fr.iutlens.mmi.dejaVu.game.screens.screenEffects.Fog
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.BigBook
 import fr.iutlens.mmi.dejaVu.game.sprite.sprites.characters.CloseNinja
@@ -52,6 +53,13 @@ class Ninja : Game(
                     projectile.sprite.rotate += 36f
                 }
             }
+        }
+        GlobalScope.launch {
+            delay(15000)
+            cinematic.value = Pair(
+                VideoCinematic(this@Ninja),
+                true
+            )
         }
     }
 

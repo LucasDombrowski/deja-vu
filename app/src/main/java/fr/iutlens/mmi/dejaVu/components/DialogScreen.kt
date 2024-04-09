@@ -170,7 +170,7 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
                 }
             }
         }
-        .background(Color(0, 0, 0, 128))
+        .background(Color(0, 255, 0))
         .navigationBarsPadding()
         .statusBarsPadding()){
         Column(
