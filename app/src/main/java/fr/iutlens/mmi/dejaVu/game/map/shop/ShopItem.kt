@@ -7,11 +7,12 @@ import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.Item
 import fr.iutlens.mmi.dejaVu.game.sprite.ImageSprite
 import fr.iutlens.mmi.dejaVu.game.sprite.TextSprite
+import fr.iutlens.mmi.dejaVu.getCurrentActivityContext
 import fr.iutlens.mmi.dejaVu.utils.Music
 
 class ShopItem(val item : Item, var price: Int) {
-    var textSprite = TextSprite(price.toString(),50f, Color.White,false,0f,0f)
-    val imageSprite = ImageSprite(item.image, 100, 0f,0f)
+    var textSprite = TextSprite(price.toString(),(getCurrentActivityContext().resources.displayMetrics.widthPixels/25).toFloat(), Color.White,false,0f,0f)
+    val imageSprite = ImageSprite(item.image, getCurrentActivityContext().resources.displayMetrics.widthPixels/10, 0f,0f)
 
     var active = true
 
