@@ -13,7 +13,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import fr.iutlens.mmi.dejaVu.boot.changeLevel
 import fr.iutlens.mmi.dejaVu.boot.resetCheckedTutorials
 import fr.iutlens.mmi.dejaVu.boot.startFirstLevel
@@ -48,6 +51,7 @@ class MainActivity : ComponentActivity() {
         window.decorView.apply {
             systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
         }
+
 
 
         enableEdgeToEdge()

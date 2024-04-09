@@ -42,6 +42,7 @@ class TextSprite(val text: String, val textSize: Float, val textColor: Color, va
         val width : Int = paint.measureText(text).roundToInt()
         val height : Int = baseline.roundToInt()
         val image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        image.density = context.applicationContext.resources.displayMetrics.densityDpi
         val canvas = Canvas(image)
         canvas.drawText(text,0f,baseline,paint)
         return image

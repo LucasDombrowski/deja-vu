@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "fr.iutlens.mmi.dejaVu"
-        minSdk = 29
+        minSdk = 30
         targetSdk = 34
         versionCode = 6
         versionName = "1.5"
