@@ -437,6 +437,42 @@ open class Character(
             }
         }
     }
+
+    fun getMoveSteps(x : Float, y: Float) : Pair<Float,Float>{
+        val aimedX = x
+        val aimedY = y
+        val steps = targetMoveStep(x,y)
+        val xStep = when{
+            aimedX<sprite.x->-steps[0]
+            else->steps[0]
+        }
+        val yStep = when{
+            aimedY<sprite.y->-steps[1]
+            else->steps[1]
+        }
+        return Pair(xStep,yStep)
+    }
+
+    fun targetMoveStep(x: Float, y: Float) : List<Float>{
+        val moveSpeed = realSpeed()
+        val aimedX = x
+        val aimedY = y
+        val vectorX = abs( round(aimedX) - round(sprite.x))
+        val vectorY = abs(round(aimedY) - round(sprite.y))
+        return if (vectorX == 0f && vectorY == 0f) {
+            listOf(0f, 0f)
+        } else if (vectorX == 0f) {
+            listOf(0f, moveSpeed)
+        } else if(vectorY==0f){
+            listOf(moveSpeed,0f)
+        } else if(vectorX==vectorY){
+            listOf(moveSpeed,moveSpeed)
+        } else if(vectorX>vectorY){
+            listOf(moveSpeed,moveSpeed/(vectorX/vectorY))
+        } else {
+            listOf(moveSpeed/(vectorY/vectorX),moveSpeed)
+        }
+    }
     fun findShortestPath(x: Float, y: Float){
         GlobalScope.launch {
             val currentTile = game.map.getMapIndexFromPosition(sprite.x, sprite.y)

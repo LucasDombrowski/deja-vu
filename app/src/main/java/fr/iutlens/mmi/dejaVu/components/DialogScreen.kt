@@ -147,10 +147,16 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
         currentText = textSequence[textSequenceIndex]
     }
 
+    var instant by remember {
+        mutableStateOf(false)
+    }
+
     @RequiresApi(Build.VERSION_CODES.Q)
     @Composable
     fun DialogScreenBox(text : String){
-        DialogBox(text = text, boxWidth = boxWidth, textWidth = textWidth,  fontSize = fontSize, lineHeight = lineHeight, name = name, highlightedWords = highlightedWords, italicWords = italicWords)
+        DialogBox(text = text, boxWidth = boxWidth, textWidth = textWidth,  fontSize = fontSize, lineHeight = lineHeight, name = name, highlightedWords = highlightedWords, italicWords = italicWords, instant, onWritingStop = {
+            instant = true
+        })
     }
 
     Box(modifier = Modifier
@@ -159,14 +165,19 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
         .pointerInput(key1 = "DialogScreen") {
             detectTapGestures {
                 Music.stopSound(R.raw.text_sound_effect)
-                if (textSequenceIndex + 1 < textSequence.size) {
-                    textSequenceIndex++
-                    currentText = textSequence[textSequenceIndex]
+                if(!instant){
+                    instant = true
                 } else {
-                    if (higherMusic && resetMusic) {
-                        Music.normalMusicVolume()
+                    instant = false
+                    if (textSequenceIndex + 1 < textSequence.size) {
+                        textSequenceIndex++
+                        currentText = textSequence[textSequenceIndex]
+                    } else {
+                        if (higherMusic && resetMusic) {
+                            Music.normalMusicVolume()
+                        }
+                        onEnd()
                     }
-                    onEnd()
                 }
             }
         }

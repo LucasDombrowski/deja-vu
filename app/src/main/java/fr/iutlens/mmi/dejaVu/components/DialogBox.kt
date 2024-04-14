@@ -46,7 +46,7 @@ import fr.iutlens.mmi.dejaVu.utils.setInterval
 import kotlinx.coroutines.delay
 
 @Composable
-fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit, name : String ? = null, highlightedWords : List<String> = listOf(), italicWords : List<String> = listOf()){
+fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, lineHeight: TextUnit, name : String ? = null, highlightedWords : List<String> = listOf(), italicWords : List<String> = listOf(), instant : Boolean = false, onWritingStop : ()->Unit = {}){
 
     var currentText by remember {
         mutableStateOf(text)
@@ -65,6 +65,7 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
     }
 
     fun stopWriting(){
+        onWritingStop();
         isWriting = false
     }
 
@@ -117,10 +118,9 @@ fun DialogBox(text : String, boxWidth : Dp, textWidth : Dp, fontSize: TextUnit, 
         WritingText(
             text = currentText, modifier = Modifier
                 .align(Alignment.Center)
-                .width(textWidth), fontSize = fontSize, lineHeight = lineHeight, highlightedWords = highlightedWords, italicWords = italicWords
-        ) {
-            stopWriting()
-        }
+                .width(textWidth), fontSize = fontSize, lineHeight = lineHeight, highlightedWords = highlightedWords, italicWords = italicWords, stopWriting = {
+                stopWriting()
+            }, instant)
         if(!isWriting) {
             WritingAnimation(
                 images.toList(),
@@ -145,7 +145,8 @@ fun WritingText(
     lineHeight: TextUnit,
     highlightedWords : List<String> = listOf(),
     italicWords: List<String> = listOf(),
-    stopWriting: () -> Unit
+    stopWriting: () -> Unit,
+    instant: Boolean
 ){
     fun highlightedWordIndices() : List<Pair<Int,Int>>{
         val res = mutableListOf<Pair<Int,Int>>()
@@ -220,7 +221,7 @@ fun WritingText(
         val typingDelay = 10L
         val punctuationDelay = 150L
 
-        LaunchedEffect(key1 = currentText){
+        LaunchedEffect(key1 = currentText, key2 = instant){
             if(phraseEnd()){
                 Music.stopSound(R.raw.text_sound_effect)
             }
@@ -233,7 +234,11 @@ fun WritingText(
             if(phraseEnd()){
                 Music.playSound(R.raw.text_sound_effect, loop = -1)
             }
-            if(currentText!=text && currentText.length<text.length){
+            if(instant){
+                currentText = text
+                stopWriting()
+                Music.stopSound(R.raw.text_sound_effect)
+            } else if(currentText!=text && currentText.length<text.length){
                 currentText += text[currentText.length]
             } else {
                 stopWriting()

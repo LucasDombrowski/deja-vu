@@ -491,6 +491,10 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                 delay(100)
                 sprite.visible()
                 blink()
+            } else {
+                while (sprite.isInvisible()){
+                    sprite.visible()
+                }
             }
         }
     }
@@ -511,6 +515,22 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
         } else {
             target = distances.toSortedMap().values.toList().first()
         }
+    }
+
+    fun unblockPosCoordinates(coordinatesAdd: Float = realSpeed()) : Pair<Float,Float>{
+        val characterCoordinates = Pair(sprite.x,sprite.y)
+        return when{
+            isValidMainCharacterCoordinates(characterCoordinates.first+coordinatesAdd,characterCoordinates.second)->Pair(characterCoordinates.first+coordinatesAdd,characterCoordinates.second)
+            isValidMainCharacterCoordinates(characterCoordinates.first-coordinatesAdd,characterCoordinates.second)->Pair(characterCoordinates.first-coordinatesAdd,characterCoordinates.second)
+            isValidMainCharacterCoordinates(characterCoordinates.first,characterCoordinates.second+coordinatesAdd)->Pair(characterCoordinates.first,characterCoordinates.second+coordinatesAdd)
+            isValidMainCharacterCoordinates(characterCoordinates.first,characterCoordinates.second-coordinatesAdd)->Pair(characterCoordinates.first,characterCoordinates.second-coordinatesAdd)
+            else->unblockPosCoordinates(coordinatesAdd+realSpeed())
+        }
+    }
+
+    fun isValidMainCharacterCoordinates(x: Float, y: Float) : Boolean{
+        val yCheckValue = y + (sprite.boundingBox.bottom - sprite.boundingBox.top)/3
+        return !game.map.inForbiddenArea(x,yCheckValue) && !inSolidCharacterBoundingBox(x,yCheckValue) && !inSolidSpriteBoundingBox(x,yCheckValue)
     }
 
     fun changeProjectileSkin(ndx: Int, animation : (Projectile)->Job =

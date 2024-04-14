@@ -11,8 +11,8 @@ import fr.iutlens.mmi.dejaVu.getCurrentActivityContext
 import fr.iutlens.mmi.dejaVu.utils.Music
 
 class ShopItem(val item : Item, var price: Int) {
-    var textSprite = TextSprite(price.toString(),(getCurrentActivityContext().resources.displayMetrics.widthPixels/25).toFloat(), Color.White,false,0f,0f)
-    val imageSprite = ImageSprite(item.image, getCurrentActivityContext().resources.displayMetrics.widthPixels/15, 0f,0f)
+    var textSprite = TextSprite(price.toString(),150f, Color.White,false,0f,0f)
+    var imageSprite = ImageSprite(item.image, 100, 0f,0f)
 
     var active = true
 
@@ -23,6 +23,11 @@ class ShopItem(val item : Item, var price: Int) {
         textSprite.y = imageSprite.boundingBox.bottom + game.map.tileArea.h/6
         game.addSprite(imageSprite)
         game.addSprite(textSprite)
+    }
+
+    fun resetSprites(tileWidth: Int){
+        textSprite = TextSprite(price.toString(),(tileWidth/3).toFloat(), Color.White,false,0f,0f)
+        imageSprite = ImageSprite(item.image, tileWidth/2, 0f,0f)
     }
 
     fun copy() : ShopItem{

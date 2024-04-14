@@ -34,6 +34,9 @@ class ShopRoom(map : Map, enter: String ?= null, exit: String? = null) : Room(
                 shopItem.refreshPrice()
             }
         }
+        for(shopItem in shopItems){
+            shopItem.resetSprites(game.map.tileArea.w)
+        }
         var xVal = getRoomCenter().first
         val yVal = getRoomCenter().second
         val xStep = shopItems[0].imageSprite.bitmap.width*3/2

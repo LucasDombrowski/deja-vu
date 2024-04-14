@@ -68,7 +68,7 @@ object Music {
      * @param id
      */
     fun loadSound(context: Context, id: Int){
-        soundMap.getOrPut(id) { soundPool.load(context,id,1) }
+        soundMap.getOrPut(id) { soundPool.load(context, id, 1) }
     }
 
     /**
@@ -88,9 +88,11 @@ object Music {
                   loop: Int = 0,
                   rate: Float = 1f
                   ){
-        soundMap[id]?.let { soundId ->
-            val play = soundPool.play(soundId,leftVolume,rightVolume,priority, loop, rate)
-            soundStream[id] = play
+        if(!mute){
+            soundMap[id]?.let { soundId ->
+                val play = soundPool.play(soundId,leftVolume,rightVolume,priority, loop, rate)
+                soundStream[id] = play
+            }
         }
     }
 

@@ -5,8 +5,9 @@ import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.SchoolBag
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.SingleGoldHeart
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.SingleHeart
 import fr.iutlens.mmi.dejaVu.game.gameplayResources.items.Torch
+import fr.iutlens.mmi.dejaVu.game.map.Map
 
-class Shop {
+class Shop() {
     val shopItems : List<ShopItem> = listOf(
         ShopItem(SingleHeart(),5),
         ShopItem(SingleGoldHeart(),7),

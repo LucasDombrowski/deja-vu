@@ -39,83 +39,93 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
     override fun spawn(x: Float, y: Float){
         game.addCharacter(this)
         changePos(x, y)
-        action = GlobalScope.launch {
+        GlobalScope.launch {
             delay(1000)
-            pattern()
+            invisible()
         }
     }
-    fun pattern() {
-        val soundVolume = 0.125f
-        disablePathFollowing()
-        if(!game.ended) {
-            GlobalScope.launch {
-                while (game.pause) {
-                    delay(33)
-                }
-                if (alive) {
-                    if (!chasing) {
-                        targetable = false
-                        Music.playSound(R.raw.teleport, leftVolume = soundVolume, rightVolume = soundVolume)
-                        sprite.setTransparencyLevel(0.75f)
-                        delay(33)
-                        sprite.setTransparencyLevel(0.5f)
-                        delay(33)
-                        sprite.setTransparencyLevel(0.25f)
-                        delay(33)
-                        sprite.invisible()
-                        delay(2000)
-                        var xPos = when (Math.random()) {
-                            in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w*2
-                            else -> target!!.sprite.x + game.map.tileArea.w*2
-                        }
-                        var yPos = when (Math.random()) {
-                            in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h*2
-                            else -> target!!.sprite.y - game.map.tileArea.h*2
-                        }
-                        while (game.map.inForbiddenArea(xPos,yPos)){
-                            xPos = when (Math.random()) {
-                                in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w*2
-                                else -> target!!.sprite.x + game.map.tileArea.w*2
-                            }
-                            yPos = when (Math.random()) {
-                                in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h*2
-                                else -> target!!.sprite.y - game.map.tileArea.h*2
-                            }
-                        }
-                        chasing = true
-                        changePos(xPos, yPos)
-                        Music.playSound(R.raw.teleport, leftVolume = soundVolume, rightVolume = soundVolume)
-                        sprite.visible()
-                        sprite.setTransparencyLevel(0.25f)
-                        delay(15)
-                        sprite.setTransparencyLevel(0.5f)
-                        delay(15)
-                        sprite.setTransparencyLevel(0.75f)
-                        delay(15)
-                        sprite.setTransparencyLevel(1f)
-                        targetable = true
-                        action = GlobalScope.launch {
-                            pattern()
-                        }
 
-                    } else if (target!!.inBoundingBox(sprite.x, sprite.y)) {
-                        target!!.healthDown(0.25f, 0.2f, currentDirection)
-                        chasing = false
-                        action = GlobalScope.launch {
-                            delay(100)
-                            pattern()
-                        }
-                    } else {
-                        if (isPathFree(target!!.sprite.x, target!!.sprite.y)) {
-                            moveTo(target!!.sprite.x, target!!.sprite.y)
-                            action = GlobalScope.launch {
-                                delay(100)
-                                pattern()
-                            }
-                        } else {
-                            followPlayer()
-                        }
-                    }
+    fun chasePlayer(){
+        action.cancel();
+        action = setInterval(0,100){
+            if (target!!.inBoundingBox(sprite.x, sprite.y)){
+                target!!.healthDown(0.25f, 0.2f, currentDirection)
+                chasing = false
+                invisible();
+            } else {
+                if (isPathFree(target!!.sprite.x, target!!.sprite.y)) {
+                    moveTo(target!!.sprite.x, target!!.sprite.y)
+                } else {
+                    followPlayer()
+                }
+            }
+        }
+    }
+
+    fun invisible(){
+        action.cancel()
+        val soundVolume = 0.125f
+        if(alive){
+            action = GlobalScope.launch {
+                targetable = false
+                Music.playSound(R.raw.teleport, leftVolume = soundVolume, rightVolume = soundVolume)
+                sprite.setTransparencyLevel(0.75f)
+                delay(33)
+                sprite.setTransparencyLevel(0.5f)
+                delay(33)
+                sprite.setTransparencyLevel(0.25f)
+                delay(33)
+                sprite.invisible()
+                delay(2000)
+                teleport()
+            }
+        }
+    }
+
+    fun teleport(){
+        var xPos = when (Math.random()) {
+            in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w*2
+            else -> target!!.sprite.x + game.map.tileArea.w*2
+        }
+        var yPos = when (Math.random()) {
+            in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h*2
+            else -> target!!.sprite.y - game.map.tileArea.h*2
+        }
+        while (game.map.inForbiddenArea(xPos,yPos)){
+            xPos = when (Math.random()) {
+                in 0f..0.5f -> target!!.sprite.x - game.map.tileArea.w*2
+                else -> target!!.sprite.x + game.map.tileArea.w*2
+            }
+            yPos = when (Math.random()) {
+                in 0f..0.5f -> target!!.sprite.y + game.map.tileArea.h*2
+                else -> target!!.sprite.y - game.map.tileArea.h*2
+            }
+        }
+        chasing = true
+        changePos(xPos, yPos)
+        visible()
+    }
+
+    fun visible(){
+        val soundVolume = 0.125f
+        action.cancel()
+        if(alive){
+            action = GlobalScope.launch {
+                if(game.pause){
+                    delay(100)
+                    visible()
+                } else {
+                    Music.playSound(R.raw.teleport, leftVolume = soundVolume, rightVolume = soundVolume)
+                    sprite.visible()
+                    sprite.setTransparencyLevel(0.25f)
+                    delay(15)
+                    sprite.setTransparencyLevel(0.5f)
+                    delay(15)
+                    sprite.setTransparencyLevel(0.75f)
+                    delay(15)
+                    sprite.setTransparencyLevel(1f)
+                    targetable = true
+                    chasePlayer()
                 }
             }
         }
@@ -132,8 +142,7 @@ class TeleportNinja(x: Float, y:Float, game: Game) : Enemy(
         pathFollow = true
         action = setInterval(0,100){
             if(isPathFree(target!!.sprite.x, target!!.sprite.y) || !pathFollow){
-                action.cancel()
-                pattern()
+                chasePlayer()
             }
         }
     }

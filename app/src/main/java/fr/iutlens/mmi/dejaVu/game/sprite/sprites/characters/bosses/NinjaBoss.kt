@@ -340,40 +340,44 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
         val startDelay = 750L
         val endDelay = 1000L
         val soundVolume = 0.25f
-        Music.playSound(R.raw.ninja_boss_dash, leftVolume = soundVolume, rightVolume = soundVolume)
-        GlobalScope.launch {
-            delay(startDelay)
-            while (invisibleValue>=0f){
-                sprite.setTransparencyLevel(invisibleValue)
-                game.invalidate()
-                invisibleValue-=invisibleStep
-                delay(stepDelay)
+        if(!game.gameOver.value){
+            Music.playSound(R.raw.ninja_boss_dash, leftVolume = soundVolume, rightVolume = soundVolume)
+            GlobalScope.launch {
+                delay(startDelay)
+                while (invisibleValue>=0f){
+                    sprite.setTransparencyLevel(invisibleValue)
+                    game.invalidate()
+                    invisibleValue-=invisibleStep
+                    delay(stepDelay)
+                }
+                sprite.invisible()
+                delay(endDelay)
+                sprite.setTransparencyLevel(1f)
+                sprite.visible()
+                action()
             }
-            sprite.invisible()
-            delay(endDelay)
-            sprite.setTransparencyLevel(1f)
-            sprite.visible()
-            action()
         }
     }
 
     fun dashToCenter(){
         val delay = 500L
         val roomCenter = game.map.currentRoom().getRoomCenter()
-        GlobalScope.launch {
-            delay(delay)
-            dash(
-                Pair(
-                    sprite.x,
-                    sprite.y
-                ),
-                Pair(
-                    roomCenter.first,
-                    roomCenter.second
-                ),
-                dashSpeed = speed*2
-            ){
-                projectiles()
+        if(!game.gameOver.value){
+            GlobalScope.launch {
+                delay(delay)
+                dash(
+                    Pair(
+                        sprite.x,
+                        sprite.y
+                    ),
+                    Pair(
+                        roomCenter.first,
+                        roomCenter.second
+                    ),
+                    dashSpeed = speed*2
+                ){
+                    projectiles()
+                }
             }
         }
     }
@@ -381,17 +385,19 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
     fun projectiles(){
         currentAnimationSequence = basicAnimation()
         val projectilesDelay = 1500L
-        GlobalScope.launch {
-            repeat(3){
-                while (game.pause){
-                    delay(pauseCheckDelay)
+        if(!game.gameOver.value){
+            GlobalScope.launch {
+                repeat(3){
+                    while (game.pause){
+                        delay(pauseCheckDelay)
+                    }
+                    if(alive) {
+                        projectileWave()
+                        delay(projectilesDelay)
+                    }
                 }
-                if(alive) {
-                    projectileWave()
-                    delay(projectilesDelay)
-                }
+                land()
             }
-            land()
         }
     }
 

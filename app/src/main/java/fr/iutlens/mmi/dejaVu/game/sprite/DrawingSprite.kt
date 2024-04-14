@@ -30,10 +30,12 @@ class DrawingSprite(id: Int, x: Float, y: Float, ndx: Int = 0, val drawColor: an
 
     fun erase(){
         drawing = false
+        val copiedPositions = lastPositions.toMutableList()
         GlobalScope.launch {
             repeat(lastPositions.size){
-                if(!drawing && lastPositions.isNotEmpty()){
-                    lastPositions.removeLast()
+                if(!drawing && copiedPositions.isNotEmpty()){
+                    copiedPositions.removeLast()
+                    lastPositions = copiedPositions
                     delay(33)
                 } else {
                     cancel()

@@ -21,6 +21,7 @@ import fr.iutlens.mmi.dejaVu.boot.changeLevel
 import fr.iutlens.mmi.dejaVu.boot.resetCheckedTutorials
 import fr.iutlens.mmi.dejaVu.boot.startFirstLevel
 import fr.iutlens.mmi.dejaVu.components.Level
+import fr.iutlens.mmi.dejaVu.game.Game
 import fr.iutlens.mmi.dejaVu.game.screens.MainMenu
 import fr.iutlens.mmi.dejaVu.utils.Music.mute
 import fr.iutlens.mmi.dejaVu.ui.theme.MyApplicationTheme
@@ -31,6 +32,8 @@ import fr.iutlens.mmi.dejaVu.utils.loadSpritesheet
 var currentContext : Context ?= null
 
 var sharedPreferences : SharedPreferences ? = null
+
+var currentGame : Game ? = null
 
 fun getCurrentSharedPreferences() : SharedPreferences{
     return sharedPreferences!!
@@ -101,10 +104,10 @@ class MainActivity : ComponentActivity() {
         loadSound(R.raw.shot_reflected)
         loadSound(R.raw.ninja_boss_dash)
 
+
         setContent {
             currentContext = LocalContext.current
             sharedPreferences = getSharedPreferences("Deja vu",0)
-
             resetCheckedTutorials()
 
             var game by remember {
@@ -114,6 +117,8 @@ class MainActivity : ComponentActivity() {
             var started by remember {
                 mutableStateOf(false)
             }
+
+            currentGame = game
 
             MyApplicationTheme {
                 if(started){
@@ -145,6 +150,13 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         mute = true
+        currentGame!!.pause = true
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        mute = false
+        currentGame!!.pause = false
     }
 
 
