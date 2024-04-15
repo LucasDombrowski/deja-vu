@@ -150,7 +150,6 @@ fun WritingText(
 ){
     fun highlightedWordIndices() : List<Pair<Int,Int>>{
         val res = mutableListOf<Pair<Int,Int>>()
-        Log.i("words","$highlightedWords")
         for(word in highlightedWords){
             var currentTextIndex = 0
             while (currentTextIndex<text.length){

@@ -46,7 +46,6 @@ fun DialogScreen(text : String, onEnd : ()->Unit, name : String ? = null, highli
     }
 
     LaunchedEffect(last){
-        Log.i("last","$last")
         higherMusic = last
     }
 
