@@ -36,7 +36,8 @@ class Camera(val game: Game) {
         })
     }
 
-    fun moveCamera(x: Float, y: Float, after : ()->Unit = {}, speed: Float = 100f){
+    fun moveCamera(x: Float, y: Float, after : ()->Unit = {}, floatSpeed: Float = 0.6f){
+        val speed = realSpeed(floatSpeed)
         cameraMoving.cancel()
         cameraMoving = GlobalScope.launch {
             if(x!=sprite.x || y!=sprite.y){
@@ -60,7 +61,7 @@ class Camera(val game: Game) {
                 }
                 game.invalidate()
                 delay(33)
-                moveCamera(x,y,after)
+                moveCamera(x,y,after,floatSpeed)
             } else {
                 after()
             }
@@ -88,7 +89,7 @@ class Camera(val game: Game) {
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.x < minXValue){
-                moveCamera(minXValue,sprite.y, speed = 15f)
+                moveCamera(minXValue,sprite.y, floatSpeed = 0.2f)
                 if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)) {
                     if(exitSide=="left"){
                         arrowToRoomExit()
@@ -99,7 +100,7 @@ class Camera(val game: Game) {
                     removeDirectionArrow()
                 }
             } else if(game.controllableCharacter!!.sprite.x > maxXValue){
-                moveCamera(maxXValue,sprite.y, speed = 15f)
+                moveCamera(maxXValue,sprite.y, floatSpeed = 0.2f)
                 if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)){
                     if(exitSide=="right"){
                         arrowToRoomExit()
@@ -189,7 +190,7 @@ class Camera(val game: Game) {
         return {
             x, y ->
             if(game.controllableCharacter!!.sprite.y < minYValue){
-                moveCamera(sprite.x,minYValue, speed = 15f)
+                moveCamera(sprite.x,minYValue, floatSpeed = 0.2f)
                 if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)){
                     if(exitSide=="top"){
                         arrowToRoomExit()
@@ -200,7 +201,7 @@ class Camera(val game: Game) {
                     removeDirectionArrow()
                 }
             } else if(game.controllableCharacter!!.sprite.y > maxYValue){
-                moveCamera(sprite.x,maxYValue, speed = 15f)
+                moveCamera(sprite.x,maxYValue, floatSpeed = 0.2f)
                 if(game.map.currentRoom().open && !characterCloseToDoor(endGlobalTile)){
                     if(exitSide=="bottom"){
                         arrowToRoomExit()
@@ -241,6 +242,10 @@ class Camera(val game: Game) {
                 }
             }
         }
+    }
+
+    fun realSpeed(speed: Float): Float {
+        return speed * ((game.map.tileArea.w + game.map.tileArea.h) / 2)
     }
 
     fun action(){

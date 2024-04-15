@@ -348,7 +348,6 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
                     delay(33)
                     restart()
                 }
-
             }
         } else if(game.map.inOpenDoor(x,y) && game.map.currentRoom().open){
             disablePathFollowing()
@@ -418,6 +417,50 @@ class MainCharacter(x: Float, y:Float, game: Game) : Character(
             }
         }
         game.invalidate()
+    }
+
+    override fun isPathFree(x: Float, y: Float): Boolean {
+        val yCheckValue = sprite.y + (sprite.boundingBox.bottom - sprite.boundingBox.top)/3
+        val startTile = game.map.getMapIndexFromPosition(sprite.x, yCheckValue)
+        val aimedTile = game.map.getMapIndexFromPosition(x, y)
+        var startCol = when {
+            sprite.x < x -> startTile.second
+            else -> aimedTile.second
+        }
+        var startRow = when {
+            yCheckValue < y -> startTile.first
+            else -> aimedTile.first
+        }
+        var endCol = when {
+            sprite.x < x -> aimedTile.second
+            else -> startTile.second
+        }
+        var endRow = when {
+            yCheckValue < y -> aimedTile.first
+            else -> startTile.first
+        }
+
+        if(abs(startTile.first - aimedTile.first)<=1 && bottomTilesNotAvailable(startTile,aimedTile)){
+            endRow++
+        }
+
+
+        for (i in startRow..endRow) {
+            for (j in startCol..endCol) {
+                if (!isAvailableTile(row = i, col = j)) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    fun bottomTilesNotAvailable(startTile : Pair<Int,Int>, endTile: Pair<Int,Int>) : Boolean{
+        return !isAvailableTile(row = startTile.first+1, col = startTile.second) ||
+                (when{
+                    endTile.second<startTile.second->!isAvailableTile(row = startTile.first+1, col = startTile.second-1)
+                    else->!isAvailableTile(row = startTile.first+1, col = startTile.second+1)
+                })
     }
 
     fun inSolidCharacterBoundingBox(x: Float,y: Float) : Boolean{

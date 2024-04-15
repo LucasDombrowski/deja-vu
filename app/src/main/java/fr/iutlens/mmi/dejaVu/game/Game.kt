@@ -489,12 +489,12 @@ open class Game(
     var superCoinDropProbability = 1
     var goldHeartDropProbability = 1
     @Composable
-    fun Ath(showHeart: Boolean = true, showCoin : Boolean = true, showMenuButton : Boolean = true, showBar : Boolean = true){
+    fun Ath(showHeart: Boolean = true, showCoin : Boolean = true, showMenuButton : Boolean = true, showBar : Boolean = true, showLowLife : Boolean = true){
         val configuration = LocalConfiguration.current
         val screenWidth = with(configuration){
             this.screenWidthDp
         }
-        if(controllableCharacter!!.hearts.size<=1 || controllableCharacter!!.hearts[1].filled<=0f) {
+        if((controllableCharacter!!.hearts.size<=1 || controllableCharacter!!.hearts[1].filled<=0f) && showLowLife) {
             LowLife()
         }
         Box(
@@ -669,9 +669,9 @@ open class Game(
                         contentDescription = "Logo",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .align(Alignment.TopCenter)
+                            .align(Alignment.Center)
                             .size((screenHeight.dp) / 12)
-                            .offset(y = (screenHeight.dp / 15) * 4))
+                            .offset(y = -columnWidth*3/4))
                     FlowColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -766,36 +766,37 @@ open class Game(
                             )
                         }
                     }
-                    Column(
-                        modifier
+                    Box(
+                        modifier =  modifier
                             .fillMaxWidth(0.5f)
-                            .fillMaxHeight(),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
-                        val topSpacer = (screenHeight.dp / 14) * 4
-                        val titleSpacer = screenHeight.dp/9
-                        Spacer(modifier = Modifier.padding(top = topSpacer))
+                            .fillMaxHeight()
+                    ){
                         Text(
                             text = "PAUSE",
                             fontSize = titleFontSize,
                             fontFamily = MainFont,
                             fontWeight = FontWeight.Bold,
-                            color = Color(149,98,18)
+                            color = Color(149,98,18),
+                            modifier = Modifier.align(Alignment.Center).offset(y = -maxPageWidth*8/19)
                         )
-                        Spacer(modifier = Modifier.height(titleSpacer))
-                        MenuButton(text = "Reprendre", width = maxPageWidth*55/100) {
-                            active = false
-                            scope.launch {
-                                delay(transitionDuration.toLong())
-                                pause = false
-                                menu["open"] = false
-                                Music.normalMusicVolume()
+                        Column(
+                            Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center) {
+                            MenuButton(text = "Reprendre", width = maxPageWidth*55/100) {
+                                active = false
+                                scope.launch {
+                                    delay(transitionDuration.toLong())
+                                    pause = false
+                                    menu["open"] = false
+                                    Music.normalMusicVolume()
+                                }
+                            }
+                            Spacer(modifier = Modifier.height((screenHeight*0.001).dp))
+                            MenuButton(text = "Quitter", width = maxPageWidth*55/100) {
+                                onLeave()
                             }
                         }
-                        Spacer(modifier = Modifier.height((screenHeight*0.001).dp))
-                        MenuButton(text = "Quitter", width = maxPageWidth*55/100) {
-                            onLeave()
-                        }
-
                     }
                 }
 
@@ -866,7 +867,8 @@ open class Game(
             showHeart = athOverride["hearts"]!!,
             showCoin = athOverride["coins"]!!,
             showMenuButton = athOverride["menu"]!!,
-            showBar = athOverride["bar"]!!
+            showBar = athOverride["bar"]!!,
+            showLowLife = false
         )
         Music(musicTrack.value)
     }
@@ -923,38 +925,6 @@ open class Game(
     var gameOver = mutableStateOf(false)
 
     fun gameOver(){
-        ath["boss"] = listOf<Heart>().toMutableList()
-        ended = true
-        with(characterList.iterator()){
-            forEach {
-                if(it is Enemy){
-                    it.action.cancel()
-                }
-            }
-        }
-        onDragMove = {
-
-        }
-        onDragStart = {
-
-        }
-        onDragEnd = {
-
-        }
-        onTap = {
-
-        }
-        controllableCharacter!!.movingAction.cancel()
-
-        showAth.value = false
-
-        Music.mute = true
-
-        screenEffect = {}
-
-        controllableCharacter!!.sprite.visible()
-
-        pause = true
 
         fun blindReduce(onEnd : ()->Unit){
             var blindValue = 15
@@ -993,14 +963,49 @@ open class Game(
             }
         }
 
-        val soundVolume = 0.25f
-        Music.playSound(R.raw.hero_death, leftVolume = soundVolume, rightVolume = soundVolume)
+        if(!gameOver.value){
+            ath["boss"] = listOf<Heart>().toMutableList()
+            ended = true
+            with(characterList.iterator()){
+                forEach {
+                    if(it is Enemy){
+                        it.action.cancel()
+                    }
+                }
+            }
+            onDragMove = {
 
-        blindReduce {
-            scaleReduce {
-                gameOver.value = true
-                Music.mute = false
-                musicTrack.value = R.raw.game_over
+            }
+            onDragStart = {
+
+            }
+            onDragEnd = {
+
+            }
+            onTap = {
+
+            }
+            controllableCharacter!!.movingAction.cancel()
+
+            showAth.value = false
+
+
+            screenEffect = {}
+
+            controllableCharacter!!.sprite.visible()
+
+            pause = true
+
+            val soundVolume = 0.25f
+            Music.playSound(R.raw.hero_death, leftVolume = soundVolume, rightVolume = soundVolume)
+            Music.mute = true
+
+            blindReduce {
+                scaleReduce {
+                    gameOver.value = true
+                    Music.mute = false
+                    musicTrack.value = R.raw.game_over
+                }
             }
         }
     }
