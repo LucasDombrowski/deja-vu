@@ -153,7 +153,6 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
             while (patternIndex == pattern) {
                 patternIndex = (patterns.indices).random()
             }
-            Log.i("pattern index","$patternIndex")
             pattern = patternIndex
             patterns[patternIndex].invoke()
         }
@@ -304,7 +303,6 @@ class NinjaBoss(x: Float, y: Float, game: Game) : Boss(
                     attackAnimation()
                     target!!.healthDown(contactDamages, contactKnockback, currentDirection)
                 }
-                Log.i("currently dash","true")
                 delay(dashCheckDelay)
             }
             speed = oldSpeed
